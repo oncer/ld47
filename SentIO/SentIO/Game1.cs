@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Diagnostics;
 
 namespace SentIO
 {
@@ -14,6 +16,16 @@ namespace SentIO
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            if (SaveData.Instance["started"] == "1")
+            {
+                Debug.WriteLine("The game has been started before.");
+            }
+            else
+            {
+                Debug.WriteLine("Nope!");
+                SaveData.Instance["started"] = "1";
+            }
         }
 
         protected override void Initialize()
