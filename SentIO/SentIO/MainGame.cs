@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SentIO.Text;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -13,11 +14,11 @@ namespace SentIO
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        SpriteFont font;
-        
         private Size viewSize;
         private Size screenSize;
         private float scale;
+
+        TextManager textManager;
 
         public MainGame()
         {
@@ -31,29 +32,25 @@ namespace SentIO
             // window & screen setup
 
             viewSize = new Size(256, 144);
-            scale = 1.0f;
+            scale = 2.0f;
             screenSize = new Size((int)(viewSize.Width * scale), (int)(viewSize.Height * scale));
 
             graphics.PreferredBackBufferWidth = screenSize.Width;
             graphics.PreferredBackBufferHeight = screenSize.Height;
 
+            textManager = new TextManager();
         }
 
-        
-
         protected override void Initialize()
-        {
-            // TODO: Add your initialization logic here
-
+        {            
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            font = Content.Load<SpriteFont>("console");
-
+            var font = Content.Load<SpriteFont>("console");
+            textManager.Font = font;
         }
 
         protected override void Update(GameTime gameTime)
@@ -61,21 +58,21 @@ namespace SentIO
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            textManager.Update(gameTime);
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState:BlendState.NonPremultiplied, depthStencilState:DepthStencilState.None);
 
-            spriteBatch.DrawString(font, "Hello World", Vector2.Zero, Color.White);
-
+            textManager.Draw(spriteBatch, gameTime);
+            
             spriteBatch.End();
 
             base.Draw(gameTime);
