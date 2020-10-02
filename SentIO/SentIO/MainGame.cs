@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SentIO.Text;
+using SentIO.Console;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -18,7 +18,7 @@ namespace SentIO
         private Size screenSize;
         private float scale;
 
-        TextManager textManager;
+        Monolog monolog;
 
         public MainGame()
         {
@@ -38,7 +38,6 @@ namespace SentIO
             graphics.PreferredBackBufferWidth = screenSize.Width;
             graphics.PreferredBackBufferHeight = screenSize.Height;
 
-            textManager = new TextManager();
         }
 
         protected override void Initialize()
@@ -49,8 +48,13 @@ namespace SentIO
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            var font = Content.Load<SpriteFont>("console");
-            textManager.Font = font;
+            Globals.ConsoleFont = Content.Load<SpriteFont>("console");
+
+            monolog = new Monolog();
+            monolog.AddText("Hello my dear world.");
+            monolog.AddText("The weather is very nice today.");
+            monolog.AddText("Don't you think so?");
+            monolog.AddText("zzzz");
         }
 
         protected override void Update(GameTime gameTime)
@@ -58,7 +62,7 @@ namespace SentIO
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            textManager.Update(gameTime);
+            monolog.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -71,7 +75,7 @@ namespace SentIO
 
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState:BlendState.NonPremultiplied, depthStencilState:DepthStencilState.None);
 
-            textManager.Draw(spriteBatch, gameTime);
+            monolog.Draw(spriteBatch, gameTime);
             
             spriteBatch.End();
 
