@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SentIO
 {
-    public static class Globals
+    public static class Resources
     {
         public static SpriteFont ConsoleFont { get; set; }
     }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SentIO.Console;
+using SentIO.Globals;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -38,6 +39,9 @@ namespace SentIO
             graphics.PreferredBackBufferWidth = screenSize.Width;
             graphics.PreferredBackBufferHeight = screenSize.Height;
 
+            this.IsFixedTimeStep = true;
+            this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
+
         }
 
         protected override void Initialize()
@@ -48,7 +52,7 @@ namespace SentIO
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Globals.ConsoleFont = Content.Load<SpriteFont>("console");
+            Resources.ConsoleFont = Content.Load<SpriteFont>("console");
 
             monolog = new Monolog();
             monolog.AddText("Hello my dear world.");
@@ -61,6 +65,8 @@ namespace SentIO
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            Input.Update(gameTime);
 
             monolog.Update(gameTime);
 

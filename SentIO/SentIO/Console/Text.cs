@@ -18,8 +18,6 @@ namespace SentIO.Console
 
         private bool showBlink = false;
 
-        public bool ShowCursor { get; set; } = true;
-
         public Vector2 Position { get; set; } = Vector2.Zero;
 
         public Text(string text)
@@ -55,16 +53,13 @@ namespace SentIO.Console
 
             if (index == text.Length)
             {
-                if (ShowCursor)
-                {
-                    if (showBlink) shownText += "_";
-                }
+                if (showBlink) shownText += "_";                
             }
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gt)
         {
-            spriteBatch.DrawString(Globals.ConsoleFont, shownText, Position, Color.White, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
+            spriteBatch.DrawString(Resources.ConsoleFont, shownText, Position, Color.White, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
         }
     }
 }
