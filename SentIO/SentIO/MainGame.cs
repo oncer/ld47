@@ -30,6 +30,10 @@ namespace SentIO
 
         private static readonly int WIDTH = 1024;
         private static readonly int HEIGHT = 616;
+        private static readonly int HEIGHT_SMALL = 72;
+
+        private static int W;
+        private static int H;
 
         public MainGame()
         {
@@ -39,7 +43,10 @@ namespace SentIO
 
             // window & screen setup
 
-            viewSize = new Size(WIDTH, HEIGHT);
+            W = WIDTH;
+            H = SaveData.Instance.ExeName.ToLower() == "sid" ? HEIGHT : HEIGHT_SMALL;
+
+            viewSize = new Size(W, H);
             scale = 8;
             screenSize = new Size((int)(viewSize.Width * scale), (int)(viewSize.Height * scale));
 
@@ -48,8 +55,8 @@ namespace SentIO
 
             graphics.ApplyChanges();
 
-            //IsMouseVisible = true;
-            //Window.AllowUserResizing = true;
+            IsMouseVisible = true;
+            Window.AllowUserResizing = true;
 
             // time setup
 
@@ -82,7 +89,7 @@ namespace SentIO
             // change window & camera parameters when changing window size            
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
-            Window_ClientSizeChanged(this, new SizeChangedEventArgs(new Size(WIDTH, HEIGHT)));
+            Window_ClientSizeChanged(this, new SizeChangedEventArgs(viewSize));
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs args)
@@ -104,7 +111,8 @@ namespace SentIO
 
             graphics.ApplyChanges();
 
-            Debug.WriteLine($"Size changed to {w}x{h}.");
+            var display = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+            Window.Position = new Point((int)((display.Width - w) * .5f), (int)((display.Height - h) * .5f));
         }
 
         protected override void LoadContent()
@@ -114,7 +122,7 @@ namespace SentIO
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 64, 32);
 
-            face = new Face(new Vector2(WIDTH * .5f, HEIGHT * .5f));
+            face = new Face(new Vector2(W * .5f, H * .5f));
             text = new Text();
             script = new Script(this);
         }
