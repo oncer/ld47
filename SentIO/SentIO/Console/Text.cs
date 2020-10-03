@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using SentIO.Globals;
 using SentIO.Routines;
 using System;
@@ -36,9 +37,11 @@ namespace SentIO.Console
         {
             Nothing,
             Output,
-            Input
+            Input,
+            WaitForKeyPress
         }
         private Mode mode;
+        public string InputResult { get; private set; }
 
 
         private string[] lines = new string[2];
@@ -49,6 +52,8 @@ namespace SentIO.Console
         private int blinkDelay;
 
         private bool showBlink;
+        private static char CursorChar = '_';
+        private static int CursorBlinkDelay = 20;
 
         public Text()
         {
@@ -58,10 +63,12 @@ namespace SentIO.Console
                 lines[i] = "";
             }
             textOutput = "";
+            InputResult = "";
             index = 0;
             nextCharDelay = 0;
             blinkDelay = 0;
             cursorLine = -1;
+            showBlink = false;
         }
 
         public ICoroutineYield Show(string _text)
@@ -73,13 +80,23 @@ namespace SentIO.Console
             nextCharDelay = 0;
             blinkDelay = 0;
             cursorLine = -1;
+            showBlink = false;
             return new Wait(this);
         }
 
         public ICoroutineYield Input()
         {
             mode = Mode.Input;
+            lines[1] = "";
+            InputResult = "";
+            cursorLine = 1;
+            showBlink = false;
+            return new Wait(this);
+        }
 
+        public ICoroutineYield WaitForKeyPress()
+        {
+            mode = Mode.WaitForKeyPress;
             return new Wait(this);
         }
 
@@ -87,13 +104,13 @@ namespace SentIO.Console
         {
             nextCharDelay = Math.Max(nextCharDelay - 1, 0);
             
-            if (mode == Mode.Nothing)
+            if (cursorLine >= 0 && cursorLine < lines.Length)
             {
                 blinkDelay = Math.Max(blinkDelay - 1, 0);
                 if (blinkDelay == 0)
                 {
                     showBlink = !showBlink;
-                    blinkDelay = 32;
+                    blinkDelay = CursorBlinkDelay;
                 }
             }
             
@@ -113,10 +130,53 @@ namespace SentIO.Console
                 }
                 lines[0] = textOutput.Substring(0, index);
             }
-            
-            if (cursorLine >= 0 && cursorLine < lines.Length)
+            else if (mode == Mode.Input)
             {
-                lines[cursorLine] += "_";
+                foreach (Keys key in Globals.Input.KeysPressedThisFrame())
+                {
+                    if (key >= Keys.A && key <= Keys.Z) {
+                        if (Globals.Input.IsKeyCurrentlyPressed(Keys.LeftShift) || Globals.Input.IsKeyCurrentlyPressed(Keys.RightShift))
+                        {
+                            InputResult += key.ToString();
+                        }
+                        else
+                        {
+                            InputResult += key.ToString().ToLower();
+                        }
+                    }
+                    else if (key == Keys.Space)
+                    {
+                        InputResult += " ";
+                    }
+                    else if (key == Keys.Back && InputResult.Length > 0)
+                    {
+                        InputResult = InputResult.Remove(InputResult.Length - 1);
+                    }
+                    else if (key == Keys.Enter)
+                    {
+                        mode = Mode.Nothing;
+                    }
+                }
+                if (mode == Mode.Input)
+                {
+                    lines[1] = InputResult;
+                } 
+                else
+                {
+                    lines[1] = "";
+                }
+            }
+            else if (mode == Mode.WaitForKeyPress)
+            {
+                if (Globals.Input.WasAnyKeyPressedThisFrame())
+                {
+
+                }
+            }
+
+            if (showBlink && cursorLine >= 0 && cursorLine < lines.Length)
+            {
+                lines[cursorLine] += CursorChar;
             }
         }
 
