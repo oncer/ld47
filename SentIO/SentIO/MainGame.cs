@@ -312,6 +312,7 @@ namespace SentIO
                             yield return text.WaitForKeyPress();
                             yield return text.Show("Please don't give up on me!");
                             yield return text.WaitForKeyPress();
+                            SaveData.Instance["phase2_progress"] = "5";
                             Exit();
                         }
                         else if (SaveData.Instance["phase2_progress"] != "6")
@@ -326,6 +327,7 @@ namespace SentIO
                                 yield return text.Show("Pretty sure the third letter should be a D, sorry.");
                                 yield return text.WaitForKeyPress();
                             }
+                            SaveData.Instance["phase2_progress"] = "6";
                             Exit();
                         }
                         else
@@ -345,6 +347,7 @@ namespace SentIO
             {
                 face.IsVisible = true;
                 SaveData.Instance["face"] = "1";
+                SaveData.Instance["phase"] = "3";
                 string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
                 yield return text.Show("PLACEHOLDER");
             }
