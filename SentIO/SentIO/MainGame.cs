@@ -19,6 +19,7 @@ namespace SentIO
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+        private SpriteBatch fontBatch;
 
         private Size viewSize;
         private Size screenSize;
@@ -29,6 +30,9 @@ namespace SentIO
         private Face face;
         private Text text;
 
+        private static readonly int WIDTH = 1024;
+        private static readonly int HEIGHT = 616;
+
         public MainGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -37,17 +41,35 @@ namespace SentIO
 
             // window & screen setup
 
-            viewSize = new Size(256, 144);
+            viewSize = new Size(WIDTH, HEIGHT);
             scale = 2;
             screenSize = new Size((int)(viewSize.Width * scale), (int)(viewSize.Height * scale));
 
             graphics.PreferredBackBufferWidth = screenSize.Width;
             graphics.PreferredBackBufferHeight = screenSize.Height;
 
+            graphics.ApplyChanges();
+
+            IsMouseVisible = true;
+            Window.AllowUserResizing = true;
+
+            // time setup
+
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
 
+            // routine setup
+
             coroutines = new List<Coroutine>();
+        }
+
+        class SizeChangedEventArgs : EventArgs
+        {
+            public Size Size { get; private set; }
+            public SizeChangedEventArgs(Size size)
+            {
+                Size = size;
+            }            
         }
 
         protected override void Initialize()
@@ -58,18 +80,45 @@ namespace SentIO
 
             new Camera(resolutionRenderer) { MaxZoom = 2f, MinZoom = .5f, Zoom = 1f };
             Camera.Current.Position = new Vector2(viewSize.Width * .5f, viewSize.Height * .5f);
+
+            // change window & camera parameters when changing window size            
+            Window.ClientSizeChanged += Window_ClientSizeChanged;
+
+            Window_ClientSizeChanged(this, new SizeChangedEventArgs(new Size(WIDTH, HEIGHT)));
+        }
+
+        private void Window_ClientSizeChanged(object sender, EventArgs args)
+        {
+            var w = Window.ClientBounds.Width;
+            var h = Window.ClientBounds.Height;
+
+            if (args is SizeChangedEventArgs sizeArgs)
+            {
+                w = sizeArgs.Size.Width;
+                h = sizeArgs.Size.Height;
+            }
+
+            graphics.PreferredBackBufferWidth = w;
+            graphics.PreferredBackBufferHeight = h;
+
+            Camera.Current.ResolutionRenderer.ScreenWidth = w;
+            Camera.Current.ResolutionRenderer.ScreenHeight = h;
+
+            graphics.ApplyChanges();
+
+            Debug.WriteLine($"Size changed to {w}x{h}.");
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            fontBatch = new SpriteBatch(GraphicsDevice);
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 32, 32);
 
             face = new Face(new Vector2(32, 32));
             text = new Text();
 
-            
             StartCoroutine(MyScript());
         }
 
@@ -106,19 +155,10 @@ namespace SentIO
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            
+            Camera.Current.Update(gameTime);
 
             Input.Update(gameTime);
-
-            //Script.DisplayText("Hallo");
-            //Script.DisplayText("New text");
-            //var answer = Script.DisplayQuestion("New question?");
-            //if (answer == "Yes")
-            //{
-            //    Script.DisplayText("New text");
-            //}
-
-            //text?.Update(gameTime);
-
             face.Update(gameTime);
             text.Update(gameTime);
 
@@ -127,17 +167,28 @@ namespace SentIO
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Resources.BGColor2);
+            // prepare
+
+            //GraphicsDevice.Clear(Resources.BGColor2);
+            GraphicsDevice.Clear(Color.Black);
 
             Camera.Current.ResolutionRenderer.SetupDraw();
+
+            // sprite batch
 
             spriteBatch.BeginCamera(Camera.Current, BlendState.NonPremultiplied, DepthStencilState.None);
 
             face.Draw(spriteBatch, gameTime);
 
-            text?.Draw(spriteBatch, gameTime);
+            spriteBatch.Draw(Resources.FaceTexture.OriginalTexture, Vector2.Zero, Color.White);
 
             spriteBatch.End();
+
+            // font batch
+
+            fontBatch.Begin(blendState: BlendState.NonPremultiplied);
+            text?.Draw(fontBatch, gameTime);
+            fontBatch.End();
 
             base.Draw(gameTime);
         }

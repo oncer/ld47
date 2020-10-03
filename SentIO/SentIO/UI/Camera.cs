@@ -278,6 +278,7 @@ namespace SentIO.UI
         /// <param name="gt">Game time</param>
         public virtual void Update(GameTime gt)
         {
+            Position = new Vector2(ResolutionRenderer.ViewWidth * .5f, ResolutionRenderer.ViewHeight * .5f);
         }
     }
 }
