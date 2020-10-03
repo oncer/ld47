@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SentIO.Globals;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,10 +22,10 @@ namespace SentIO.Console
 
         public void AddText(string text)
         {
-            float y = Texts.Count * Globals.ConsoleFont.MeasureString("A").Y;
+            //float y = Texts.Count * Globals.ConsoleFont.MeasureString("A").Y;
 
             var textObj = new Text(text);
-            textObj.Position = new Vector2(0, y);
+            //textObj.Position = new Vector2(0, y);
             Texts.Add(textObj);
         }
 
@@ -32,28 +33,21 @@ namespace SentIO.Console
         {
             if (current.IsDone)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                if (Input.IsAnyKeyPressed())
                 {
                     if (line < Texts.Count - 1)
                     {
-                        current.ShowCursor = false;
-                        line++;                        
+                        Texts.RemoveAt(0);                        
                     }
                 }
             }
 
-            for (var i = 0; i <= line; i++)
-            {
-                Texts[i].Update(gt);
-            }
+            current.Update(gt);
         }
 
         public void Draw (SpriteBatch spriteBatch, GameTime gt)
         {
-            for(var i = 0; i <= line; i++)
-            {
-                Texts[i].Draw(spriteBatch, gt);
-            }
+            current.Draw(spriteBatch, gt);
         }
     }
 }
