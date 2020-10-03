@@ -201,6 +201,7 @@ namespace SentIO
                     yield return text.Show("It is definitely not SentIO though.");
                     yield return text.WaitForKeyPress();
                     yield return text.Show("Would you care giving me a different name?");
+                    yield return text.Show("I'll just shut myself down so you can change it.");
                     yield return text.WaitForKeyPress();
                     SaveData.Instance["phase2_progress"] = "1";
                     Exit();
