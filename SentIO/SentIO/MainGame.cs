@@ -41,7 +41,6 @@ namespace SentIO
 
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
-
         }
 
         protected override void Initialize()
@@ -55,6 +54,7 @@ namespace SentIO
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
 
             monolog = new Monolog();
+            monolog.AddText(SaveData.Instance.ExeName);
             monolog.AddText("Hello my dear world.");
             monolog.AddText("The weather is very nice today.");
             monolog.AddText("Don't you think so?");
