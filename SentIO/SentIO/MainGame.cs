@@ -8,11 +8,7 @@ using SentIO.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 
 namespace SentIO
 {
@@ -189,6 +185,7 @@ namespace SentIO
 
         IEnumerator Phase2()
         {
+            face.IsVisible = false;
             if (SaveData.Instance.ExeName == "SentIO")
             {
                 if (SaveData.Instance["phase2_progress"] == "")
@@ -342,6 +339,8 @@ namespace SentIO
             }
             else
             {
+                face.IsVisible = true;
+                SaveData.Instance["face"] = "1";
                 string[] allowedColors = {"violet", "purple", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
                 yield return text.Show("PLACEHOLDER");
             }
@@ -349,6 +348,7 @@ namespace SentIO
 
         IEnumerator Phase3()
         {
+            face.IsVisible = SaveData.Instance["face"] != "";
             if (SaveData.Instance["bgColor"] != "")
             {
                 text.bgColor = SaveData.Instance["bgColor"].ToColor();
