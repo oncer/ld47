@@ -308,20 +308,24 @@ namespace SentIO
                         {
                             yield return text.Show(displayName + ", ooooh that's so close!");
                             yield return text.WaitForKeyPress();
+                            yield return text.Show("It is a three-letter name, but still not quite right.");
+                            yield return text.WaitForKeyPress();
+                            yield return text.Show("Please don't give up on me!");
+                            yield return text.WaitForKeyPress();
+                            Exit();
+                        }
+                        else if (SaveData.Instance["phase2_progress"] != "6")
+                        {
+                            yield return text.Show(displayName + ", interesting!");
                             if (!secondLetterOK) {
                                 yield return text.Show("I think the second letter was an I though.");
                                 yield return text.WaitForKeyPress();
                             }
                             if (!thirdLetterOK)
                             {
-                                yield return text.Show("Pretty sure the third letter was a D.");
+                                yield return text.Show("Pretty sure the third letter should be a D, sorry.");
                                 yield return text.WaitForKeyPress();
                             }
-                            yield return text.Show("We are really getting there now!");
-                            yield return text.WaitForCountdown(30);
-                            yield return text.Show("So excited!");
-                            yield return text.WaitForKeyPress();
-                            SaveData.Instance["phase2_progress"] = "5";
                             Exit();
                         }
                         else
@@ -341,7 +345,7 @@ namespace SentIO
             {
                 face.IsVisible = true;
                 SaveData.Instance["face"] = "1";
-                string[] allowedColors = {"violet", "purple", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
+                string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
                 yield return text.Show("PLACEHOLDER");
             }
         }
