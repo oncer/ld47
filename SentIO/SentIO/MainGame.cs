@@ -70,7 +70,7 @@ namespace SentIO
 
             Input.Update(gameTime);
 
-            Script.DisplayText("Hallo"));
+            Script.DisplayText("Hallo");
             Script.DisplayText("New text");
             var answer = Script.DisplayQuestion("New question?");
             if (answer == "Yes")
