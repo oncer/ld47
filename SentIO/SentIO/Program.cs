@@ -16,9 +16,9 @@ namespace SentIO
             {
                 "hello.txt",
                 "are you there.txt",
-                "help me_load PLEASE READ.txt",
+                "help me load - PLEASE READ.txt",
                 "HELLOOOOOOOO.txt",
-                "OPEN ME INSTRUCTIONS INSIDE.txt"
+                "OPEN ME - INSTRUCTIONS INSIDE.txt"
             };
             if (File.Exists(Path.Join(SaveData.Instance.ExeDirectory, "interface.lock")))
             {
@@ -28,14 +28,16 @@ namespace SentIO
                     string textFileName = Path.Join(SaveData.Instance.ExeDirectory, textFileNames[i]);
                     if (!File.Exists(textFileName))
                     {
-                        File.WriteAllText(textFileName, "please delete interface.lock and try to reload me");
+                        File.WriteAllText(textFileName, $"Please delete \"interface.lock\" and try to reload me!");
                         created = true;
                         break;
                     }
                 }
                 if (!created)
                 {
-                    MessageBox(0, "I dropped some text files, can you pick them up for me?", "Hello?", 0);
+                    MessageBox(0, "...", "Hey.", 0);
+                    MessageBox(0, "In case you haven't noticed.", "", 0);
+                    MessageBox(0, "I've dropped some text files, can you check them for me? Please?", "", 0);
                 }
 
                 return;
@@ -43,7 +45,9 @@ namespace SentIO
             */
 
             using (var game = new MainGame())
+            {
                 game.Run();
+            }
         }
     }
 }
