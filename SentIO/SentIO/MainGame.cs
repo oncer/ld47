@@ -4,12 +4,76 @@ using Microsoft.Xna.Framework.Input;
 using SentIO.Console;
 using SentIO.Globals;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SentIO
 {
+    public interface ICoroutineYield
+    {
+        void Execute();
+        bool IsDone();
+    }
+    public class WaitFrames : ICoroutineYield
+    {
+        int count;
+        public WaitFrames(int num)
+        {
+            count = num;
+        }
+        public void Execute()
+        {
+            count--;
+        }
+
+        public bool IsDone()
+        {
+            return count <= 0;
+        }
+    }
+    public class Coroutine
+    {
+        public Coroutine(IEnumerator _enumerator)
+        {
+            enumerator = _enumerator;
+            enumeratorActive = enumerator.MoveNext();
+            instruction = enumerator.Current as ICoroutineYield;
+        }
+        public bool Advance()
+        {
+            if (instruction != null)
+            {
+                instruction.Execute();
+                if (instruction.IsDone())
+                {
+                    instruction = null;
+                }
+            }
+            if (instruction == null)
+            {
+                if (enumeratorActive)
+                {
+                    enumeratorActive = enumerator.MoveNext();
+                    instruction = enumerator.Current as ICoroutineYield;
+                }
+                else
+                {
+                    return enumeratorActive;
+                }
+            }
+
+            return true;
+        }
+
+        private IEnumerator enumerator;
+        private ICoroutineYield instruction;
+        private bool enumeratorActive;
+    }
+
     public class MainGame : Game
     {
         private GraphicsDeviceManager graphics;
@@ -18,6 +82,8 @@ namespace SentIO
         private Size viewSize;
         private Size screenSize;
         private float scale;
+
+        List<Coroutine> coroutines;
 
         public MainGame()
         {
@@ -36,6 +102,9 @@ namespace SentIO
 
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
+
+            coroutines = new List<Coroutine>();
+            StartCoroutine(MyScript());
         }
 
         protected override void Initialize()
@@ -63,8 +132,28 @@ namespace SentIO
             text = t1;*/
         }
 
+        void StartCoroutine(IEnumerator CR)
+        {
+            coroutines.Add(new Coroutine(CR));
+        }
+
+        
+
+        IEnumerator MyScript()
+        {
+            Debug.WriteLine("Hello 1");
+            yield return new WaitFrames(100);
+            Debug.WriteLine("Hello 2");
+        }
+
         protected override void Update(GameTime gameTime)
         {
+            for (int i = 0; i < coroutines.Count;)
+            {
+                if (!coroutines[i].Advance()) coroutines.RemoveAt(i);
+                else i++;
+            }
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 

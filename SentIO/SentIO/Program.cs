@@ -11,6 +11,7 @@ namespace SentIO
         [STAThread]
         static void Main()
         {
+            /*
             string[] textFileNames = new string[]
             {
                 "hello.txt",
@@ -39,6 +40,7 @@ namespace SentIO
 
                 return;
             }
+            */
 
             using (var game = new MainGame())
                 game.Run();
