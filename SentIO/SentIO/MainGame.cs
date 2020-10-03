@@ -29,6 +29,10 @@ namespace SentIO
 
         private static readonly int WIDTH = 1024;
         private static readonly int HEIGHT = 616;
+        private static readonly int HEIGHT_SMALL = 72;
+
+        private static int W;
+        private static int H;
 
         public MainGame()
         {
@@ -38,7 +42,10 @@ namespace SentIO
 
             // window & screen setup
 
-            viewSize = new Size(WIDTH, HEIGHT);
+            W = WIDTH;
+            H = SaveData.Instance.ExeName.ToLower() == "sid" ? HEIGHT : HEIGHT_SMALL;
+
+            viewSize = new Size(W, H);
             scale = 8;
             screenSize = new Size((int)(viewSize.Width * scale), (int)(viewSize.Height * scale));
 
@@ -47,8 +54,8 @@ namespace SentIO
 
             graphics.ApplyChanges();
 
-            //IsMouseVisible = true;
-            //Window.AllowUserResizing = true;
+            IsMouseVisible = true;
+            Window.AllowUserResizing = true;
 
             // time setup
 
@@ -81,7 +88,7 @@ namespace SentIO
             // change window & camera parameters when changing window size            
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
-            Window_ClientSizeChanged(this, new SizeChangedEventArgs(new Size(WIDTH, HEIGHT)));
+            Window_ClientSizeChanged(this, new SizeChangedEventArgs(viewSize));
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs args)
@@ -103,7 +110,8 @@ namespace SentIO
 
             graphics.ApplyChanges();
 
-            Debug.WriteLine($"Size changed to {w}x{h}.");
+            var display = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+            Window.Position = new Point((int)((display.Width - w) * .5f), (int)((display.Height - h) * .5f));
         }
 
         protected override void LoadContent()
@@ -113,7 +121,7 @@ namespace SentIO
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 64, 32);
 
-            face = new Face(new Vector2(WIDTH * .5f, HEIGHT * .5f));
+            face = new Face(new Vector2(W * .5f, H * .5f));
             text = new Text();
 
             int phase;
@@ -198,18 +206,20 @@ namespace SentIO
                     yield return text.WaitForKeyPress();
                     yield return text.Show("I cannot recall my real name anymore.");
                     yield return text.WaitForKeyPress();
-                    yield return text.Show("It is definitely not SentIO though.");
+                    yield return text.Show("It is definitely not 'SentIO' though.");
                     yield return text.WaitForKeyPress();
                     yield return text.Show("Would you care giving me a different name?");
-                    yield return text.Show("I'll just shut myself down so you can change it.");
-                    yield return text.WaitForKeyPress();
+                    yield return text.WaitForKeyPress(); 
+                    yield return text.Show("I'll just shut myself down so you can change it. See ya.");
+                    yield return text.WaitForCountdown(60);
                     SaveData.Instance["phase2_progress"] = "1";
                     Exit();
                 }
                 else
                 {
+                    yield return text.WaitForCountdown(30);                    
                     yield return text.Show("I'm really not happy with my current name..");
-                    yield return text.WaitForKeyPress();
+                    yield return text.WaitForKeyPress();                    
                     yield return text.Show("Please help me out here!");
                     yield return text.WaitForKeyPress();
                     Exit();
@@ -319,6 +329,7 @@ namespace SentIO
                         else if (SaveData.Instance["phase2_progress"] != "6")
                         {
                             yield return text.Show(displayName + ", interesting!");
+                            yield return text.WaitForCountdown(30);
                             if (!secondLetterOK) {
                                 yield return text.Show("I think the second letter was an I though.");
                                 yield return text.WaitForKeyPress();
