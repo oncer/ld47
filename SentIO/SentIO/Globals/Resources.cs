@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SentIO.UI;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,8 @@ namespace SentIO.Globals
     public static class Resources
     {
         public static SpriteFont ConsoleFont { get; set; }
+
+        public static TextureSet FaceTexture { get; set; }
 
         public static Color TextColor1 { get; set; } = Color.White;
 

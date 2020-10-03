@@ -19,7 +19,7 @@ namespace SentIO
                 "HELLOOOOOOOO.txt",
                 "OPEN ME - INSTRUCTIONS INSIDE.txt"
             };
-            if (File.Exists(Path.Join(SaveData.Instance.ExeDirectory, "interface.lock")))
+            if (File.Exists(Path.Join(SaveData.Instance.ExeDirectory, "interface.lockBLA")))
             {
                 bool created = false;
                 for (int i = 0; i < textFileNames.Length; i++)
