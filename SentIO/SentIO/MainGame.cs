@@ -82,10 +82,17 @@ namespace SentIO
         {
             while (true)
             {
-                yield return text.Show("Hello, World.");
-                yield return text.Show("Another World.");
-                yield return text.Show("Yet another world.");
-                yield return text.Show("Looks like I'm stuck in a loop!");
+                yield return text.Show("Yo, what's your name, asshole?");
+                yield return text.Input();
+                if (text.InputResult.ToLower() == "asshole")
+                {
+                    yield return text.Show("Duuuude!");
+                }
+                else
+                {
+                    yield return text.Show(text.InputResult + "?? That's a stupid name, bro.");
+                }
+                yield return text.WaitForKeyPress();
             }
         }
 
