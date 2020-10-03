@@ -47,6 +47,7 @@ namespace SentIO.Console
         private string[] lines = new string[2];
         private int cursorLine;
         private string textOutput;
+        private string textInput;
         private int index;
         private int nextCharDelay;
         private int blinkDelay;
@@ -63,7 +64,7 @@ namespace SentIO.Console
                 lines[i] = "";
             }
             textOutput = "";
-            InputResult = "";
+            textInput = "";
             index = 0;
             nextCharDelay = 0;
             blinkDelay = 0;
@@ -87,7 +88,7 @@ namespace SentIO.Console
         public ICoroutineYield Input()
         {
             mode = Mode.Input;
-            lines[1] = "";
+            textInput = "";
             InputResult = "";
             cursorLine = 1;
             showBlink = false;
@@ -137,41 +138,38 @@ namespace SentIO.Console
                     if (key >= Keys.A && key <= Keys.Z) {
                         if (Globals.Input.IsKeyCurrentlyPressed(Keys.LeftShift) || Globals.Input.IsKeyCurrentlyPressed(Keys.RightShift))
                         {
-                            InputResult += key.ToString();
+                            textInput += key.ToString();
                         }
                         else
                         {
-                            InputResult += key.ToString().ToLower();
+                            textInput += key.ToString().ToLower();
                         }
                     }
                     else if (key == Keys.Space)
                     {
-                        InputResult += " ";
+                        textInput += " ";
                     }
                     else if (key == Keys.Back && InputResult.Length > 0)
                     {
-                        InputResult = InputResult.Remove(InputResult.Length - 1);
+                        textInput = InputResult.Remove(InputResult.Length - 1);
                     }
                     else if (key == Keys.Enter)
                     {
                         mode = Mode.Nothing;
+                        InputResult = textInput;
+                        textInput = "";
                     }
                 }
-                if (mode == Mode.Input)
-                {
-                    lines[1] = InputResult;
-                } 
-                else
-                {
-                    lines[1] = "";
-                }
+                lines[1] = textInput;
             }
             else if (mode == Mode.WaitForKeyPress)
             {
                 if (Globals.Input.WasAnyKeyPressedThisFrame())
                 {
-
+                    mode = Mode.Nothing;
                 }
+                lines[0] = textOutput;
+                lines[1] = textInput;
             }
 
             if (showBlink && cursorLine >= 0 && cursorLine < lines.Length)
