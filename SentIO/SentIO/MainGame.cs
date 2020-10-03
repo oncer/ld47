@@ -50,8 +50,8 @@ namespace SentIO
 
             graphics.ApplyChanges();
 
-            IsMouseVisible = true;
-            Window.AllowUserResizing = true;
+            //IsMouseVisible = true;
+            //Window.AllowUserResizing = true;
 
             // time setup
 
@@ -114,7 +114,7 @@ namespace SentIO
             spriteBatch = new SpriteBatch(GraphicsDevice);
             fontBatch = new SpriteBatch(GraphicsDevice);
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
-            Resources.FaceTexture = Content.LoadTextureSet("face", 32, 32);
+            Resources.FaceTexture = Content.LoadTextureSet("face", 64, 32);
 
             face = new Face(new Vector2(WIDTH * .5f, HEIGHT * .5f));
             text = new Text();
