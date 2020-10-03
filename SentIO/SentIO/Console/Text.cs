@@ -149,9 +149,9 @@ namespace SentIO.Console
                     {
                         textInput += " ";
                     }
-                    else if (key == Keys.Back && InputResult.Length > 0)
+                    else if (key == Keys.Back && textInput.Length > 0)
                     {
-                        textInput = InputResult.Remove(InputResult.Length - 1);
+                        textInput = textInput.Remove(textInput.Length - 1);
                     }
                     else if (key == Keys.Enter)
                     {
