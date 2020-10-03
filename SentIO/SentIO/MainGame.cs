@@ -37,14 +37,12 @@ namespace SentIO
             // window & screen setup
 
             viewSize = new Size(256, 144);
-            scale = 4;
+            scale = 2;
             screenSize = new Size((int)(viewSize.Width * scale), (int)(viewSize.Height * scale));
 
             graphics.PreferredBackBufferWidth = screenSize.Width;
             graphics.PreferredBackBufferHeight = screenSize.Height;
 
-            //graphics.GraphicsDevice.Viewport = new Viewport(0, 0, 512, 144);
-            
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
 
@@ -56,15 +54,19 @@ namespace SentIO
         {            
             base.Initialize();
 
+            var resolutionRenderer = new ResolutionRenderer(graphics.GraphicsDevice, viewSize.Width, viewSize.Height, screenSize.Width, screenSize.Height);
+
+            new Camera(resolutionRenderer) { MaxZoom = 2f, MinZoom = .5f, Zoom = 1f };
+            Camera.Current.Position = new Vector2(viewSize.Width * .5f, viewSize.Height * .5f);
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
-            Resources.FaceTexture = Content.LoadTextureSet("face", 64, 64);
+            Resources.FaceTexture = Content.LoadTextureSet("face", 32, 32);
 
-            face = new Face(new Vector2(64, 64));
+            face = new Face(new Vector2(32, 32));
         }
 
         void StartCoroutine(IEnumerator coroutine)
@@ -74,25 +76,26 @@ namespace SentIO
 
         IEnumerator MyScript()
         {
-            yield return consoleWindow.PrintText("Hello");
-            consoleWindow.AskQuestion("Blabla");
-            yield return consoleWindow.WaitForReady();
-            string result = consoleWindow.GetUserInput();
+            //yield return consoleWindow.PrintText("Hello");
+            //consoleWindow.AskQuestion("Blabla");
+            //yield return consoleWindow.WaitForReady();
+            //string result = consoleWindow.GetUserInput();
 
 
-            yield return new TextInstruction("Hello");
-            yield return new WaitInstruction(100);
-            yield return new TextInstruction("Oh hi there. Some sentence.");
+            //yield return new TextInstruction("Hello");
+            //yield return new WaitInstruction(100);
+            //yield return new TextInstruction("Oh hi there. Some sentence.");
 
-            StringResult result = new StringResult();
-            yield return new QuestionInstruction("Do you like apples?", result);
-            if (result.Result == "wow")
-            {
-                yield return new TextInstruction("Wow indeed.");
-            } else
-            {
-                yield return new TextInstruction("How shameful.");
-            }
+            //StringResult result = new StringResult();
+            //yield return new QuestionInstruction("Do you like apples?", result);
+            //if (result.Result == "wow")
+            //{
+            //    yield return new TextInstruction("Wow indeed.");
+            //} else
+            //{
+            //    yield return new TextInstruction("How shameful.");
+            //}
+            yield return null;
         }
 
         protected override void Update(GameTime gameTime)
@@ -127,7 +130,9 @@ namespace SentIO
         {
             GraphicsDevice.Clear(Resources.BGColor2);
 
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState:BlendState.NonPremultiplied, depthStencilState:DepthStencilState.None);
+            Camera.Current.ResolutionRenderer.SetupDraw();
+
+            spriteBatch.BeginCamera(Camera.Current, BlendState.NonPremultiplied, DepthStencilState.None);
 
             face.Draw(spriteBatch, gameTime);
 

@@ -25,7 +25,7 @@ namespace SentIO.UI
 
         public void Draw(SpriteBatch sb, GameTime gt)
         {
-            animation.Draw(sb, gt, Position, Color.White, 0, new Vector2(32, 32), Vector2.One, 1);
+            animation.Draw(sb, gt, Position, Color.White, 0, new Vector2(0), new Vector2(1), 1);
         }
     }
 }
