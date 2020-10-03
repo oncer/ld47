@@ -32,5 +32,34 @@ namespace SentIO
                 return Path.GetDirectoryName(path);
             }
         }
+
+        public static Color ToColor(this string hexCode)
+        {
+            hexCode = hexCode.Replace("#", "");
+
+            try
+            {
+                if (hexCode.Length == 6)
+                {
+
+                    var r = int.Parse(hexCode.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    var g = int.Parse(hexCode.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    var b = int.Parse(hexCode.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+
+                    return new Color(r, g, b);
+                }
+
+                if (hexCode.Length == 8)
+                {
+                    var a = int.Parse(hexCode.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    var r = int.Parse(hexCode.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    var g = int.Parse(hexCode.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    var b = int.Parse(hexCode.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+                    return new Color(r, g, b, a);
+                }
+            }
+            catch (Exception) { }
+            throw new ArgumentException($"Color code '{hexCode}' is invalid!");
+        }
     }
 }

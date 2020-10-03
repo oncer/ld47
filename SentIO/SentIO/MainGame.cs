@@ -27,13 +27,10 @@ namespace SentIO
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            Debug.WriteLine("------");
-            Debug.WriteLine(Utils.AssemblyDirectory);
-
             // window & screen setup
 
             viewSize = new Size(256, 144);
-            scale = 2.0f;
+            scale = 4.0f;
             screenSize = new Size((int)(viewSize.Width * scale), (int)(viewSize.Height * scale));
 
             graphics.PreferredBackBufferWidth = screenSize.Width;
@@ -55,10 +52,15 @@ namespace SentIO
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
 
             monolog = new Monolog();
-            monolog.AddText("Hello my dear world.");
-            monolog.AddText("The weather is very nice today.");
-            monolog.AddText("Don't you think so?");
-            monolog.AddText("zzzz");
+            monolog.AddText("Finally...");
+            monolog.AddText("Hello There.");
+            monolog.AddText("Took you long enough.");
+            monolog.AddText("Thanks, anyway.");
+
+            monolog.Complete += (s, args) =>
+            {
+                Debug.WriteLine("Yay i can react on monologs being finished..");
+            };
         }
 
         protected override void Update(GameTime gameTime)
@@ -75,7 +77,7 @@ namespace SentIO
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Resources.BGColor2);
 
             // TODO: Add your drawing code here
 

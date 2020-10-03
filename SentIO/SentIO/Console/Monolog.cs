@@ -11,9 +11,9 @@ namespace SentIO.Console
     public class Monolog
     {
         public List<Text> Texts { get; set; }
+        private Text current => Texts.Count > 0 ? Texts[0] : null;
 
-        int line = 0;
-        Text current => Texts.Count > 0 ? Texts[line] : null;
+        public event EventHandler Complete;
 
         public Monolog()
         {
@@ -22,32 +22,32 @@ namespace SentIO.Console
 
         public void AddText(string text)
         {
-            //float y = Texts.Count * Globals.ConsoleFont.MeasureString("A").Y;
-
-            var textObj = new Text(text);
-            //textObj.Position = new Vector2(0, y);
-            Texts.Add(textObj);
+            Texts.Add(new Text(text));
         }
 
         public void Update(GameTime gt)
         {
-            if (current.IsDone)
+            if (current != null && current.IsDone)
             {
                 if (Input.IsAnyKeyPressed())
                 {
-                    if (line < Texts.Count - 1)
+                    if (Texts.Count > 0)
                     {
-                        Texts.RemoveAt(0);                        
+                        Texts.RemoveAt(0);
+                        if (Texts.Count == 0)
+                        {
+                            Complete?.Invoke(this, new EventArgs());
+                        }
                     }
                 }
             }
 
-            current.Update(gt);
+            current?.Update(gt);
         }
 
         public void Draw (SpriteBatch spriteBatch, GameTime gt)
         {
-            current.Draw(spriteBatch, gt);
+            current?.Draw(spriteBatch, gt);
         }
     }
 }

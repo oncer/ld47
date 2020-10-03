@@ -24,17 +24,21 @@ namespace SentIO.Console
         {
             this.text = text;
         }
+
         private Text() { }
 
         public void Update (GameTime gt)
         {
             nextCharDelay = Math.Max(nextCharDelay - 1, 0);
-            blinkDelay = Math.Max(blinkDelay - 1, 0);
-
-            if (blinkDelay == 0)
+            
+            if (IsDone)
             {
-                showBlink = !showBlink;
-                blinkDelay = 16;
+                blinkDelay = Math.Max(blinkDelay - 1, 0);
+                if (blinkDelay == 0)
+                {
+                    showBlink = !showBlink;
+                    blinkDelay = 32;
+                }
             }
             
             if (nextCharDelay == 0)
