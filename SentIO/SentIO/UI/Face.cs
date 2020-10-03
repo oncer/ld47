@@ -13,19 +13,22 @@ namespace SentIO.UI
         public Face(Vector2 position)
         {
             Position = position;
-            animation = new Animation(Resources.FaceTexture, 0, 1, .2, true);
+            animTalk = new Animation(Resources.FaceTexture, 0, 3, .1, true);
+
+            currentAnimation = animTalk;
         }
 
-        private Animation animation;
+        private Animation currentAnimation;
+        private Animation animTalk;
 
         public void Update(GameTime gt)
         {
-            animation.Update(gt);
+            currentAnimation.Update(gt);
         }
 
         public void Draw(SpriteBatch sb, GameTime gt)
         {
-            animation.Draw(sb, gt, Position, Color.White, 0, new Vector2(0), new Vector2(1), 1);
+            currentAnimation.Draw(sb, gt, Position, Color.White, 0, new Vector2(16), new Vector2(2), 1);
         }
     }
 }

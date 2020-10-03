@@ -42,7 +42,7 @@ namespace SentIO
             // window & screen setup
 
             viewSize = new Size(WIDTH, HEIGHT);
-            scale = 2;
+            scale = 8;
             screenSize = new Size((int)(viewSize.Width * scale), (int)(viewSize.Height * scale));
 
             graphics.PreferredBackBufferWidth = screenSize.Width;
@@ -116,7 +116,7 @@ namespace SentIO
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 32, 32);
 
-            face = new Face(new Vector2(32, 32));
+            face = new Face(new Vector2(WIDTH * .5f, HEIGHT * .5f));
             text = new Text();
 
             StartCoroutine(MyScript());
@@ -132,10 +132,11 @@ namespace SentIO
             while (true)
             {
                 yield return text.Show("Hello, World.");
+                yield return new WaitInstruction(100);
                 //yield return text.Show("Another World.");
                 //yield return text.Show("Yet another world.");
-                yield return text.Show("Looks like I'm stuck in a loop ASDFJK ASDLASOEDASAEDLAOESDASL!");
-                yield return new WaitInstruction(200);
+                yield return text.Show("Looks like I'm stuck in a loop...");
+                yield return new WaitInstruction(100);
             }
         }
 
@@ -173,8 +174,6 @@ namespace SentIO
             spriteBatch.BeginCamera(Camera.Current, BlendState.NonPremultiplied, DepthStencilState.None);
 
             face.Draw(spriteBatch, gameTime);
-
-            spriteBatch.Draw(Resources.FaceTexture.OriginalTexture, Vector2.Zero, Color.White);
 
             spriteBatch.End();
 
