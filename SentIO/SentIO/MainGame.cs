@@ -131,7 +131,7 @@ namespace SentIO
         {
             while (true)
             {
-                yield return text.Show("Yo, what's your name, asshole?");
+                yield return text.Show("Hey. I'm Sid. What's your name?");
                 yield return text.Input();
                 if (text.InputResult.ToLower() == "asshole")
                 {

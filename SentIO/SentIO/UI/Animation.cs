@@ -43,6 +43,11 @@ namespace SentIO.UI
             this.loop = loop;
         }
 
+        public void Restart()
+        {
+            currentFrame = MinFrame;
+        }
+
         public void Update(GameTime gt)
         {
             if (MaxFrame > MinFrame && MaxFrame > 0)

@@ -9,26 +9,49 @@ namespace SentIO.UI
 {
     public class Face
     {
+        public enum Mood
+        {
+            TalkNeutral,
+            IdleNeutral,
+        }
+
         public Vector2 Position { get; set; }
+
+        public Animation CurrentAnimation => moods[CurrentMood];
+        
+        private Mood mood;
+        public Mood CurrentMood
+        {
+            get { return mood; }
+            set
+            {
+                mood = value;
+                CurrentAnimation.Restart();
+            }
+        }
+
+        private Dictionary<Mood, Animation> moods;
+
         public Face(Vector2 position)
         {
             Position = position;
-            animTalk = new Animation(Resources.FaceTexture, 0, 3, .1, true);
 
-            currentAnimation = animTalk;
+            moods = new Dictionary<Mood, Animation>();
+
+            moods.Add(Mood.TalkNeutral, new Animation(Resources.FaceTexture, 0, 6, .25, true));
+            moods.Add(Mood.IdleNeutral, new Animation(Resources.FaceTexture, 7, 13, .15, true));;
+
+            CurrentMood = Mood.TalkNeutral;
         }
-
-        private Animation currentAnimation;
-        private Animation animTalk;
 
         public void Update(GameTime gt)
         {
-            currentAnimation.Update(gt);
+            CurrentAnimation.Update(gt);
         }
 
         public void Draw(SpriteBatch sb, GameTime gt)
         {
-            currentAnimation.Draw(sb, gt, Position, Color.White, 0, new Vector2(16), new Vector2(2), 1);
+            CurrentAnimation.Draw(sb, gt, Position, Color.White, 0, new Vector2(16), new Vector2(2), 1);
         }
     }
 }
