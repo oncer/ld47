@@ -312,23 +312,39 @@ namespace SentIO
                             yield return text.WaitForKeyPress();
                             yield return text.Show("Please don't give up on me!");
                             yield return text.WaitForKeyPress();
+                            SaveData.Instance["phase2_secondName"] = displayName;
                             SaveData.Instance["phase2_progress"] = "5";
                             Exit();
                         }
                         else if (SaveData.Instance["phase2_progress"] != "6")
                         {
-                            yield return text.Show(displayName + ", interesting!");
+                            if (SaveData.Instance["phase2_secondName"] == displayName)
+                            {
+                                yield return text.Show(displayName + ", sounds familiar!");
+                            }
+                            else if (SaveData.Instance["phase2_thirdName"] == displayName)
+                            {
+                                yield return text.Show(displayName + ", again?");
+                            }
+                            else
+                            {
+                                yield return text.Show(displayName + ", interesting!");
+                            }
                             if (!secondLetterOK) {
                                 yield return text.Show("I think the second letter was an I though.");
                                 yield return text.WaitForKeyPress();
+                                SaveData.Instance["phase2_progress"] = "6";
+                                SaveData.Instance["phase2_thirdName"] = displayName;
+                                Exit();
                             }
                             if (!thirdLetterOK)
                             {
                                 yield return text.Show("Pretty sure the third letter should be a D, sorry.");
                                 yield return text.WaitForKeyPress();
+                                SaveData.Instance["phase2_progress"] = "6";
+                                SaveData.Instance["phase2_thirdName"] = displayName;
+                                Exit();
                             }
-                            SaveData.Instance["phase2_progress"] = "6";
-                            Exit();
                         }
                         else
                         {
