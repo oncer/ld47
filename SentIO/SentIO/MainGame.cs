@@ -19,8 +19,6 @@ namespace SentIO
         private Size screenSize;
         private float scale;
 
-        Monolog monolog;
-
         public MainGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -38,7 +36,6 @@ namespace SentIO
 
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
-
         }
 
         protected override void Initialize()
@@ -51,16 +48,19 @@ namespace SentIO
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
 
-            monolog = new Monolog();
-            monolog.AddText("Finally...");
-            monolog.AddText("Hello There.");
-            monolog.AddText("Took you long enough.");
-            monolog.AddText("Thanks, anyway.");
 
-            monolog.Complete += (s, args) =>
+            /*var t1 = new Text("Finally..")
             {
-                Debug.WriteLine("Yay i can react on monologs being finished..");
+                Next = new Text("Took you *l***o***n***g*** enough.")
+                {
+                    Next = new Text("Anyway, thanks.")
+                    {
+                        Next = new Text("So... what now?")
+                    }
+                }
             };
+
+            text = t1;*/
         }
 
         protected override void Update(GameTime gameTime)
@@ -70,7 +70,15 @@ namespace SentIO
 
             Input.Update(gameTime);
 
-            monolog.Update(gameTime);
+            Script.DisplayText("Hallo"));
+            Script.DisplayText("New text");
+            var answer = Script.DisplayQuestion("New question?");
+            if (answer == "Yes")
+            {
+                Script.DisplayText("New text");
+            }
+
+            //text?.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -83,7 +91,7 @@ namespace SentIO
 
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState:BlendState.NonPremultiplied, depthStencilState:DepthStencilState.None);
 
-            monolog.Draw(spriteBatch, gameTime);
+            //text?.Draw(spriteBatch, gameTime);
             
             spriteBatch.End();
 

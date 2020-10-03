@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SentIO
+namespace SentIO.Globals
 {
     public static class Resources
     {

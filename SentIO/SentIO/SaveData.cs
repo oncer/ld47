@@ -12,6 +12,9 @@ namespace SentIO
         private string path;
         private Dictionary<string, string> data;
 
+        public string ExeDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+        public string ExeName => System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+
         SaveData()
         {
             path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SentIO");

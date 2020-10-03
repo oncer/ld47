@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace SentIO
+namespace SentIO.Globals
 {
     public struct Size
     {
