@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SentIO.Globals;
+using SentIO.Routines;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,57 +12,82 @@ namespace SentIO.Console
 {
     public class Text
     {
-        public bool IsDone { get; private set; } = false;
-        public Vector2 Position { get; set; } = Vector2.Zero;
-        public event EventHandler Complete;
+        public class Wait : ICoroutineYield
+        {
+            Text parent;
+            public Wait(Text _parent)
+            {
+                parent = _parent;
+            }
 
-        private string shownText;
-        private string text;
+            public void Execute()
+            {
+            }
+
+            public bool IsDone()
+            {
+                return parent.IsDone;
+            }
+        }
+        public bool IsDone => mode == Mode.Nothing;
+        public Vector2 Position { get; set; } = Vector2.Zero;
+
+        public enum Mode
+        {
+            Nothing,
+            Output,
+            Input
+        }
+        private Mode mode;
+
+
+        private string[] lines = new string[2];
+        private int cursorLine;
+        private string textOutput;
         private int index;
         private int nextCharDelay;
         private int blinkDelay;
 
-        private bool invoked;
         private bool showBlink;
 
-        public Text(string text)
+        public Text()
         {
-            this.text = text;
-        }
-
-        private Text()
-        {
-            shownText = "";
-            text = "";
+            mode = Mode.Nothing;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                lines[i] = "";
+            }
+            textOutput = "";
             index = 0;
             nextCharDelay = 0;
             blinkDelay = 0;
-            invoked = false;
-            showBlink = false;
-            Next = null;
+            cursorLine = -1;
         }
 
-        private void ResetWith(Text next)
+        public ICoroutineYield Show(string _text)
         {
-            IsDone = false;
-            shownText = "";
-            text = next.text;
+            mode = Mode.Output;
+            lines[0] = "";
+            textOutput = _text;
             index = 0;
             nextCharDelay = 0;
             blinkDelay = 0;
-            invoked = false;
-            showBlink = false;
-            Complete = Next.Complete;
-            Next = Next.Next;
+            cursorLine = -1;
+            return new Wait(this);
         }
 
-        public Text Next { get; set; }
+        public ICoroutineYield Input()
+        {
+            mode = Mode.Input;
+
+            return new Wait(this);
+        }
 
         public void Update (GameTime gt)
         {
             nextCharDelay = Math.Max(nextCharDelay - 1, 0);
             
-            if (IsDone)
+            if (mode == Mode.Nothing)
             {
                 blinkDelay = Math.Max(blinkDelay - 1, 0);
                 if (blinkDelay == 0)
@@ -71,45 +97,35 @@ namespace SentIO.Console
                 }
             }
             
-            if (nextCharDelay == 0)
+            if (mode == Mode.Output)
             {
-                if (index < text.Length)
+                if (nextCharDelay == 0)
                 {
-                    index++;
-                } else
-                {
-                    IsDone = true;
+                    if (index < textOutput.Length)
+                    {
+                        index++;
+                    } else
+                    {
+                        mode = Mode.Nothing;
+                        cursorLine = 0;
+                    }
+                    nextCharDelay = 4;
                 }
-                nextCharDelay = 4;
+                lines[0] = textOutput.Substring(0, index);
             }
             
-            shownText = text.Substring(0, index);
-
-            if (index == text.Length)
+            if (cursorLine >= 0 && cursorLine < lines.Length)
             {
-                if (showBlink) shownText += "_";                
-            }
-
-            if (IsDone && !invoked)
-            {
-                if (Input.IsAnyKeyPressed())
-                {
-                    invoked = true;
-                    Complete?.Invoke(this, new EventArgs());
-                    if (Next != null)
-                    {
-                        ResetWith(Next);                        
-                    }
-                }
+                lines[cursorLine] += "_";
             }
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gt)
         {
-            if (shownText == null)
-                return;
-
-            spriteBatch.DrawString(Resources.ConsoleFont, shownText, Position, Color.White, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
+            for (int i = 0; i < lines.Length; i++)
+            {
+                spriteBatch.DrawString(Resources.ConsoleFont, lines[i], new Vector2(0, i * Resources.ConsoleFont.LineSpacing), Color.White, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
+            }
         }
     }
 }

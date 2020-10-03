@@ -27,6 +27,7 @@ namespace SentIO
         List<Coroutine> coroutines;
 
         private Face face;
+        private Text text;
 
         public MainGame()
         {
@@ -49,7 +50,6 @@ namespace SentIO
             this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
 
             coroutines = new List<Coroutine>();
-            StartCoroutine(MyScript());
         }
 
         protected override void Initialize()
@@ -65,6 +65,10 @@ namespace SentIO
             Resources.FaceTexture = Content.LoadTextureSet("face", 64, 64);
 
             face = new Face(new Vector2(64, 64));
+            text = new Text();
+
+            
+            StartCoroutine(MyScript());
         }
 
         void StartCoroutine(IEnumerator coroutine)
@@ -74,24 +78,12 @@ namespace SentIO
 
         IEnumerator MyScript()
         {
-            yield return consoleWindow.PrintText("Hello");
-            consoleWindow.AskQuestion("Blabla");
-            yield return consoleWindow.WaitForReady();
-            string result = consoleWindow.GetUserInput();
-
-
-            yield return new TextInstruction("Hello");
-            yield return new WaitInstruction(100);
-            yield return new TextInstruction("Oh hi there. Some sentence.");
-
-            StringResult result = new StringResult();
-            yield return new QuestionInstruction("Do you like apples?", result);
-            if (result.Result == "wow")
+            while (true)
             {
-                yield return new TextInstruction("Wow indeed.");
-            } else
-            {
-                yield return new TextInstruction("How shameful.");
+                yield return text.Show("Hello, World.");
+                yield return text.Show("Another World.");
+                yield return text.Show("Yet another world.");
+                yield return text.Show("Looks like I'm stuck in a loop!");
             }
         }
 
@@ -119,6 +111,7 @@ namespace SentIO
             //text?.Update(gameTime);
 
             face.Update(gameTime);
+            text.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -131,7 +124,7 @@ namespace SentIO
 
             face.Draw(spriteBatch, gameTime);
 
-            //text?.Draw(spriteBatch, gameTime);
+            text?.Draw(spriteBatch, gameTime);
 
             spriteBatch.End();
 
