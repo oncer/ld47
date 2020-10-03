@@ -15,11 +15,13 @@ namespace SentIO.UI
             IdleNeutral,
         }
 
+        private Dictionary<Mood, Animation> moods;
+        private Mood mood;
+
         public Vector2 Position { get; set; }
 
         public Animation CurrentAnimation => moods[CurrentMood];
         
-        private Mood mood;
         public Mood CurrentMood
         {
             get { return mood; }
@@ -30,7 +32,7 @@ namespace SentIO.UI
             }
         }
 
-        private Dictionary<Mood, Animation> moods;
+        public bool IsVisible { get; set; } = true;
 
         public Face(Vector2 position)
         {
@@ -51,7 +53,8 @@ namespace SentIO.UI
 
         public void Draw(SpriteBatch sb, GameTime gt)
         {
-            CurrentAnimation.Draw(sb, gt, Position, Color.White, 0, new Vector2(32, 16), new Vector2(2), 1);
+            if (IsVisible)
+                CurrentAnimation.Draw(sb, gt, Position, Color.White, 0, new Vector2(32, 16), new Vector2(2), 1);
         }
     }
 }
