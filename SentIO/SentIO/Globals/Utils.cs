@@ -61,5 +61,10 @@ namespace SentIO.Globals
             catch (Exception) { }
             throw new ArgumentException($"Color code '{hexCode}' is invalid!");
         }
+
+        public static string ToHexString(this Color color)
+        {
+            return string.Format("#{0:X}{1:X}{2:X}{3:X}", color.R, color.G, color.B, color.A);
+        }
     }
 }

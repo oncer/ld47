@@ -30,6 +30,9 @@ namespace SentIO.Console
                 return parent.IsDone;
             }
         }
+
+        public Color bgColor = Color.Black;
+        public Color fgColor = Color.White;
         public bool IsDone => mode == Mode.Nothing;
         public Vector2 Position { get; set; } = Vector2.Zero;
 
@@ -38,7 +41,8 @@ namespace SentIO.Console
             Nothing,
             Output,
             Input,
-            WaitForKeyPress
+            WaitForKeyPress,
+            WaitForTime
         }
         private Mode mode;
         public string InputResult { get; private set; }
@@ -51,6 +55,7 @@ namespace SentIO.Console
         private int index;
         private int nextCharDelay;
         private int blinkDelay;
+        private int frameCountdown;
 
         private bool showBlink;
         private static char CursorChar = '_';
@@ -70,6 +75,7 @@ namespace SentIO.Console
             blinkDelay = 0;
             cursorLine = -1;
             showBlink = false;
+            frameCountdown = 0;
         }
 
         public ICoroutineYield Show(string _text)
@@ -98,6 +104,13 @@ namespace SentIO.Console
         public ICoroutineYield WaitForKeyPress()
         {
             mode = Mode.WaitForKeyPress;
+            return new Wait(this);
+        }
+
+        public ICoroutineYield WaitForCountdown(int frames)
+        {
+            mode = Mode.WaitForTime;
+            frameCountdown = frames;
             return new Wait(this);
         }
 
@@ -171,6 +184,16 @@ namespace SentIO.Console
                 lines[0] = textOutput;
                 lines[1] = textInput;
             }
+            else if (mode == Mode.WaitForTime)
+            {
+                frameCountdown--;
+                if (frameCountdown <= 0)
+                {
+                    mode = Mode.Nothing;
+                }
+                lines[0] = textOutput;
+                lines[1] = textInput;
+            }
 
             if (showBlink && cursorLine >= 0 && cursorLine < lines.Length)
             {
@@ -182,7 +205,7 @@ namespace SentIO.Console
         {
             for (int i = 0; i < lines.Length; i++)
             {
-                spriteBatch.DrawString(Resources.ConsoleFont, lines[i], new Vector2(0, i * Resources.ConsoleFont.LineSpacing), Color.White, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
+                spriteBatch.DrawString(Resources.ConsoleFont, lines[i], new Vector2(0, i * Resources.ConsoleFont.LineSpacing), fgColor, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
             }
         }
     }
