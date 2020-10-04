@@ -11,7 +11,7 @@ getClientAddress = function (req) {
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.json({
-    ip: getClientAddress(req);
+    ip: getClientAddress(req)
   });
 });
 
