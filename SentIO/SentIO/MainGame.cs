@@ -188,6 +188,14 @@ namespace SentIO
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+            {
+                if (dice.State == Dice.DiceState.Done)
+                {
+                    dice.Roll();
+                }
+            }
+
             Camera.Instance.Update();
 
             Input.Update();
