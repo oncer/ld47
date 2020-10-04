@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
@@ -221,6 +222,15 @@ namespace SentIO.Console
                 {
                     if (index < textOutput.Length)
                     {
+                        if (index == textOutput.Length - 1)
+                        {
+                            SoundManager.Stop(Resources.SfxChar);
+                            SoundManager.Play(Resources.SfxCharStop);
+                        }
+                        else if (textOutput[index] != ' ')
+                        {
+                            SoundManager.Play(Resources.SfxChar);
+                        }
                         index++;
                     }
                     switch (CurrentSpeed)
