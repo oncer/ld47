@@ -16,7 +16,8 @@ namespace SentIO.UI
             TalkNeutral,
             IdleNeutral,
             TalkHappy,
-            IdleHappy
+            IdleHappy,
+            Excited
         }
 
         private static Face instance;
@@ -57,6 +58,7 @@ namespace SentIO.UI
             moods.Add(Mood.IdleNeutral, new Animation(Resources.FaceTexture, 7, 27, .16, true));
             moods.Add(Mood.TalkHappy, new Animation(Resources.FaceTexture, 28, 34, .25, true));
             moods.Add(Mood.IdleHappy, new Animation(Resources.FaceTexture, 35, 55, .16, true));
+            moods.Add(Mood.Excited, new Animation(Resources.FaceTexture, 56, 62, .2, false));
 
             CurrentMood = Mood.IdleNeutral;
         }
