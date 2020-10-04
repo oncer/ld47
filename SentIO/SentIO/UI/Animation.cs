@@ -32,7 +32,7 @@ namespace SentIO.UI
             }
         }
 
-        public event EventHandler AnimationComplete;
+        public bool IsDone { get; private set; }
 
         public Animation(TextureSet frames, int minFrame, int maxFrame, double animationSpeed, bool loop)
         {
@@ -41,11 +41,15 @@ namespace SentIO.UI
             MaxFrame = maxFrame;
             AnimationSpeed = animationSpeed;
             this.loop = loop;
+
+            IsDone = false;
         }
 
         public void Restart()
         {
-            currentFrame = MinFrame;
+            lastFrame = -1;
+            currentFrame = 0;
+            IsDone = false;
         }
 
         public void Update()
@@ -59,7 +63,7 @@ namespace SentIO.UI
                     if (currentFrame > (MaxFrame - MinFrame) + 1 - AnimationSpeed)
                     {
                         currentFrame -= ((MaxFrame - MinFrame) + 1 - AnimationSpeed);
-                        AnimationComplete?.Invoke(this, new EventArgs());
+                        IsDone = true;
                     }
                 }
                 else
@@ -67,7 +71,7 @@ namespace SentIO.UI
                     currentFrame = Math.Min(currentFrame + AnimationSpeed, MaxFrame - MinFrame);
 
                     if (currentFrame == MaxFrame - MinFrame && currentFrame != lastFrame)
-                        AnimationComplete?.Invoke(this, new EventArgs());
+                        IsDone = true;
                 }
             }
             lastFrame = currentFrame;
