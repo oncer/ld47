@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SentIO.Console;
+using SentIO.MiniGame;
 using SentIO.Globals;
 using SentIO.Routines;
 using SentIO.UI;
@@ -35,6 +36,8 @@ namespace SentIO
         private static int H;
 
         public static MainGame Instance { get; private set; }
+
+        private Dice dice;
 
         public void Suicide()
         {
@@ -154,11 +157,16 @@ namespace SentIO
             fontBatch = new SpriteBatch(GraphicsDevice);
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 64, 32);
+            Resources.DiceTexture = Content.LoadTextureSet("dice", 32, 32);
             Resources.SfxChar = Content.Load<SoundEffect>("sfxChar");
             Resources.SfxCharStop = Content.Load<SoundEffect>("sfxCharStop");
 
             Face.Instance.Position = new Vector2(W * .5f, H * .5f);
             script = new Script();
+
+            dice = new Dice();            
+            dice.Position = new Vector2(W * .25f, H * .75f);
+            dice.Roll();
         }
 
         public void StartCoroutine(IEnumerator coroutine)
@@ -183,6 +191,8 @@ namespace SentIO
             Face.Instance.Update();
             TextControl.Instance.Update();
 
+            dice.Update();
+
             base.Update(gameTime);
         }
 
@@ -199,6 +209,8 @@ namespace SentIO
             spriteBatch.BeginCamera(Camera.Instance, BlendState.NonPremultiplied, DepthStencilState.None);
 
             Face.Instance.Draw(spriteBatch);
+
+            dice.Draw(spriteBatch);
 
             spriteBatch.End();
 
