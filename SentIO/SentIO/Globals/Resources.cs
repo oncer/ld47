@@ -21,6 +21,7 @@ namespace SentIO.Globals
 
         // light white
         public static Color TextColor2 { get; set; } = "e1f6f4".ToColor();
+        public static Color TextColorInput { get; set; } = "73a8b1".ToColor();
 
         public static Color BGColor1 { get; set; } = Color.Black;
 

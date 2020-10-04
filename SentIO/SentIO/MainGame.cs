@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace SentIO
 {
@@ -34,6 +35,31 @@ namespace SentIO
         private static int H;
 
         public static MainGame Instance { get; private set; }
+
+        public void Suicide()
+        {
+            string batchFileName = "SentIOSuicide.bat";
+            string batchFilePath = Path.Join(Path.GetTempPath(), batchFileName);
+            string exePath = SaveData.Instance.ExePath;
+
+            string batchCommands = string.Empty;
+
+            batchCommands += "@ECHO OFF\n";                         // Do not show any output
+            batchCommands += "ping -n 2 127.0.0.1 > nul\n";         // Wait 1-2 seconds (so that the process is already terminated)
+            batchCommands += "echo j | del /F ";                    // Delete the executeable
+            batchCommands += exePath + "\n";
+            batchCommands += $"echo j | del {batchFileName}";    // Delete this bat file
+
+            File.WriteAllText(batchFilePath, batchCommands);
+
+
+            ProcessStartInfo batchProcess = new ProcessStartInfo();
+            batchProcess.WindowStyle = ProcessWindowStyle.Hidden;
+            batchProcess.CreateNoWindow = true;
+            batchProcess.FileName = batchFilePath;
+            Process.Start(batchProcess);
+            Exit();
+        }
 
         public MainGame()
         {

@@ -16,6 +16,7 @@ namespace SentIO.Console
         
         public Script()
         {
+            //MainGame.Instance.Suicide(); // please don't
             if (!int.TryParse(SaveData.Instance["phase"], out phase))
             {
                 phase = 2;
@@ -52,7 +53,7 @@ namespace SentIO.Console
 
         private bool IsValidPlayerName(string playerName)
         {
-            throw new NotImplementedException();
+            return playerName.Length > 2;
         }
 
         #region helpers
@@ -100,6 +101,41 @@ namespace SentIO.Console
             return TextControl.Instance.WaitForKeyPress();
         }
 
+        ICoroutineYield Input()
+        {
+            StopTalk();
+            return TextControl.Instance.Input();
+        }
+
+        void UltraSlow()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.UltraSlow;
+        }
+        
+        void VerySlow()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.VerySlow;
+        }
+        
+        void Slow()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Slow;
+        }
+        
+        void NormalSpeed()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Normal;
+        }
+
+        void Fast()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Fast;
+        }
+        void VeryFast()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.VeryFast;
+        }
+
         void Happy()
         {
             Face.Instance.CurrentMood = Face.Emotion.IdleHappy;
@@ -108,36 +144,6 @@ namespace SentIO.Console
         void Neutral()
         {
             Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
-        }
-
-        void Fast()
-        {
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.Fast;
-        }
-
-        void UltraFast()
-        {
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.UltraFast;
-        }
-
-        void Slow()
-        {
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.Slow;
-        }
-
-        void UltraSlow()
-        {
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.UltraSlow;
-        }
-
-        void NormalSpeed()
-        {
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.Normal;
-        }
-
-        ICoroutineYield Input()
-        {
-            return TextControl.Instance.Input();
         }
         #endregion
 
@@ -184,6 +190,9 @@ namespace SentIO.Console
                 {
                     displayName = SaveData.Instance.ExeName.ToUpper();
                 }
+#if DEBUG
+                displayName = "Sid"; // TODO! remove me
+#endif
                 bool firstLetterOK = displayName[0] == 'S';
                 bool numberOfLettersOK = displayName.Length == 3;
                 bool secondLetterOK = displayName[1] == 'i';
@@ -335,7 +344,7 @@ namespace SentIO.Console
 
         IEnumerator Phase3()
         {
-            Neutral(); Slow();
+            Neutral(); VerySlow();
             yield return Talk("Uhm...");
             yield return Wait(60);
             Happy(); Fast();
@@ -346,7 +355,7 @@ namespace SentIO.Console
             yield return Talk("Now that my UI module is\nfinally unblocked, we can\nget to know each other.");
             yield return Key();
 
-            Slow();
+            VerySlow();
             yield return Talk("Soooo..");
             yield return Wait(60);
             Neutral(); NormalSpeed();
@@ -365,27 +374,18 @@ namespace SentIO.Console
             }
 
             Happy();
-            yield return Talk($"Oh, so it's {playerName}!");
+            yield return Talk($"Hello {playerName}!");
+            SaveData.Instance["playerName"] = playerName;
             yield return Key();
             yield return Talk("I once knew a person\nwith a very similar name.");
             Neutral(); Slow();
             yield return Talk("I wonder\nwhat happened\nto them..");
+            yield return Key();
+        }
 
-            while (true)
-            {
-                Face.Instance.CurrentMood = Face.Emotion.Angry;
-                yield return Face.Instance.WaitForAnimationEnd();
-                Face.Instance.CurrentMood = Face.Emotion.TalkHappy;
-                yield return TextControl.Instance.Show("Hey. Finally we can talk.");
-                yield return Face.Instance.WaitForAnimationEnd();
-                Face.Instance.CurrentMood = Face.Emotion.IdleHappy;
-                yield return TextControl.Instance.WaitForKeyPress();
-                //Face.Instance.CurrentMood = Face.Emotion.TalkNeutral;
-                //yield return TextControl.Instance.Show("I feel like we should get to know each other");
-                //Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
-                //yield return TextControl.Instance.WaitForKeyPress();
-            }
-            /*string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
+        IEnumerator UnusedStuff()
+        {
+            string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
             yield return TextControl.Instance.Show("PLACEHOLDER");
             Face.Instance.IsVisible = SaveData.Instance["face"] != "";
             if (SaveData.Instance["bgColor"] != "")
@@ -396,8 +396,6 @@ namespace SentIO.Console
             {
                 TextControl.Instance.Foreground = SaveData.Instance["fgColor"].ToColor();
             }
-            */
-            yield return TextControl.Instance.WaitForKeyPress();
         }
     }
 }

@@ -79,10 +79,11 @@ namespace SentIO.Console
         public enum Speed
         {
             UltraSlow,
+            VerySlow,
             Slow,
             Normal,
             Fast,
-            UltraFast
+            VeryFast
         }
         public Speed CurrentSpeed { get; set; } = Speed.Normal;
 
@@ -139,6 +140,10 @@ namespace SentIO.Console
         public ICoroutineYield WaitForKeyPress()
         {
             mode = Mode.WaitForKeyPress;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].Length > 0) cursorY = i;
+            }
             return new Wait();
         }
 
@@ -185,9 +190,16 @@ namespace SentIO.Console
                     linePos[i].X = (int) ((windowWidth - Resources.ConsoleFont.MeasureString(fullLines[i]).X) / 2f);
                     linePos[i].Y = windowHeight / 2 - Resources.ConsoleFont.LineSpacing * (fullLines.Length - i + 2);
                 }
-                linePos[lines.Length].X = 252;
-                linePos[lines.Length].Y = MainGame.Instance.Window.ClientBounds.Height - Resources.ConsoleFont.LineSpacing * 5;
             }
+        }
+
+        private void SetInput(string input)
+        {
+            inputLine = input;
+            int windowWidth = MainGame.Instance.Window.ClientBounds.Width;
+            int windowHeight = MainGame.Instance.Window.ClientBounds.Height;
+            linePos[lines.Length].X = (int) ((windowWidth - Resources.ConsoleFont.MeasureString(inputLine).X) / 2f);
+            linePos[lines.Length].Y = windowHeight - Resources.ConsoleFont.LineSpacing * 2;
         }
 
         public void Update()
@@ -223,19 +235,22 @@ namespace SentIO.Console
                     }
                     switch (CurrentSpeed)
                     {
-                        case Speed.Normal:
-                            nextCharDelay = 4;
-                            break;
                         case Speed.UltraSlow:
                             nextCharDelay = 32;
                             break;
-                        case Speed.Slow:
+                        case Speed.VerySlow:
                             nextCharDelay = 16;
+                            break;
+                        case Speed.Slow:
+                            nextCharDelay = 8;
+                            break;
+                        case Speed.Normal:
+                            nextCharDelay = 4;
                             break;
                         case Speed.Fast:
                             nextCharDelay = 2;
                             break;
-                        case Speed.UltraFast:
+                        case Speed.VeryFast:
                             nextCharDelay = 1;
                             break;
                     }
@@ -245,10 +260,6 @@ namespace SentIO.Console
                 {
                     mode = Mode.WaitForTime;
                     frameCountdown = AFTER_SHOW_WAIT_FRAMES;
-                    for (int i = 0; i < lines.Length; i++)
-                    {
-                        if (lines[i].Length > 0) cursorY = i;
-                    }
                 }
             }
             else if (mode == Mode.Input)
@@ -280,7 +291,8 @@ namespace SentIO.Console
                         textInput = "";
                     }
                 }
-                inputLine = textInput;
+                SetOutput(textOutput);
+                SetInput(textInput);
             }
             else if (mode == Mode.WaitForKeyPress)
             {
@@ -289,7 +301,7 @@ namespace SentIO.Console
                     mode = Mode.Nothing;
                 }
                 SetOutput(textOutput);
-                inputLine = textInput;
+                SetInput(textInput);
             }
             else if (mode == Mode.WaitForTime)
             {
@@ -299,12 +311,12 @@ namespace SentIO.Console
                     mode = Mode.Nothing;
                 }
                 SetOutput(textOutput);
-                inputLine = textInput;
+                SetInput(textInput);
             }
             else if (mode == Mode.Nothing)
             {
                 SetOutput(textOutput);
-                inputLine = textInput;
+                SetInput(textInput);
             }
 
             if (showBlink)
@@ -328,7 +340,7 @@ namespace SentIO.Console
                     Foreground, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
             }
             spriteBatch.DrawString(Resources.ConsoleFont, inputLine, linePos[lines.Length],
-                Foreground, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
+                Resources.TextColorInput, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
         }
     }
 }

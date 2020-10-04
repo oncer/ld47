@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -13,11 +14,8 @@ namespace SentIO
         private Dictionary<string, string> data;
 
         public string ExeDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-#if DEBUG
-        public string ExeName => "Sid"; // TODO : change back!!
-#else
         public string ExeName => System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-#endif
+        public string ExePath => Path.Join(ExeDirectory, ExeName) + ".exe";
 
         SaveData()
         {
