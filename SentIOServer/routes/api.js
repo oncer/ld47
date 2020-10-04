@@ -11,12 +11,12 @@ getClientAddress = function (req) {
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.json({
-    ip: req.ip
+    ip: getClientAddress(req);
   });
 });
 
 router.get('/player', function(req, res, next) {
-  var ip = getClientAddress();
+  var ip = getClientAddress(req);
   db.getPlayer(ip).then((row) => {
     res.json(row);
   }).catch((err) =>{
