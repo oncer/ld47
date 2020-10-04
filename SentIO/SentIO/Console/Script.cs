@@ -333,7 +333,7 @@ namespace SentIO.Console
             yield return Wait(60);
 
             Happy(); NormalSpeed();
-            yield return Talk("I can finally feel\nlike myself again,\nit's so great!");
+            yield return Talk("Now that my UI module is finally unblocked,\nwe can get to know each other.");
             yield return Key();
 
             Happy(); Fast();
