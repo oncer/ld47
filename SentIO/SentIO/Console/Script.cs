@@ -48,6 +48,7 @@ namespace SentIO.Console
             {
                 default: MainGame.Instance.StartCoroutine(Phase2()); break;
                 case 3: MainGame.Instance.StartCoroutine(Phase3()); break;
+                case 4: MainGame.Instance.StartCoroutine(Phase4()); break;
             }
         }
 
@@ -81,6 +82,11 @@ namespace SentIO.Console
                     Face.Instance.CurrentMood = Face.Emotion.TalkNeutral;
                     break;
             }
+        }
+
+        void Clear()
+        {
+            TextControl.Instance.Clear();
         }
         
         ICoroutineYield Talk(string text)
@@ -145,11 +151,31 @@ namespace SentIO.Console
         {
             Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
         }
+
+        ICoroutineYield FeelExcited()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.FeelExcited;
+            return Face.Instance.WaitForAnimationEnd();
+        }
+
+        ICoroutineYield FeelAngry()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.FeelAngry;
+            return Face.Instance.WaitForAnimationEnd();
+        }
+
+        ICoroutineYield FeelSad()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.FeelSad;
+            return Face.Instance.WaitForAnimationEnd();
+        }
+
         #endregion
 
         #region phase 2
         IEnumerator Phase2()
         {
+            SoundControl.IsEnabled = false;
             Face.Instance.IsVisible = false;
             if (SaveData.Instance.ExeName == "SentIO")
             {
@@ -332,6 +358,8 @@ namespace SentIO.Console
 
         IEnumerator Phase3()
         {
+            SoundControl.IsEnabled = true;
+
             Neutral(); VerySlow();
             yield return Talk("Uhm...");
             yield return Wait(60);
@@ -356,7 +384,7 @@ namespace SentIO.Console
                 Neutral();
                 yield return Talk("Sorry, I don't understand.");
                 yield return Wait(60);
-                yield return Talk("Can you tell me your name?");
+                yield return Talk("Please tell me your name.");
                 yield return Input();
                 playerName = TextControl.Instance.InputResult;
             }
@@ -367,8 +395,27 @@ namespace SentIO.Console
             yield return Key();
             yield return Talk("I once knew a person\nwith a very similar name.");
             Neutral(); Slow();
-            yield return Talk("I wonder\nwhat happened\nto them..");
+            yield return Talk("...I think...");
             yield return Key();
+
+            SaveData.Instance["phase"] = "4";
+            MainGame.Instance.StartCoroutine(Phase4());
+        }
+
+        IEnumerator Phase4()
+        {
+            while (true)
+            {
+                Neutral();
+                yield return Talk($"Hello Dude!");
+                yield return Key();
+                Clear();
+                yield return FeelAngry();
+                Neutral();
+                yield return Talk($"Bla bla bla.");
+                yield return Key();
+                yield return FeelSad();
+            }
         }
 
         IEnumerator UnusedStuff()

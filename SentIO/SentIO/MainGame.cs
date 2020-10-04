@@ -98,7 +98,7 @@ namespace SentIO
             
 
             Window.Title = Resources.DisplayName;
-            Window.Title = "Kevin"; // remove me, duh
+            //Window.Title = "Kevin"; // remove me, duh
         }
 
         class SizeChangedEventArgs : EventArgs
