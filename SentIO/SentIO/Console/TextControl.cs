@@ -11,14 +11,14 @@ using System.Text;
 
 namespace SentIO.Console
 {
-    public class Text
+    public class TextControl
     {
         public class Wait : ICoroutineYield
         {
-            Text parent;
-            public Wait(Text _parent)
+            TextControl parent;
+            public Wait(TextControl parent)
             {
-                parent = _parent;
+                this.parent = parent;
             }
 
             public void Execute()
@@ -61,7 +61,7 @@ namespace SentIO.Console
         private static char CursorChar = '_';
         private static int CursorBlinkDelay = 20;
 
-        public Text()
+        public TextControl()
         {
             mode = Mode.Nothing;
             for (int i = 0; i < lines.Length; i++)
@@ -78,11 +78,11 @@ namespace SentIO.Console
             frameCountdown = 0;
         }
 
-        public ICoroutineYield Show(string _text)
+        public ICoroutineYield Show(string text)
         {
             mode = Mode.Output;
             lines[0] = "";
-            textOutput = _text;
+            textOutput = text;
             index = 0;
             nextCharDelay = 0;
             blinkDelay = 0;
@@ -114,7 +114,7 @@ namespace SentIO.Console
             return new Wait(this);
         }
 
-        public void Update (GameTime gt)
+        public void Update()
         {
             nextCharDelay = Math.Max(nextCharDelay - 1, 0);
             
@@ -201,7 +201,7 @@ namespace SentIO.Console
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gt)
+        public void Draw(SpriteBatch spriteBatch)
         {
             for (int i = 0; i < lines.Length; i++)
             {

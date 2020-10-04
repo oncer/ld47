@@ -24,8 +24,7 @@ namespace SentIO
 
         List<Coroutine> coroutines;
 
-        public Face face;
-        public Text text;
+        public Console.TextControl text;
         private Script script;
 
         private static readonly int WIDTH = 1024;
@@ -35,8 +34,12 @@ namespace SentIO
         private static int W;
         private static int H;
 
+        public static MainGame Instance { get; private set; }
+
         public MainGame()
         {
+            Instance = this;
+
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -44,7 +47,8 @@ namespace SentIO
             // window & screen setup
 
             W = WIDTH;
-            H = SaveData.Instance.ExeName.ToLower() == "sid" ? HEIGHT : HEIGHT_SMALL;
+            //H = SaveData.Instance.ExeName.ToLower() == "sid" ? HEIGHT : HEIGHT_SMALL;
+            H = HEIGHT;
 
             viewSize = new Size(W, H);
             scale = 8;
@@ -84,7 +88,7 @@ namespace SentIO
             var resolutionRenderer = new ResolutionRenderer(graphics.GraphicsDevice, viewSize.Width, viewSize.Height, screenSize.Width, screenSize.Height);
 
             new Camera(resolutionRenderer) { MaxZoom = 2f, MinZoom = .5f, Zoom = 1f };
-            Camera.Current.Position = new Vector2(viewSize.Width * .5f, viewSize.Height * .5f);
+            Camera.Instance.Position = new Vector2(viewSize.Width * .5f, viewSize.Height * .5f);
 
             // change window & camera parameters when changing window size            
             Window.ClientSizeChanged += Window_ClientSizeChanged;
@@ -106,8 +110,8 @@ namespace SentIO
             graphics.PreferredBackBufferWidth = w;
             graphics.PreferredBackBufferHeight = h;
 
-            Camera.Current.ResolutionRenderer.ScreenWidth = w;
-            Camera.Current.ResolutionRenderer.ScreenHeight = h;
+            Camera.Instance.ResolutionRenderer.ScreenWidth = w;
+            Camera.Instance.ResolutionRenderer.ScreenHeight = h;
 
             graphics.ApplyChanges();
 
@@ -122,9 +126,9 @@ namespace SentIO
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 64, 32);
 
-            face = new Face(new Vector2(W * .5f, H * .5f));
-            text = new Text();
-            script = new Script(this);
+            Face.Instance.Position = new Vector2(W * .5f, H * .5f);
+            text = new Console.TextControl();
+            script = new Script();
         }
 
         public void StartCoroutine(IEnumerator coroutine)
@@ -143,11 +147,11 @@ namespace SentIO
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             
-            Camera.Current.Update(gameTime);
+            Camera.Instance.Update();
 
-            Input.Update(gameTime);
-            face.Update(gameTime);
-            text.Update(gameTime);
+            Input.Update();
+            Face.Instance.Update();
+            text.Update();
 
             base.Update(gameTime);
         }
@@ -159,20 +163,20 @@ namespace SentIO
             //GraphicsDevice.Clear(Resources.BGColor2);
             GraphicsDevice.Clear(text.bgColor);
 
-            Camera.Current.ResolutionRenderer.SetupDraw();
+            Camera.Instance.ResolutionRenderer.SetupDraw();
 
             // sprite batch
 
-            spriteBatch.BeginCamera(Camera.Current, BlendState.NonPremultiplied, DepthStencilState.None);
+            spriteBatch.BeginCamera(Camera.Instance, BlendState.NonPremultiplied, DepthStencilState.None);
 
-            face.Draw(spriteBatch, gameTime);
+            Face.Instance.Draw(spriteBatch);
 
             spriteBatch.End();
 
             // font batch
 
             fontBatch.Begin(blendState: BlendState.NonPremultiplied);
-            text?.Draw(fontBatch, gameTime);
+            text?.Draw(fontBatch);
             fontBatch.End();
 
             base.Draw(gameTime);

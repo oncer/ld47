@@ -48,7 +48,7 @@ namespace SentIO.UI
             currentFrame = MinFrame;
         }
 
-        public void Update(GameTime gt)
+        public void Update()
         {
             if (MaxFrame > MinFrame && MaxFrame > 0)
             {
@@ -73,7 +73,7 @@ namespace SentIO.UI
             lastFrame = currentFrame;
         }
 
-        public void Draw(SpriteBatch sb, GameTime gt, Vector2 position, Color color, float angle, Vector2 origin, Vector2 scale, float depth)
+        public void Draw(SpriteBatch sb, Vector2 position, Color color, float angle, Vector2 origin, Vector2 scale, float depth)
         {
             if (Texture != null)
             {

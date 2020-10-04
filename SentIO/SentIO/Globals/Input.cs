@@ -44,7 +44,7 @@ namespace SentIO.Globals
             return current.Except(last).ToArray();
         }
 
-        public static void Update(GameTime gt)
+        public static void Update()
         {
             lastKeyboardState = keyboardState;
             keyboardState = Keyboard.GetState();

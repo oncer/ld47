@@ -176,7 +176,7 @@ namespace SentIO.UI
         #endregion
 
         private static Camera instance;
-        public static Camera Current { get => instance; }
+        public static Camera Instance { get => instance; }
 
         public Camera(ResolutionRenderer resolutionRenderer)
         {
@@ -272,11 +272,7 @@ namespace SentIO.UI
             ResolutionRenderer = null;
         }
 
-        /// <summary>
-        /// Update logic (must be called within main update method)
-        /// </summary>
-        /// <param name="gt">Game time</param>
-        public virtual void Update(GameTime gt)
+        public virtual void Update()
         {
             Position = new Vector2(ResolutionRenderer.ViewWidth * .5f, ResolutionRenderer.ViewHeight * .5f);
         }
