@@ -320,6 +320,7 @@ namespace SentIO.Console
 
         ICoroutineYield Input()
         {
+            StopTalk();
             return TextControl.Instance.Input();
         }
 

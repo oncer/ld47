@@ -181,9 +181,16 @@ namespace SentIO.Console
                     linePos[i].X = (int) ((windowWidth - Resources.ConsoleFont.MeasureString(fullLines[i]).X) / 2f);
                     linePos[i].Y = windowHeight / 2 - Resources.ConsoleFont.LineSpacing * (fullLines.Length - i + 2);
                 }
-                linePos[lines.Length].X = 252;
-                linePos[lines.Length].Y = MainGame.Instance.Window.ClientBounds.Height - Resources.ConsoleFont.LineSpacing * 5;
             }
+        }
+
+        private void SetInput(string input)
+        {
+            inputLine = input;
+            int windowWidth = MainGame.Instance.Window.ClientBounds.Width;
+            int windowHeight = MainGame.Instance.Window.ClientBounds.Height;
+            linePos[lines.Length].X = (int) ((windowWidth - Resources.ConsoleFont.MeasureString(inputLine).X) / 2f);
+            linePos[lines.Length].Y = windowHeight - Resources.ConsoleFont.LineSpacing * 2;
         }
 
         public void Update()
@@ -264,7 +271,8 @@ namespace SentIO.Console
                         textInput = "";
                     }
                 }
-                inputLine = textInput;
+                SetOutput(textOutput);
+                SetInput(textInput);
             }
             else if (mode == Mode.WaitForKeyPress)
             {
@@ -273,7 +281,7 @@ namespace SentIO.Console
                     mode = Mode.Nothing;
                 }
                 SetOutput(textOutput);
-                inputLine = textInput;
+                SetInput(textInput);
             }
             else if (mode == Mode.WaitForTime)
             {
@@ -283,12 +291,12 @@ namespace SentIO.Console
                     mode = Mode.Nothing;
                 }
                 SetOutput(textOutput);
-                inputLine = textInput;
+                SetInput(textInput);
             }
             else if (mode == Mode.Nothing)
             {
                 SetOutput(textOutput);
-                inputLine = textInput;
+                SetInput(textInput);
             }
 
             if (showBlink)
