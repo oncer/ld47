@@ -78,10 +78,11 @@ namespace SentIO.Console
         public enum Speed
         {
             UltraSlow,
+            VerySlow,
             Slow,
             Normal,
             Fast,
-            UltraFast
+            VeryFast
         }
         public Speed CurrentSpeed { get; set; } = Speed.Normal;
 
@@ -224,19 +225,22 @@ namespace SentIO.Console
                     }
                     switch (CurrentSpeed)
                     {
-                        case Speed.Normal:
-                            nextCharDelay = 4;
-                            break;
                         case Speed.UltraSlow:
                             nextCharDelay = 32;
                             break;
-                        case Speed.Slow:
+                        case Speed.VerySlow:
                             nextCharDelay = 16;
+                            break;
+                        case Speed.Slow:
+                            nextCharDelay = 8;
+                            break;
+                        case Speed.Normal:
+                            nextCharDelay = 4;
                             break;
                         case Speed.Fast:
                             nextCharDelay = 2;
                             break;
-                        case Speed.UltraFast:
+                        case Speed.VeryFast:
                             nextCharDelay = 1;
                             break;
                     }
@@ -326,7 +330,7 @@ namespace SentIO.Console
                     Foreground, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
             }
             spriteBatch.DrawString(Resources.ConsoleFont, inputLine, linePos[lines.Length],
-                Foreground, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
+                Resources.TextColorInput, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
         }
     }
 }
