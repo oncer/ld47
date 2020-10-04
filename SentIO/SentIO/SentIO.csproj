@@ -7,7 +7,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
-    <AssemblyName>SentIO</AssemblyName>
+    <AssemblyName>Sid</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Content\bin\**" />

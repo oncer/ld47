@@ -95,6 +95,10 @@ namespace SentIO
             // routine setup
 
             coroutines = new List<Coroutine>();
+            
+
+            Window.Title = Resources.DisplayName;
+            Window.Title = "Kevin"; // remove me, duh
         }
 
         class SizeChangedEventArgs : EventArgs
