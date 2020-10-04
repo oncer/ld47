@@ -5,8 +5,10 @@ using System.Text;
 
 namespace SentIO.Globals
 {
-    public static class SoundManager
+    public static class SoundControl
     {
+        public static bool IsEnabled { get; set; } = true;
+
         public static float SoundVolume { get; set; } = 1.0f;
 
         private static Dictionary<string, SoundEffectInstance> soundInst = new Dictionary<string, SoundEffectInstance>();
@@ -29,6 +31,9 @@ namespace SentIO.Globals
 
         public static void Play(SoundEffect sound, double pitch = 0, double pan = 0, bool skipPlaying = false, bool isLooped = false)
         {
+            if (!IsEnabled)
+                return;
+
             if (!soundInst.ContainsKey(sound.Name))
             {
                 soundInst.Add(sound.Name, sound.CreateInstance());

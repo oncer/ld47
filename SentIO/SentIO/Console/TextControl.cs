@@ -224,12 +224,12 @@ namespace SentIO.Console
                     {
                         if (index == textOutput.Length - 1)
                         {
-                            SoundManager.Stop(Resources.SfxChar);
-                            SoundManager.Play(Resources.SfxCharStop);
+                            SoundControl.Stop(Resources.SfxChar);
+                            SoundControl.Play(Resources.SfxCharStop);
                         }
                         else if (textOutput[index] != ' ')
                         {
-                            SoundManager.Play(Resources.SfxChar);
+                            SoundControl.Play(Resources.SfxChar);
                         }
                         index++;
                     }
