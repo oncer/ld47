@@ -15,6 +15,10 @@ namespace SentIO.Console
 {
     public class TextControl
     {
+        private const char CURSOR_CHAR = '_';
+        private const int CURSOR_BLINK_DELAY = 20;
+        private const int AFTER_SHOW_WAIT_FRAMES = 30;
+
         private static TextControl instance;
         public static TextControl Instance
         {
@@ -70,11 +74,10 @@ namespace SentIO.Console
         private int frameCountdown;
 
         private bool showBlink;
-        private static char CursorChar = '_';
-        private static int CursorBlinkDelay = 20;
-        private static int AfterShowWaitFrames = 20;
+        
         public enum Speed
         {
+            UltraSlow,
             Slow,
             Normal,
             Fast,
@@ -135,6 +138,10 @@ namespace SentIO.Console
         public ICoroutineYield WaitForKeyPress()
         {
             mode = Mode.WaitForKeyPress;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].Length > 0) cursorY = i;
+            }
             return new Wait();
         }
 
@@ -203,7 +210,7 @@ namespace SentIO.Console
                 if (blinkDelay == 0)
                 {
                     showBlink = !showBlink;
-                    blinkDelay = CursorBlinkDelay;
+                    blinkDelay = CURSOR_BLINK_DELAY;
                 }
             }
             
@@ -220,8 +227,11 @@ namespace SentIO.Console
                         case Speed.Normal:
                             nextCharDelay = 4;
                             break;
+                        case Speed.UltraSlow:
+                            nextCharDelay = 32;
+                            break;
                         case Speed.Slow:
-                            nextCharDelay = 8;
+                            nextCharDelay = 16;
                             break;
                         case Speed.Fast:
                             nextCharDelay = 2;
@@ -235,11 +245,7 @@ namespace SentIO.Console
                 if (index >= textOutput.Length)
                 {
                     mode = Mode.WaitForTime;
-                    frameCountdown = 20;
-                    for (int i = 0; i < lines.Length; i++)
-                    {
-                        if (lines[i].Length > 0) cursorY = i;
-                    }
+                    frameCountdown = AFTER_SHOW_WAIT_FRAMES;
                 }
             }
             else if (mode == Mode.Input)
@@ -303,11 +309,11 @@ namespace SentIO.Console
             {
                 if (cursorY >= 0 && cursorY < lines.Length)
                 {
-                    lines[cursorY] += CursorChar;
+                    lines[cursorY] += CURSOR_CHAR;
                 }
                 else if (cursorY == lines.Length)
                 {
-                    inputLine += CursorChar;
+                    inputLine += CURSOR_CHAR;
                 }
             }
         }
