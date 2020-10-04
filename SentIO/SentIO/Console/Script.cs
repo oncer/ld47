@@ -226,17 +226,17 @@ namespace SentIO.Console
         {
             while (true)
             {
-                Face.Instance.CurrentMood = Face.Mood.TalkHappy;
-                //yield return Face.Instance.WaitForAnimationEnd();
-                //Face.Instance.CurrentMood = Face.Mood.TalkNeutral;
+                Face.Instance.CurrentMood = Face.Emotion.Excite;                
+                yield return Face.Instance.WaitForAnimationEnd();
+                Face.Instance.CurrentMood = Face.Emotion.TalkHappy;
                 yield return TextControl.Instance.Show("Hey. Finally we can talk.");
                 yield return Face.Instance.WaitForAnimationEnd();
-                Face.Instance.CurrentMood = Face.Mood.IdleHappy;
+                Face.Instance.CurrentMood = Face.Emotion.IdleHappy;
                 yield return TextControl.Instance.WaitForKeyPress();
-                Face.Instance.CurrentMood = Face.Mood.TalkNeutral;
-                yield return TextControl.Instance.Show("I feel like we should get to know each other");
-                Face.Instance.CurrentMood = Face.Mood.IdleNeutral;
-                yield return TextControl.Instance.WaitForKeyPress();
+                //Face.Instance.CurrentMood = Face.Emotion.TalkNeutral;
+                //yield return TextControl.Instance.Show("I feel like we should get to know each other");
+                //Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
+                //yield return TextControl.Instance.WaitForKeyPress();
             }
             /*string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
             yield return TextControl.Instance.Show("PLACEHOLDER");
