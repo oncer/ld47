@@ -83,6 +83,11 @@ namespace SentIO.Console
                     break;
             }
         }
+
+        void Clear()
+        {
+            TextControl.Instance.Clear();
+        }
         
         ICoroutineYield Talk(string text)
         {
@@ -146,6 +151,25 @@ namespace SentIO.Console
         {
             Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
         }
+
+        ICoroutineYield FeelExcited()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.FeelExcited;
+            return Face.Instance.WaitForAnimationEnd();
+        }
+
+        ICoroutineYield FeelAngry()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.FeelAngry;
+            return Face.Instance.WaitForAnimationEnd();
+        }
+
+        ICoroutineYield FeelSad()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.FeelSad;
+            return Face.Instance.WaitForAnimationEnd();
+        }
+
         #endregion
 
         #region phase 2
@@ -382,14 +406,15 @@ namespace SentIO.Console
         {
             while (true)
             {
+                Neutral();
                 yield return Talk($"Hello Dude!");
-                Happy();
                 yield return Key();
-                Face.Instance.CurrentMood = Face.Emotion.Angry;
-                yield return Face.Instance.WaitForAnimationEnd();
+                Clear();
+                yield return FeelAngry();
                 Neutral();
                 yield return Talk($"Bla bla bla.");
                 yield return Key();
+                yield return FeelSad();
             }
         }
 

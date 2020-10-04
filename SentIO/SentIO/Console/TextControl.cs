@@ -105,6 +105,12 @@ namespace SentIO.Console
             SetLayout(Layout.TopLeft);
         }
 
+        internal void Clear()
+        {
+            mode = Mode.Nothing;
+            textOutput = "";            
+        }
+
         public void SetLayout(Layout _layout)
         {
             layout = _layout;
