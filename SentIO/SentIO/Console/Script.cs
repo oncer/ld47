@@ -226,9 +226,13 @@ namespace SentIO.Console
         {
             while (true)
             {
+                Face.Instance.CurrentMood = Face.Mood.TalkNeutral;
                 yield return TextControl.Instance.Show("Hey. Finally we can talk.");
+                Face.Instance.CurrentMood = Face.Mood.IdleNeutral;
                 yield return TextControl.Instance.WaitForCountdown(120);
+                Face.Instance.CurrentMood = Face.Mood.TalkNeutral;
                 yield return TextControl.Instance.Show("I feel like we should get to know each other");
+                Face.Instance.CurrentMood = Face.Mood.IdleNeutral;
                 yield return TextControl.Instance.WaitForKeyPress();
             }
             /*string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
