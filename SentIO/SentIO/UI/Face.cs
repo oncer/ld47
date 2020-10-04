@@ -19,7 +19,11 @@ namespace SentIO.UI
             IdleHappy,
             FeelExcited,
             FeelAngry,
-            FeelSad
+            FeelSad,
+            IdleSad,
+            TalkSad,
+            IdleAngry,
+            TalkAngry,
         }
 
         private static Face instance;
@@ -60,9 +64,13 @@ namespace SentIO.UI
             moods.Add(Emotion.IdleNeutral, new Animation(Resources.FaceTexture, 1 * 7, 21, .16, true));
             moods.Add(Emotion.TalkHappy, new Animation(Resources.FaceTexture,   4 * 7,  7, .25, true));
             moods.Add(Emotion.IdleHappy, new Animation(Resources.FaceTexture,   5 * 7, 21, .16, true));
-            moods.Add(Emotion.FeelExcited, new Animation(Resources.FaceTexture,     8 * 7, 21,  .2, false));
-            moods.Add(Emotion.FeelAngry, new Animation(Resources.FaceTexture,      11 * 7, 21, .16, false));
-            moods.Add(Emotion.FeelSad, new Animation(Resources.FaceTexture,        14 * 7, 21, .16, false));
+            moods.Add(Emotion.FeelExcited, new Animation(Resources.FaceTexture, 8 * 7, 21,  .2, false));
+            moods.Add(Emotion.FeelAngry, new Animation(Resources.FaceTexture,  11 * 7, 21, .16, false));
+            moods.Add(Emotion.FeelSad, new Animation(Resources.FaceTexture,    14 * 7, 21, .16, false));
+            moods.Add(Emotion.IdleSad, new Animation(Resources.FaceTexture,    17 * 7, 21, .16, true));
+            moods.Add(Emotion.TalkSad, new Animation(Resources.FaceTexture,    20 * 7, 7,  .25, true));
+            moods.Add(Emotion.IdleAngry, new Animation(Resources.FaceTexture,  21 * 7, 21, .16, true));
+            moods.Add(Emotion.TalkAngry, new Animation(Resources.FaceTexture,  24 * 7, 7,  .25, true));
 
             CurrentMood = Emotion.IdleNeutral;
         }

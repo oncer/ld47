@@ -68,6 +68,12 @@ namespace SentIO.Console
                 case Face.Emotion.TalkNeutral:
                     Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
                     break;
+                case Face.Emotion.TalkSad:
+                    Face.Instance.CurrentMood = Face.Emotion.IdleSad;
+                    break;
+                case Face.Emotion.TalkAngry:
+                    Face.Instance.CurrentMood = Face.Emotion.IdleAngry;
+                    break;
             }
         }
 
@@ -80,6 +86,12 @@ namespace SentIO.Console
                     break;
                 case Face.Emotion.IdleNeutral:
                     Face.Instance.CurrentMood = Face.Emotion.TalkNeutral;
+                    break;
+                case Face.Emotion.IdleSad:
+                    Face.Instance.CurrentMood = Face.Emotion.TalkSad;
+                    break;
+                case Face.Emotion.IdleAngry:
+                    Face.Instance.CurrentMood = Face.Emotion.TalkAngry;
                     break;
             }
         }
@@ -150,6 +162,16 @@ namespace SentIO.Console
         void Neutral()
         {
             Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
+        }
+
+        void Angry()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.IdleAngry;
+        }
+
+        void Sad()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.IdleSad;
         }
 
         ICoroutineYield FeelExcited()
@@ -406,6 +428,9 @@ namespace SentIO.Console
         {
             while (true)
             {
+                Angry();
+                yield return Talk($"Woah I am sooo angry!");
+                yield return Wait(360);
                 Neutral();
                 yield return Talk($"Hello Dude!");
                 yield return Key();
@@ -414,7 +439,15 @@ namespace SentIO.Console
                 Neutral();
                 yield return Talk($"Bla bla bla.");
                 yield return Key();
+                yield return Talk($"...");
                 yield return FeelSad();
+                yield return Key();
+                yield return Talk($"......");
+                Sad();
+                Clear();
+                yield return Wait(120);
+                yield return Talk("I am so sad, so very very sad.");
+                yield return Key();
             }
         }
 
