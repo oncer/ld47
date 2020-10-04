@@ -20,6 +20,12 @@ namespace SentIO.Globals
         }
     }
 
+    public static class RND
+    {
+        private static readonly Random random = new Random();
+        public static double Get => random.NextDouble();
+    }
+
     public static class Utils
     {
         public static string AssemblyDirectory

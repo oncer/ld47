@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SentIO.Console;
@@ -123,6 +124,8 @@ namespace SentIO
             fontBatch = new SpriteBatch(GraphicsDevice);
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 64, 32);
+            Resources.SfxChar = Content.Load<SoundEffect>("sfxChar");
+            Resources.SfxCharStop = Content.Load<SoundEffect>("sfxCharStop");
 
             Face.Instance.Position = new Vector2(W * .5f, H * .5f);
             script = new Script();
