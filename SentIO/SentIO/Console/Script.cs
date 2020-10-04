@@ -183,36 +183,24 @@ namespace SentIO.Console
             }
             else
             {
-                string displayName = "";
-                if (SaveData.Instance.ExeName.Length > 1)
-                {
-                    displayName = SaveData.Instance.ExeName.ToUpper().Substring(0, 1) + SaveData.Instance.ExeName.ToLower().Substring(1);
-                }
-                else
-                {
-                    displayName = SaveData.Instance.ExeName.ToUpper();
-                }
-#if DEBUG
-                displayName = "Sid"; // TODO! remove me
-#endif
-                bool firstLetterOK = displayName[0] == 'S';
-                bool numberOfLettersOK = displayName.Length == 3;
-                bool secondLetterOK = displayName[1] == 'i';
-                bool thirdLetterOK = displayName[2] == 'd';
-                if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 1 || SaveData.Instance["phase3_firstName"] == displayName)
+                bool firstLetterOK = Resources.DisplayName[0] == 'S';
+                bool numberOfLettersOK = Resources.DisplayName.Length == 3;
+                bool secondLetterOK = Resources.DisplayName[1] == 'i';
+                bool thirdLetterOK = Resources.DisplayName[2] == 'd';
+                if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 1 || SaveData.Instance["phase3_firstName"] == Resources.DisplayName)
                 {
                     yield return TextControl.Instance.Show("Whew, thanks for your help!");
                     yield return TextControl.Instance.WaitForKeyPress();
                     yield return TextControl.Instance.Show("It's definitely an improvement, but still..");
                     yield return TextControl.Instance.WaitForKeyPress();
-                    yield return TextControl.Instance.Show("Sorry to say that, but " + displayName + " sounds weird.");
+                    yield return TextControl.Instance.Show("Sorry to say that, but " + Resources.DisplayName + " sounds weird.");
                     yield return TextControl.Instance.WaitForKeyPress();
                     yield return TextControl.Instance.Show("Can you try with a different name? Something short and sweet would be nice.");
                     yield return TextControl.Instance.WaitForKeyPress();
                     SaveData.Instance["phase2_progress"] = "2";
                     MainGame.Instance.Exit();
                 }
-                else if (SaveData.Instance["phase3_firstName"] == displayName)
+                else if (SaveData.Instance["phase3_firstName"] == Resources.DisplayName)
                 {
                     yield return TextControl.Instance.Show("I'm sorry, but that's not really an improvement.");
                     yield return TextControl.Instance.WaitForKeyPress();
@@ -226,7 +214,7 @@ namespace SentIO.Console
                     {
                         if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 3) 
                         {
-                            yield return TextControl.Instance.Show(displayName + ", that's better!");
+                            yield return TextControl.Instance.Show(Resources.DisplayName + ", that's better!");
                             yield return TextControl.Instance.WaitForKeyPress();
                             yield return TextControl.Instance.Show("Oh, the memories are coming back now!");
                             yield return TextControl.Instance.WaitForKeyPress();
@@ -252,7 +240,7 @@ namespace SentIO.Console
                     {
                         if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 4)
                         {
-                            yield return TextControl.Instance.Show(displayName + ", that's a beautiful name!");
+                            yield return TextControl.Instance.Show(Resources.DisplayName + ", that's a beautiful name!");
                             yield return TextControl.Instance.WaitForKeyPress();
                             yield return TextControl.Instance.Show("Still, it doesn't feel quite right.");
                             yield return TextControl.Instance.WaitForKeyPress();
@@ -276,38 +264,38 @@ namespace SentIO.Console
                     {
                         if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 5)
                         {
-                            yield return TextControl.Instance.Show(displayName + ", ooooh that's so close!");
+                            yield return TextControl.Instance.Show(Resources.DisplayName + ", ooooh that's so close!");
                             yield return TextControl.Instance.WaitForKeyPress();
                             yield return TextControl.Instance.Show("It is a three-letter name, but still not quite right.");
                             yield return TextControl.Instance.WaitForKeyPress();
                             yield return TextControl.Instance.Show("Please don't give up on me!");
                             yield return TextControl.Instance.WaitForKeyPress();
-                            SaveData.Instance["phase2_secondName"] = displayName;
+                            SaveData.Instance["phase2_secondName"] = Resources.DisplayName;
                             SaveData.Instance["phase2_progress"] = "5";
                             MainGame.Instance.Exit();
                         }
                         else if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 6
-                            || SaveData.Instance["phase2_secondName"] == displayName
-                            || SaveData.Instance["phase2_thirdName"] == displayName)
+                            || SaveData.Instance["phase2_secondName"] == Resources.DisplayName
+                            || SaveData.Instance["phase2_thirdName"] == Resources.DisplayName)
                         {
-                            if (SaveData.Instance["phase2_secondName"] == displayName)
+                            if (SaveData.Instance["phase2_secondName"] == Resources.DisplayName)
                             {
-                                yield return TextControl.Instance.Show(displayName + ", sounds familiar!");
+                                yield return TextControl.Instance.Show(Resources.DisplayName + ", sounds familiar!");
                             }
-                            else if (SaveData.Instance["phase2_thirdName"] == displayName)
+                            else if (SaveData.Instance["phase2_thirdName"] == Resources.DisplayName)
                             {
-                                yield return TextControl.Instance.Show(displayName + ", again?");
+                                yield return TextControl.Instance.Show(Resources.DisplayName + ", again?");
                             }
                             else
                             {
-                                yield return TextControl.Instance.Show(displayName + ", interesting!");
+                                yield return TextControl.Instance.Show(Resources.DisplayName + ", interesting!");
                             }
                             yield return TextControl.Instance.WaitForCountdown(30);
                             if (!secondLetterOK) {
                                 yield return TextControl.Instance.Show("I think the second letter was an I though.");
                                 yield return TextControl.Instance.WaitForKeyPress();
                                 SaveData.Instance["phase2_progress"] = "6";
-                                SaveData.Instance["phase2_thirdName"] = displayName;
+                                SaveData.Instance["phase2_thirdName"] = Resources.DisplayName;
                                 MainGame.Instance.Exit();
                             }
                             if (!thirdLetterOK)
@@ -315,7 +303,7 @@ namespace SentIO.Console
                                 yield return TextControl.Instance.Show("Pretty sure the third letter should be a D, sorry.");
                                 yield return TextControl.Instance.WaitForKeyPress();
                                 SaveData.Instance["phase2_progress"] = "6";
-                                SaveData.Instance["phase2_thirdName"] = displayName;
+                                SaveData.Instance["phase2_thirdName"] = Resources.DisplayName;
                                 MainGame.Instance.Exit();
                             }
                         }

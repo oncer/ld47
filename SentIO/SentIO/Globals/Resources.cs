@@ -27,5 +27,17 @@ namespace SentIO.Globals
 
         public static Color BGColor2 { get; set; } = "0a4552".ToColor();
 
+        public static string DisplayName { 
+            get {
+                if (SaveData.Instance.ExeName.Length > 1)
+                {
+                    return SaveData.Instance.ExeName.ToUpper().Substring(0, 1) + SaveData.Instance.ExeName.ToLower().Substring(1);
+                }
+                else
+                {
+                    return SaveData.Instance.ExeName.ToUpper();
+                }
+            } 
+        }
     }
 }
