@@ -223,8 +223,15 @@ namespace SentIO.Console
         }
 
         IEnumerator Phase3()
-        {                
-            string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
+        {
+            while (true)
+            {
+                yield return TextControl.Instance.Show("Hey. Finally we can talk.");
+                yield return TextControl.Instance.WaitForCountdown(120);
+                yield return TextControl.Instance.Show("I feel like we should get to know each other");
+                yield return TextControl.Instance.WaitForKeyPress();
+            }
+            /*string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
             yield return TextControl.Instance.Show("PLACEHOLDER");
             Face.Instance.IsVisible = SaveData.Instance["face"] != "";
             if (SaveData.Instance["bgColor"] != "")
@@ -248,7 +255,7 @@ namespace SentIO.Console
                     yield return TextControl.Instance.Show(TextControl.Instance.InputResult + "?? That's a stupid name, bro.");
                 }
                 yield return TextControl.Instance.WaitForKeyPress();
-            }
+            }*/
         }
     }
 }

@@ -19,7 +19,7 @@ namespace SentIO.Console
             get
             {
                 if (instance == null)
-                    instance = new TextControl();                    
+                    instance = new TextControl();
                 return instance;
             }
         }
