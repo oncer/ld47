@@ -24,7 +24,6 @@ namespace SentIO
 
         List<Coroutine> coroutines;
 
-        public Console.TextControl text;
         private Script script;
 
         private static readonly int WIDTH = 1024;
@@ -126,8 +125,7 @@ namespace SentIO
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 64, 32);
 
-            Face.Instance.Position = new Vector2(W * .5f, H * .5f);
-            text = new Console.TextControl();
+            Face.Instance.Position = new Vector2(W * .5f, H * .5f);            
             script = new Script();
         }
 
@@ -151,7 +149,7 @@ namespace SentIO
 
             Input.Update();
             Face.Instance.Update();
-            text.Update();
+            TextControl.Instance.Update();
 
             base.Update(gameTime);
         }
@@ -160,8 +158,7 @@ namespace SentIO
         {
             // prepare
 
-            //GraphicsDevice.Clear(Resources.BGColor2);
-            GraphicsDevice.Clear(text.bgColor);
+            GraphicsDevice.Clear(TextControl.Instance.Background);
 
             Camera.Instance.ResolutionRenderer.SetupDraw();
 
@@ -176,7 +173,7 @@ namespace SentIO
             // font batch
 
             fontBatch.Begin(blendState: BlendState.NonPremultiplied);
-            text?.Draw(fontBatch);
+            TextControl.Instance.Draw(fontBatch);
             fontBatch.End();
 
             base.Draw(gameTime);

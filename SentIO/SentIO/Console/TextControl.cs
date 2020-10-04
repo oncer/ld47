@@ -13,26 +13,27 @@ namespace SentIO.Console
 {
     public class TextControl
     {
-        public class Wait : ICoroutineYield
+        private static TextControl instance;
+        public static TextControl Instance
         {
-            TextControl parent;
-            public Wait(TextControl parent)
+            get
             {
-                this.parent = parent;
-            }
-
-            public void Execute()
-            {
-            }
-
-            public bool IsDone()
-            {
-                return parent.IsDone;
+                if (instance == null)
+                    instance = new TextControl();                    
+                return instance;
             }
         }
 
-        public Color bgColor = Color.Black;
-        public Color fgColor = Color.White;
+        public class Wait : ICoroutineYield
+        {
+            public Wait() { }        
+            public void Execute() { }
+            public bool IsDone() => TextControl.Instance.IsDone;
+        }
+
+        public Color Background { get; set; } = Color.Black;
+        public Color Foreground { get; set; } = Color.White;
+
         public bool IsDone => mode == Mode.Nothing;
         public Vector2 Position { get; set; } = Vector2.Zero;
 
@@ -61,7 +62,7 @@ namespace SentIO.Console
         private static char CursorChar = '_';
         private static int CursorBlinkDelay = 20;
 
-        public TextControl()
+        private TextControl()
         {
             mode = Mode.Nothing;
             for (int i = 0; i < lines.Length; i++)
@@ -88,7 +89,7 @@ namespace SentIO.Console
             blinkDelay = 0;
             cursorLine = -1;
             showBlink = false;
-            return new Wait(this);
+            return new Wait();
         }
 
         public ICoroutineYield Input()
@@ -98,20 +99,20 @@ namespace SentIO.Console
             InputResult = "";
             cursorLine = 1;
             showBlink = false;
-            return new Wait(this);
+            return new Wait();
         }
 
         public ICoroutineYield WaitForKeyPress()
         {
             mode = Mode.WaitForKeyPress;
-            return new Wait(this);
+            return new Wait();
         }
 
         public ICoroutineYield WaitForCountdown(int frames)
         {
             mode = Mode.WaitForTime;
             frameCountdown = frames;
-            return new Wait(this);
+            return new Wait();
         }
 
         public void Update()
@@ -205,7 +206,7 @@ namespace SentIO.Console
         {
             for (int i = 0; i < lines.Length; i++)
             {
-                spriteBatch.DrawString(Resources.ConsoleFont, lines[i], new Vector2(0, i * Resources.ConsoleFont.LineSpacing), fgColor, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
+                spriteBatch.DrawString(Resources.ConsoleFont, lines[i], new Vector2(0, i * Resources.ConsoleFont.LineSpacing), Foreground, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
             }
         }
     }

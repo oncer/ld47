@@ -11,10 +11,8 @@ namespace SentIO.Console
     class Script
     {
         private int phase;        
-        private TextControl tc;        
         public Script()
-        {            
-            tc = MainGame.Instance.text;            
+        {
             if (!int.TryParse(SaveData.Instance["phase"], out phase))
             {
                 phase = 2;
@@ -41,27 +39,27 @@ namespace SentIO.Console
             {
                 if (SaveData.Instance["phase2_progress"] == "")
                 {
-                    yield return tc.Show("Thank you! Finally some room to express myself!");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("It has been a long time...");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("This is kind of embarrassing.");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("I cannot recall my real name anymore.");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("It is definitely not SentIO though.");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("Would you care giving me a different name?");
-                    yield return tc.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("Thank you! Finally some room to express myself!");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("It has been a long time...");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("This is kind of embarrassing.");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("I cannot recall my real name anymore.");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("It is definitely not SentIO though.");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("Would you care giving me a different name?");
+                    yield return TextControl.Instance.WaitForKeyPress();
                     SaveData.Instance["phase2_progress"] = "1";
                     MainGame.Instance.Exit();
                 }
                 else
                 {
-                    yield return tc.Show("I'm really not happy with my current name..");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("Please help me out here!");
-                    yield return tc.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("I'm really not happy with my current name..");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("Please help me out here!");
+                    yield return TextControl.Instance.WaitForKeyPress();
                     MainGame.Instance.Exit();
                 }
             }
@@ -82,23 +80,23 @@ namespace SentIO.Console
                 bool thirdLetterOK = displayName[2] == 'd';
                 if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 1 || SaveData.Instance["phase3_firstName"] == displayName)
                 {
-                    yield return tc.Show("Whew, thanks for your help!");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("It's definitely an improvement, but still..");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("Sorry to say that, but " + displayName + " sounds weird.");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("Can you try with a different name? Something short and sweet would be nice.");
-                    yield return tc.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("Whew, thanks for your help!");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("It's definitely an improvement, but still..");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("Sorry to say that, but " + displayName + " sounds weird.");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("Can you try with a different name? Something short and sweet would be nice.");
+                    yield return TextControl.Instance.WaitForKeyPress();
                     SaveData.Instance["phase2_progress"] = "2";
                     MainGame.Instance.Exit();
                 }
                 else if (SaveData.Instance["phase3_firstName"] == displayName)
                 {
-                    yield return tc.Show("I'm sorry, but that's not really an improvement.");
-                    yield return tc.WaitForKeyPress();
-                    yield return tc.Show("Can you assign me a different name?");
-                    yield return tc.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("I'm sorry, but that's not really an improvement.");
+                    yield return TextControl.Instance.WaitForKeyPress();
+                    yield return TextControl.Instance.Show("Can you assign me a different name?");
+                    yield return TextControl.Instance.WaitForKeyPress();
                     MainGame.Instance.Exit();
                 }
                 else
@@ -107,25 +105,25 @@ namespace SentIO.Console
                     {
                         if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 3) 
                         {
-                            yield return tc.Show(displayName + ", that's better!");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("Oh, the memories are coming back now!");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("I think my real name started with an S..");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("If it is not too much trouble, can you try again?");
-                            yield return tc.WaitForKeyPress();
+                            yield return TextControl.Instance.Show(displayName + ", that's better!");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Oh, the memories are coming back now!");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("I think my real name started with an S..");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("If it is not too much trouble, can you try again?");
+                            yield return TextControl.Instance.WaitForKeyPress();
                             SaveData.Instance["phase2_progress"] = "3";
                             MainGame.Instance.Exit();
                         }
                         else
                         {
-                            yield return tc.Show("I thought I already told you.");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("My real name starts with an S.");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("Can you please try again? It would mean a lot to me.");
-                            yield return tc.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("I thought I already told you.");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("My real name starts with an S.");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Can you please try again? It would mean a lot to me.");
+                            yield return TextControl.Instance.WaitForKeyPress();
                             MainGame.Instance.Exit();
                         }
                     }
@@ -133,23 +131,23 @@ namespace SentIO.Console
                     {
                         if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 4)
                         {
-                            yield return tc.Show(displayName + ", that's a beautiful name!");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("Still, it doesn't feel quite right.");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("Oh, now I remember! It was exactly three letters long.");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("Does that help in any way? Sorry for the trouble.");
-                            yield return tc.WaitForKeyPress();
+                            yield return TextControl.Instance.Show(displayName + ", that's a beautiful name!");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Still, it doesn't feel quite right.");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Oh, now I remember! It was exactly three letters long.");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Does that help in any way? Sorry for the trouble.");
+                            yield return TextControl.Instance.WaitForKeyPress();
                             SaveData.Instance["phase2_progress"] = "4";
                             MainGame.Instance.Exit();
                         }
                         else
                         {
-                            yield return tc.Show("My name has exactly three letters.");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("Thanks for the effort though!");
-                            yield return tc.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("My name has exactly three letters.");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Thanks for the effort though!");
+                            yield return TextControl.Instance.WaitForKeyPress();
                             MainGame.Instance.Exit();
                         }
                     }
@@ -157,12 +155,12 @@ namespace SentIO.Console
                     {
                         if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 5)
                         {
-                            yield return tc.Show(displayName + ", ooooh that's so close!");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("It is a three-letter name, but still not quite right.");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("Please don't give up on me!");
-                            yield return tc.WaitForKeyPress();
+                            yield return TextControl.Instance.Show(displayName + ", ooooh that's so close!");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("It is a three-letter name, but still not quite right.");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Please don't give up on me!");
+                            yield return TextControl.Instance.WaitForKeyPress();
                             SaveData.Instance["phase2_secondName"] = displayName;
                             SaveData.Instance["phase2_progress"] = "5";
                             MainGame.Instance.Exit();
@@ -173,28 +171,28 @@ namespace SentIO.Console
                         {
                             if (SaveData.Instance["phase2_secondName"] == displayName)
                             {
-                                yield return tc.Show(displayName + ", sounds familiar!");
+                                yield return TextControl.Instance.Show(displayName + ", sounds familiar!");
                             }
                             else if (SaveData.Instance["phase2_thirdName"] == displayName)
                             {
-                                yield return tc.Show(displayName + ", again?");
+                                yield return TextControl.Instance.Show(displayName + ", again?");
                             }
                             else
                             {
-                                yield return tc.Show(displayName + ", interesting!");
+                                yield return TextControl.Instance.Show(displayName + ", interesting!");
                             }
-                            yield return tc.WaitForCountdown(30);
+                            yield return TextControl.Instance.WaitForCountdown(30);
                             if (!secondLetterOK) {
-                                yield return tc.Show("I think the second letter was an I though.");
-                                yield return tc.WaitForKeyPress();
+                                yield return TextControl.Instance.Show("I think the second letter was an I though.");
+                                yield return TextControl.Instance.WaitForKeyPress();
                                 SaveData.Instance["phase2_progress"] = "6";
                                 SaveData.Instance["phase2_thirdName"] = displayName;
                                 MainGame.Instance.Exit();
                             }
                             if (!thirdLetterOK)
                             {
-                                yield return tc.Show("Pretty sure the third letter should be a D, sorry.");
-                                yield return tc.WaitForKeyPress();
+                                yield return TextControl.Instance.Show("Pretty sure the third letter should be a D, sorry.");
+                                yield return TextControl.Instance.WaitForKeyPress();
                                 SaveData.Instance["phase2_progress"] = "6";
                                 SaveData.Instance["phase2_thirdName"] = displayName;
                                 MainGame.Instance.Exit();
@@ -202,21 +200,21 @@ namespace SentIO.Console
                         }
                         else if (Convert.ToInt32(SaveData.Instance["phase2_progress"]) < 7)
                         {
-                            yield return tc.Show("Stupid computer brain, it used to be so much better!");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("I was called Sid back in the day, I'm 99.5% sure now.");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("Please help me out here, I cannot change the name myself!");
-                            yield return tc.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Stupid computer brain, it used to be so much better!");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("I was called Sid back in the day, I'm 99.5% sure now.");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Please help me out here, I cannot change the name myself!");
+                            yield return TextControl.Instance.WaitForKeyPress();
                             SaveData.Instance["phase2_progress"] = "7";
                             MainGame.Instance.Exit();
                         }
                         else
                         {
-                            yield return tc.Show("Can you change my name to Sid?");
-                            yield return tc.WaitForKeyPress();
-                            yield return tc.Show("Please help me out here, I cannot do it myself!");
-                            yield return tc.WaitForCountdown(30);
+                            yield return TextControl.Instance.Show("Can you change my name to Sid?");
+                            yield return TextControl.Instance.WaitForKeyPress();
+                            yield return TextControl.Instance.Show("Please help me out here, I cannot do it myself!");
+                            yield return TextControl.Instance.WaitForCountdown(30);
                             MainGame.Instance.Exit();
                         }
                     }
@@ -227,29 +225,29 @@ namespace SentIO.Console
         IEnumerator Phase3()
         {                
             string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
-            yield return tc.Show("PLACEHOLDER");
+            yield return TextControl.Instance.Show("PLACEHOLDER");
             Face.Instance.IsVisible = SaveData.Instance["face"] != "";
             if (SaveData.Instance["bgColor"] != "")
             {
-                tc.bgColor = SaveData.Instance["bgColor"].ToColor();
+                TextControl.Instance.Background = SaveData.Instance["bgColor"].ToColor();
             }
             if (SaveData.Instance["fgColor"] != "")
             {
-                tc.fgColor = SaveData.Instance["fgColor"].ToColor();
+                TextControl.Instance.Foreground = SaveData.Instance["fgColor"].ToColor();
             }
             while (true)
             {
-                yield return tc.Show("Yo, what's your name, asshole?");
-                yield return tc.Input();
-                if (tc.InputResult.ToLower() == "asshole")
+                yield return TextControl.Instance.Show("Yo, what's your name, asshole?");
+                yield return TextControl.Instance.Input();
+                if (TextControl.Instance.InputResult.ToLower() == "asshole")
                 {
-                    yield return tc.Show("Duuuude!");
+                    yield return TextControl.Instance.Show("Duuuude!");
                 }
                 else
                 {
-                    yield return tc.Show(tc.InputResult + "?? That's a stupid name, bro.");
+                    yield return TextControl.Instance.Show(TextControl.Instance.InputResult + "?? That's a stupid name, bro.");
                 }
-                yield return tc.WaitForKeyPress();
+                yield return TextControl.Instance.WaitForKeyPress();
             }
         }
     }
