@@ -320,8 +320,11 @@ namespace SentIO.Console
 
         IEnumerator Phase3()
         {
-            Happy(); Fast();
-            yield return Talk("Thank you, thank you, thank you!");
+            Happy(); Slow();
+            yield return Talk("Uhm...");
+            yield return Wait(60);
+            Fast();
+            yield return Talk("Thank you!\n.................");
             yield return Wait(60);
 
             Happy(); NormalSpeed();
