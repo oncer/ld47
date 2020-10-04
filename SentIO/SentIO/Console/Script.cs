@@ -6,6 +6,7 @@ using SentIO.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace SentIO.Console
@@ -32,6 +33,7 @@ namespace SentIO.Console
 
             if (phase < 3)
             {
+                SoundControl.IsEnabled = false;
                 Face.Instance.IsVisible = false;
                 TextControl.Instance.Background = Resources.BGColor1;
                 TextControl.Instance.Foreground = Resources.TextColor1;
@@ -39,6 +41,7 @@ namespace SentIO.Console
             }
             else
             {
+                SoundControl.IsEnabled = true;
                 Face.Instance.IsVisible = true;
                 TextControl.Instance.Background = Resources.BGColor2;
                 TextControl.Instance.Foreground = Resources.TextColor2;
@@ -380,8 +383,6 @@ namespace SentIO.Console
 
         IEnumerator Phase3()
         {
-            SoundControl.IsEnabled = true;
-
             Neutral(); VerySlow();
             yield return Talk("Uhm...");
             yield return Wait(60);
@@ -424,7 +425,80 @@ namespace SentIO.Console
             MainGame.Instance.StartCoroutine(Phase4());
         }
 
+        IEnumerator ForceYesOrNo(string expectation, string question)
+        {
+            string answer = TextControl.Instance.InputResult;
+            while (answer.ToLower() != "yes" && answer.ToLower() != "no")
+            {
+                Neutral(); NormalSpeed();
+                yield return Talk(expectation);
+                yield return Key();
+                yield return Talk(question);
+                yield return Input();
+                answer = TextControl.Instance.InputResult;
+            }
+        }
+
         IEnumerator Phase4()
+        {
+            int diceAnswer = (int)(RND.Get * 3f);
+            Neutral(); NormalSpeed();
+            yield return Talk("Hey, wanna roll\nsome dice with me?");
+            yield return Input();
+            string answer = TextControl.Instance.InputResult;
+            while (answer.ToLower() != "yes")
+            {
+                yield return MainGame.Instance.StartCoroutine(
+                    ForceYesOrNo("I was expecting a 'yes'\nor 'no' kind of answer.",
+                    "So, do you wanna roll\nsome dice with me?"));
+                answer = TextControl.Instance.InputResult;
+                if (answer.ToLower() == "no")
+                {
+                    Clear();
+                    yield return FeelSad();
+                    Neutral(); NormalSpeed();
+                    diceAnswer = (diceAnswer + 1) % 3;
+                    switch (diceAnswer)
+                    {
+                        case 0:
+                            yield return Talk("Come on, dice are fun!");
+                            break;
+                        case 1:
+                            yield return Talk("I really wanted to\nplay with you though..");
+                            break;
+                        case 2:
+                            yield return Talk("It won't take long, I promise!");
+                            break;
+                    }
+                    yield return Key();
+                    Happy(); NormalSpeed();
+                    yield return Talk("I'll ask you again.\nDo you want to roll\nsome dice with me?");
+                    yield return Input();
+                    answer = TextControl.Instance.InputResult;
+                }
+            }
+            int sidScore = 0;
+            int playerScore = 0;
+            bool playersTurn = false;
+            yield return FeelExcited();
+            Happy(); Fast();
+            yield return Talk("Ooh, I'm excited!");
+            yield return Wait(120);
+            NormalSpeed();
+            yield return Talk("Do you want to go first?");
+            yield return Input();
+            answer = TextControl.Instance.InputResult;
+            if (answer.ToLower() == "yes")
+            {
+                playersTurn = true;
+                yield return Talk("Alright, let's roll!");
+                yield return Key();
+            }
+
+            // roll a dice
+        }
+
+        IEnumerator Phase5()
         {
             while (true)
             {

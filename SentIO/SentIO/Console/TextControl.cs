@@ -295,6 +295,7 @@ namespace SentIO.Console
                         mode = Mode.Nothing;
                         InputResult = textInput;
                         textInput = "";
+                        cursorY = -1;
                     }
                 }
                 SetOutput(textOutput);

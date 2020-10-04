@@ -12,6 +12,23 @@ namespace SentIO.Routines
         bool IsDone();
     }
 
+    public class CoroutineWait : ICoroutineYield
+    {
+        private Coroutine coroutine;
+        public CoroutineWait(Coroutine cr)
+        {
+            coroutine = cr;
+        }
+        public void Execute()
+        {
+        }
+
+        public bool IsDone()
+        {
+            return coroutine.IsDone;
+        }
+    }
+
     public class Coroutine
     {
         private IEnumerator enumerator;
@@ -50,6 +67,14 @@ namespace SentIO.Routines
             }
 
             return true;
+        }
+
+        public bool IsDone
+        {
+            get
+            {
+                return !enumeratorActive && instruction == null;
+            }
         }
     }
 }

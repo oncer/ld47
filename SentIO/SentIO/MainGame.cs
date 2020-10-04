@@ -64,6 +64,7 @@ namespace SentIO
         public MainGame()
         {
             Instance = this;
+            Debug.WriteLine("Player finished: " + WebClient.Instance.GetPlayerFinished());
 
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -161,9 +162,11 @@ namespace SentIO
             script = new Script();
         }
 
-        public void StartCoroutine(IEnumerator coroutine)
+        public CoroutineWait StartCoroutine(IEnumerator coroutine)
         {
-            coroutines.Add(new Coroutine(coroutine));
+            var cr = new Coroutine(coroutine);
+            coroutines.Add(cr);
+            return new CoroutineWait(cr);
         }
 
         protected override void Update(GameTime gameTime)
