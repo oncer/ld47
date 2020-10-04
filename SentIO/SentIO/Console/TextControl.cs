@@ -3,9 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SentIO.Globals;
 using SentIO.Routines;
+using SentIO.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
@@ -28,7 +30,7 @@ namespace SentIO.Console
         {
             public Wait() { }        
             public void Execute() { }
-            public bool IsDone() => TextControl.Instance.IsDone;
+            public bool IsDone() => Instance.IsDone;
         }
 
         public Color Background { get; set; } = Color.Black;
@@ -46,10 +48,18 @@ namespace SentIO.Console
             WaitForTime
         }
         private Mode mode;
+
+        public enum Layout
+        {
+            TopLeft,
+            Centered
+        }
+        private Layout layout;
         public string InputResult { get; private set; }
 
 
         private string[] lines = new string[2];
+        private Vector2[] linePos = new Vector2[2];
         private int cursorLine;
         private string textOutput;
         private string textInput;
@@ -77,12 +87,32 @@ namespace SentIO.Console
             cursorLine = -1;
             showBlink = false;
             frameCountdown = 0;
+            SetLayout(Layout.TopLeft);
+        }
+
+        public void SetLayout(Layout _layout)
+        {
+            layout = _layout;
+            switch (layout)
+            {
+                case Layout.TopLeft:
+                    lines = new string[2];
+                    linePos = new Vector2[2];
+                    break;
+                case Layout.Centered:
+                    lines = new string[3];
+                    linePos = new Vector2[3];
+                    break;
+            }
         }
 
         public ICoroutineYield Show(string text)
         {
             mode = Mode.Output;
-            lines[0] = "";
+            for (int i = 0; i < lines.Length; i++)
+            {
+                lines[i] = "";
+            }
             textOutput = text;
             index = 0;
             nextCharDelay = 0;
@@ -97,7 +127,7 @@ namespace SentIO.Console
             mode = Mode.Input;
             textInput = "";
             InputResult = "";
-            cursorLine = 1;
+            cursorLine = lines.Length - 1;
             showBlink = false;
             return new Wait();
         }
@@ -113,6 +143,58 @@ namespace SentIO.Console
             mode = Mode.WaitForTime;
             frameCountdown = frames;
             return new Wait();
+        }
+
+        private void SetOutput(string textOutput, int index=-1)
+        {
+            if (index < 0) index = textOutput.Length;
+            string textOutputPart = textOutput.Substring(0, index);
+            if (lines.Length > 2)
+            {
+                string[] partLines = textOutputPart.Split('\n');
+                for (int i = 0; i < lines.Length - 2; i++)
+                {
+                    lines[i] = partLines[i];
+                }
+                lines[lines.Length - 2] = string.Join("", partLines.Skip(lines.Length - 2).ToArray());
+            }
+            else
+            {
+                lines[0] = textOutputPart;
+            }
+
+            if (layout == Layout.TopLeft)
+            {
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    linePos[i].X = 0;
+                    linePos[i].Y = Resources.ConsoleFont.LineSpacing * i;
+                }
+            }
+            else if (layout == Layout.Centered)
+            {
+                string[] fullLines = new string[lines.Length];
+                if (fullLines.Length > 2)
+                {
+                    string[] outLines = textOutput.Split('\n');
+                    for (int i = 0; i < lines.Length - 2; i++)
+                    {
+                        fullLines[i] = outLines[i];
+                    }
+                    fullLines[fullLines.Length - 2] = string.Join("", outLines.Skip(fullLines.Length - 2).ToArray());
+                }
+                else
+                {
+                    fullLines[0] = textOutput;
+                }
+                for (int i = 0; i < lines.Length - 1; i++)
+                {
+                    linePos[i].X = (int) ((MainGame.Instance.Window.ClientBounds.Width - Resources.ConsoleFont.MeasureString(fullLines[i]).X) / 2f);
+                    linePos[i].Y = 36 + Resources.ConsoleFont.LineSpacing * i;
+                }
+                linePos[lines.Length - 1].X = 252;
+                linePos[lines.Length - 1].Y = MainGame.Instance.Window.ClientBounds.Height - Resources.ConsoleFont.LineSpacing * 5;
+            }
         }
 
         public void Update()
@@ -136,14 +218,18 @@ namespace SentIO.Console
                     if (index < textOutput.Length)
                     {
                         index++;
-                    } else
-                    {
-                        mode = Mode.Nothing;
-                        cursorLine = 0;
-                    }
+                    } 
                     nextCharDelay = 4;
                 }
-                lines[0] = textOutput.Substring(0, index);
+                SetOutput(textOutput, index);
+                if (index >= textOutput.Length)
+                {
+                    mode = Mode.Nothing;
+                    for (int i = 0; i < lines.Length - 1; i++)
+                    {
+                        if (lines[i].Length > 0) cursorLine = i;
+                    }
+                }
             }
             else if (mode == Mode.Input)
             {
@@ -174,7 +260,7 @@ namespace SentIO.Console
                         textInput = "";
                     }
                 }
-                lines[1] = textInput;
+                lines[lines.Length - 1] = textInput;
             }
             else if (mode == Mode.WaitForKeyPress)
             {
@@ -182,8 +268,8 @@ namespace SentIO.Console
                 {
                     mode = Mode.Nothing;
                 }
-                lines[0] = textOutput;
-                lines[1] = textInput;
+                SetOutput(textOutput);
+                lines[lines.Length - 1] = textInput;
             }
             else if (mode == Mode.WaitForTime)
             {
@@ -192,8 +278,13 @@ namespace SentIO.Console
                 {
                     mode = Mode.Nothing;
                 }
-                lines[0] = textOutput;
-                lines[1] = textInput;
+                SetOutput(textOutput);
+                lines[lines.Length - 1] = textInput;
+            }
+            else if (mode == Mode.Nothing)
+            {
+                SetOutput(textOutput);
+                lines[lines.Length - 1] = textInput;
             }
 
             if (showBlink && cursorLine >= 0 && cursorLine < lines.Length)
@@ -206,7 +297,7 @@ namespace SentIO.Console
         {
             for (int i = 0; i < lines.Length; i++)
             {
-                spriteBatch.DrawString(Resources.ConsoleFont, lines[i], new Vector2(0, i * Resources.ConsoleFont.LineSpacing), Foreground, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
+                spriteBatch.DrawString(Resources.ConsoleFont, lines[i], linePos[i], Foreground, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);            
             }
         }
     }

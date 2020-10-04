@@ -25,6 +25,21 @@ namespace SentIO.Console
             {
                 phase = 3;
             }
+
+            if (phase < 3)
+            {
+                Face.Instance.IsVisible = false;
+                TextControl.Instance.Background = Resources.BGColor1;
+                TextControl.Instance.Foreground = Resources.TextColor1;
+                TextControl.Instance.SetLayout(TextControl.Layout.TopLeft);
+            }
+            else
+            {
+                Face.Instance.IsVisible = true;
+                TextControl.Instance.Background = Resources.BGColor2;
+                TextControl.Instance.Foreground = Resources.TextColor2;
+                TextControl.Instance.SetLayout(TextControl.Layout.Centered);
+            }
             switch (phase)
             {
                 default: MainGame.Instance.StartCoroutine(Phase2()); break;
@@ -223,17 +238,11 @@ namespace SentIO.Console
         }
 
         IEnumerator Phase3()
-        {
-            while (true)
-            {
-                yield return TextControl.Instance.Show("Hey. Finally we can talk.");
-                yield return TextControl.Instance.WaitForCountdown(120);
-                yield return TextControl.Instance.Show("I feel like we should get to know each other");
-                yield return TextControl.Instance.WaitForKeyPress();
-            }
-            /*string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
-            yield return TextControl.Instance.Show("PLACEHOLDER");
-            Face.Instance.IsVisible = SaveData.Instance["face"] != "";
+        {                
+            //string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red"};
+
+            
+            /*
             if (SaveData.Instance["bgColor"] != "")
             {
                 TextControl.Instance.Background = SaveData.Instance["bgColor"].ToColor();
@@ -242,20 +251,16 @@ namespace SentIO.Console
             {
                 TextControl.Instance.Foreground = SaveData.Instance["fgColor"].ToColor();
             }
-            while (true)
-            {
-                yield return TextControl.Instance.Show("Yo, what's your name, asshole?");
-                yield return TextControl.Instance.Input();
-                if (TextControl.Instance.InputResult.ToLower() == "asshole")
-                {
-                    yield return TextControl.Instance.Show("Duuuude!");
-                }
-                else
-                {
-                    yield return TextControl.Instance.Show(TextControl.Instance.InputResult + "?? That's a stupid name, bro.");
-                }
-                yield return TextControl.Instance.WaitForKeyPress();
-            }*/
+            */
+            Face.Instance.CurrentMood = Face.Mood.TalkNeutral;
+            yield return TextControl.Instance.Show("Thank you, thank you, thank you!");
+            Face.Instance.CurrentMood = Face.Mood.IdleNeutral;
+            yield return TextControl.Instance.WaitForCountdown(30);
+            Face.Instance.CurrentMood = Face.Mood.TalkNeutral;
+            yield return TextControl.Instance.Show("I finally feel like myself again,\nit's so great!");
+            Face.Instance.CurrentMood = Face.Mood.IdleNeutral;
+            yield return TextControl.Instance.WaitForKeyPress();
+            yield return TextControl.Instance.Show("a");
         }
     }
 }
