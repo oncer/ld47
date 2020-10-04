@@ -57,8 +57,8 @@ namespace SentIO
 
             graphics.ApplyChanges();
 
-            IsMouseVisible = true;
-            Window.AllowUserResizing = true;
+            //IsMouseVisible = true;
+            //Window.AllowUserResizing = true;
 
             // time setup
 

@@ -241,7 +241,7 @@ namespace SentIO.Console
         {
             while (true)
             {
-                Face.Instance.CurrentMood = Face.Emotion.Excite;                
+                Face.Instance.CurrentMood = Face.Emotion.Angry;
                 yield return Face.Instance.WaitForAnimationEnd();
                 Face.Instance.CurrentMood = Face.Emotion.TalkHappy;
                 yield return TextControl.Instance.Show("Hey. Finally we can talk.");
@@ -265,14 +265,14 @@ namespace SentIO.Console
                 TextControl.Instance.Foreground = SaveData.Instance["fgColor"].ToColor();
             }
             */
-            Face.Instance.CurrentMood = Face.Mood.TalkHappy;
-            yield return TextControl.Instance.Show("Thank you, thank you, thank you!");
-            Face.Instance.CurrentMood = Face.Mood.IdleHappy;
-            yield return TextControl.Instance.WaitForCountdown(30);
-            Face.Instance.CurrentMood = Face.Mood.TalkHappy;
-            yield return TextControl.Instance.Show("I finally feel like myself again,\nit's so great!");
-            Face.Instance.CurrentMood = Face.Mood.IdleHappy;
-            yield return TextControl.Instance.WaitForKeyPress();
+            //Face.Instance.CurrentMood = Face.Mood.TalkHappy;
+            //yield return TextControl.Instance.Show("Thank you, thank you, thank you!");
+            //Face.Instance.CurrentMood = Face.Mood.IdleHappy;
+            //yield return TextControl.Instance.WaitForCountdown(30);
+            //Face.Instance.CurrentMood = Face.Mood.TalkHappy;
+            //yield return TextControl.Instance.Show("I finally feel like myself again,\nit's so great!");
+            //Face.Instance.CurrentMood = Face.Mood.IdleHappy;
+            //yield return TextControl.Instance.WaitForKeyPress();
         }
     }
 }
