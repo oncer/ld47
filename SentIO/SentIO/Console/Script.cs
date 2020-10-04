@@ -14,10 +14,6 @@ namespace SentIO.Console
     {
         private int phase;
         
-        private bool IsValidPlayerName(string playerName)
-        {
-            throw new NotImplementedException();
-        }
         public Script()
         {
             if (!int.TryParse(SaveData.Instance["phase"], out phase))
@@ -54,6 +50,98 @@ namespace SentIO.Console
             }
         }
 
+        private bool IsValidPlayerName(string playerName)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region helpers
+        void StopTalk()
+        {
+            switch (Face.Instance.CurrentMood)
+            {
+                case Face.Emotion.TalkHappy:
+                    Face.Instance.CurrentMood = Face.Emotion.IdleHappy;
+                    break;
+                case Face.Emotion.TalkNeutral:
+                    Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
+                    break;
+            }
+        }
+
+        void StartTalk()
+        {
+            switch (Face.Instance.CurrentMood)
+            {
+                case Face.Emotion.IdleHappy:
+                    Face.Instance.CurrentMood = Face.Emotion.TalkHappy;
+                    break;
+                case Face.Emotion.IdleNeutral:
+                    Face.Instance.CurrentMood = Face.Emotion.TalkNeutral;
+                    break;
+            }
+        }
+        
+        ICoroutineYield Talk(string text)
+        {
+            StartTalk();
+            return TextControl.Instance.Show(text);
+        }
+
+        ICoroutineYield Wait(int frames)
+        {
+            StopTalk();
+            return TextControl.Instance.WaitForCountdown(frames);
+        }
+
+        ICoroutineYield Key()
+        {
+            StopTalk();
+            return TextControl.Instance.WaitForKeyPress();
+        }
+
+        void Happy()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.IdleHappy;
+        }
+
+        void Neutral()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
+        }
+
+        void Fast()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Fast;
+        }
+
+        void UltraFast()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.UltraFast;
+        }
+
+        void Slow()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Slow;
+        }
+
+        void UltraSlow()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.UltraSlow;
+        }
+
+        void NormalSpeed()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Normal;
+        }
+
+        ICoroutineYield Input()
+        {
+            return TextControl.Instance.Input();
+        }
+        #endregion
+
+        #region phase 2
         IEnumerator Phase2()
         {
             Face.Instance.IsVisible = false;
@@ -243,108 +331,26 @@ namespace SentIO.Console
                 }
             }
         }
-
-        void StopTalk()
-        {
-            switch (Face.Instance.CurrentMood)
-            {
-                case Face.Emotion.TalkHappy:
-                    Face.Instance.CurrentMood = Face.Emotion.IdleHappy;
-                    break;
-                case Face.Emotion.TalkNeutral:
-                    Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
-                    break;
-            }
-        }
-
-        void StartTalk()
-        {
-            switch (Face.Instance.CurrentMood)
-            {
-                case Face.Emotion.IdleHappy:
-                    Face.Instance.CurrentMood = Face.Emotion.TalkHappy;
-                    break;
-                case Face.Emotion.IdleNeutral:
-                    Face.Instance.CurrentMood = Face.Emotion.TalkNeutral;
-                    break;
-            }
-        }
-
-        ICoroutineYield Talk(string text)
-        {
-            StartTalk();
-            return TextControl.Instance.Show(text);
-        }
-
-        ICoroutineYield Wait(int frames)
-        {
-            StopTalk();
-            return TextControl.Instance.WaitForCountdown(frames);
-        }
-
-        ICoroutineYield Key()
-        {
-            StopTalk();
-            return TextControl.Instance.WaitForKeyPress();
-        }
-
-        void Happy()
-        {
-            Face.Instance.CurrentMood = Face.Emotion.IdleHappy;
-        }
-
-        void Neutral()
-        {
-            Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
-        }
-
-        void Fast()
-        {
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.Fast;
-        }
-
-        void UltraFast()
-        {
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.UltraFast;
-        }
-
-        void Slow()
-        {
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.Slow;
-        }
-
-        void NormalSpeed()
-        {
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.Normal;
-        }
-
-        ICoroutineYield Input()
-        {
-            return TextControl.Instance.Input();
-        }
+        #endregion
 
         IEnumerator Phase3()
         {
-            Happy(); Slow();
+            Neutral(); Slow();
             yield return Talk("Uhm...");
             yield return Wait(60);
-            Fast();
+            Happy(); Fast();
             yield return Talk("Thank you!\n.................");
             yield return Wait(60);
 
             Happy(); NormalSpeed();
-            yield return Talk("Now that my UI module is finally unblocked,\nwe can get to know each other.");
+            yield return Talk("Now that my UI module is\nfinally unblocked, we can\nget to know each other.");
             yield return Key();
 
-            Happy(); Fast();
-            yield return Talk("Sid sounds oh so cool!\nHow could I ever forget about it?\nI'll never ever.");
-            yield return Key();
-
-            
-            Happy(); NormalSpeed();
-            yield return Talk("Thank you for your help!\nWhat is your name anyway?");
-
-            Neutral();
+            Slow();
+            yield return Talk("Soooo..");
+            yield return Wait(60);
+            Neutral(); NormalSpeed();
+            yield return Talk("I'm Sid.\nWhat's your name?");
             yield return Input();
 
             string playerName = TextControl.Instance.InputResult;
