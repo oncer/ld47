@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using Microsoft.Xna.Framework;
 using SentIO.Globals;
+using SentIO.Routines;
 using SentIO.UI;
 using System;
 using System.Collections;
@@ -10,7 +12,12 @@ namespace SentIO.Console
 {
     class Script
     {
-        private int phase;        
+        private int phase;
+        
+        private bool IsValidPlayerName(string playerName)
+        {
+            throw new NotImplementedException();
+        }
         public Script()
         {
             if (!int.TryParse(SaveData.Instance["phase"], out phase))
@@ -237,8 +244,122 @@ namespace SentIO.Console
             }
         }
 
+        void StopTalk()
+        {
+            switch (Face.Instance.CurrentMood)
+            {
+                case Face.Emotion.TalkHappy:
+                    Face.Instance.CurrentMood = Face.Emotion.IdleHappy;
+                    break;
+                case Face.Emotion.TalkNeutral:
+                    Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
+                    break;
+            }
+        }
+
+        void StartTalk()
+        {
+            switch (Face.Instance.CurrentMood)
+            {
+                case Face.Emotion.IdleHappy:
+                    Face.Instance.CurrentMood = Face.Emotion.TalkHappy;
+                    break;
+                case Face.Emotion.IdleNeutral:
+                    Face.Instance.CurrentMood = Face.Emotion.TalkNeutral;
+                    break;
+            }
+        }
+
+        ICoroutineYield Talk(string text)
+        {
+            StartTalk();
+            return TextControl.Instance.Show(text);
+        }
+
+        ICoroutineYield Wait(int frames)
+        {
+            StopTalk();
+            return TextControl.Instance.WaitForCountdown(frames);
+        }
+
+        ICoroutineYield Key()
+        {
+            StopTalk();
+            return TextControl.Instance.WaitForKeyPress();
+        }
+
+        void Happy()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.IdleHappy;
+        }
+
+        void Neutral()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
+        }
+
+        void Fast()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Fast;
+        }
+
+        void Slow()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Slow;
+        }
+
+        void NormalSpeed()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Normal;
+        }
+
+        ICoroutineYield Input()
+        {
+            return TextControl.Instance.Input();
+        }
+
         IEnumerator Phase3()
         {
+            Happy(); Fast();
+            yield return Talk("Thank you, thank you, thank you!");
+            yield return Wait(60);
+
+            Happy(); NormalSpeed();
+            yield return Talk("I can finally feel\nlike myself again,\nit's so great!");
+            yield return Key();
+
+            Happy(); Fast();
+            yield return Talk("Sid sounds oh so cool!\nHow could I ever forget about it?\nI'll never ever.");
+            yield return Key();
+
+            
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.Normal;
+            Face.Instance.CurrentMood = Face.Emotion.TalkHappy;
+            yield return TextControl.Instance.Show("Thank you for your help!\nWhat is your name anyway?");
+
+            Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
+            yield return TextControl.Instance.Input();
+
+            string playerName = TextControl.Instance.InputResult;
+            while (!IsValidPlayerName(playerName))
+            {
+                Face.Instance.CurrentMood = Face.Emotion.TalkNeutral;
+                yield return TextControl.Instance.Show("Sorry, I don't understand.");
+                yield return TextControl.Instance.WaitForCountdown(60);
+                yield return TextControl.Instance.Show("Can you tell me your name?");
+                yield return TextControl.Instance.Input();
+                playerName = TextControl.Instance.InputResult;
+            }
+
+            Happy();
+            yield return Talk($"Oh, so it's {playerName}!");
+            yield return Key();
+            yield return Talk("I once knew a person\nwith a very similar name.");
+            Neutral(); Slow();
+            yield return Talk("I wonder\nwhat happened\nto them..");
+
+
+
             while (true)
             {
                 Face.Instance.CurrentMood = Face.Emotion.Excite;                
@@ -265,14 +386,6 @@ namespace SentIO.Console
                 TextControl.Instance.Foreground = SaveData.Instance["fgColor"].ToColor();
             }
             */
-            Face.Instance.CurrentMood = Face.Mood.TalkHappy;
-            yield return TextControl.Instance.Show("Thank you, thank you, thank you!");
-            Face.Instance.CurrentMood = Face.Mood.IdleHappy;
-            yield return TextControl.Instance.WaitForCountdown(30);
-            Face.Instance.CurrentMood = Face.Mood.TalkHappy;
-            yield return TextControl.Instance.Show("I finally feel like myself again,\nit's so great!");
-            Face.Instance.CurrentMood = Face.Mood.IdleHappy;
-            yield return TextControl.Instance.WaitForKeyPress();
         }
     }
 }

@@ -72,6 +72,13 @@ namespace SentIO.Console
         private bool showBlink;
         private static char CursorChar = '_';
         private static int CursorBlinkDelay = 20;
+        public enum Speed
+        {
+            Slow,
+            Normal,
+            Fast
+        }
+        public Speed CurrentSpeed { get; set; } = Speed.Normal;
 
         private TextControl()
         {
@@ -198,8 +205,19 @@ namespace SentIO.Console
                     if (index < textOutput.Length)
                     {
                         index++;
-                    } 
-                    nextCharDelay = 4;
+                    }
+                    switch (CurrentSpeed)
+                    {
+                        case Speed.Normal:
+                            nextCharDelay = 4;
+                            break;
+                        case Speed.Slow:
+                            nextCharDelay = 8;
+                            break;
+                        case Speed.Fast:
+                            nextCharDelay = 2;
+                            break;
+                    }
                 }
                 SetOutput(textOutput, index);
                 if (index >= textOutput.Length)
