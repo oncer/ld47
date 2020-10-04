@@ -72,6 +72,7 @@ namespace SentIO.Console
         private bool showBlink;
         private static char CursorChar = '_';
         private static int CursorBlinkDelay = 20;
+        private static int AfterShowWaitFrames = 20;
         public enum Speed
         {
             Slow,
@@ -226,7 +227,8 @@ namespace SentIO.Console
                 SetOutput(textOutput, index);
                 if (index >= textOutput.Length)
                 {
-                    mode = Mode.Nothing;
+                    mode = Mode.WaitForTime;
+                    frameCountdown = 20;
                     for (int i = 0; i < lines.Length; i++)
                     {
                         if (lines[i].Length > 0) cursorY = i;
