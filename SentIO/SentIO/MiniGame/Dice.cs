@@ -14,6 +14,7 @@ namespace SentIO.MiniGame
         {
             New,
             Bounce,
+            Finish,
             Done
         }
 
@@ -52,8 +53,8 @@ namespace SentIO.MiniGame
 
         void ChangeAngularSpeed()
         {
-            var pow = Math.Max(bounced * .5f, 2);
-            angSpeed = -pow + RND.Get * 2 * pow;
+            var pow = Math.Max(bounced * .5f, 1);
+            angSpeed = Math.Sign(bounced % 2 == 0 ? 1 : -1) * (1.5 + RND.Get * pow);
         }
 
         public void Update()
@@ -67,25 +68,56 @@ namespace SentIO.MiniGame
                 yVel = Math.Min(yVel + yGrav, 999);
                 if (y + yVel > yMax)
                 {
-                    diceValue = (int)(RND.Get * 6);
+                    if (bounced > 0)
+                        diceValue = (int)(RND.Get * 6);
 
                     ChangeAngularSpeed();
 
                     yVel *= -.7f;
-                    bounced--;
+                    if (Math.Abs(yVel) < .6f)
+                    {
+                        yVel = Math.Sign(yVel) * Math.Abs(.6f);
+                    }
+
+                    bounced = Math.Max(bounced - 1, 0);
 
                     if (bounced == 0)
                     {
-                        Position = new Vector2(x, yMax);
-                        yVel = 0;
                         angSpeed = 0;
-                        State = DiceState.Done;
+                        Position = new Vector2(x, yMax);
+                        State = DiceState.Finish;
+                        /*if (Math.Abs(yVel) < .2f)
+                        {
+                            Position = new Vector2(x, yMax);
+                            yVel = 0;
+                            angSpeed = 0;
+                            State = DiceState.Done;
+                        }*/
                     }
                 }
                 else
                 {
                     Position = new Vector2(x, y + yVel);
                 }                
+            }
+
+            if (State == DiceState.Finish)
+            {
+                if (angle % 45 < 22.5)
+                    angSpeed = 3;
+                else
+                    angSpeed = -3;
+
+                angle += (float)angSpeed;
+                angle = angle % 360;
+
+                if (Math.Abs((angle % 90) - 10) < 6)
+                {
+                    angle = 0;
+                    State = DiceState.Done;
+                }
+
+                yVel = 0;
             }
 
             if (State == DiceState.Done)
