@@ -13,10 +13,11 @@ namespace SentIO
         private Dictionary<string, string> data;
 
         public string ExeDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-        //public string ExeName => System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-
+#if DEBUG
         public string ExeName => "Sid"; // TODO : change back!!
-
+#else
+        public string ExeName => System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+#endif
 
         SaveData()
         {

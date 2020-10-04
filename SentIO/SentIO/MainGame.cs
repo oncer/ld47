@@ -124,7 +124,7 @@ namespace SentIO
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 64, 32);
 
-            Face.Instance.Position = new Vector2(W * .5f, H * .25f);            
+            Face.Instance.Position = new Vector2(W * .5f, H * .5f);
             script = new Script();
         }
 
