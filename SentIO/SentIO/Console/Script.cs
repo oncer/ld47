@@ -238,11 +238,21 @@ namespace SentIO.Console
         }
 
         IEnumerator Phase3()
-        {                
-            //string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red"};
-
-            
-            /*
+        {
+            while (true)
+            {
+                Face.Instance.CurrentMood = Face.Mood.TalkNeutral;
+                yield return TextControl.Instance.Show("Hey. Finally we can talk.");
+                Face.Instance.CurrentMood = Face.Mood.IdleNeutral;
+                yield return TextControl.Instance.WaitForCountdown(120);
+                Face.Instance.CurrentMood = Face.Mood.TalkNeutral;
+                yield return TextControl.Instance.Show("I feel like we should get to know each other");
+                Face.Instance.CurrentMood = Face.Mood.IdleNeutral;
+                yield return TextControl.Instance.WaitForKeyPress();
+            }
+            /*string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
+            yield return TextControl.Instance.Show("PLACEHOLDER");
+            Face.Instance.IsVisible = SaveData.Instance["face"] != "";
             if (SaveData.Instance["bgColor"] != "")
             {
                 TextControl.Instance.Background = SaveData.Instance["bgColor"].ToColor();

@@ -31,7 +31,7 @@ namespace SentIO.UI
 
         public Vector2 Position { get; set; }
 
-        public Animation CurrentAnimation => moods[CurrentMood];
+        private Animation CurrentAnimation => moods[CurrentMood];
 
         public Mood CurrentMood
         {
