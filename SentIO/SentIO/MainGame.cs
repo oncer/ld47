@@ -26,9 +26,8 @@ namespace SentIO
 
         private Script script;
 
-        private static readonly int WIDTH = 1024;
-        private static readonly int HEIGHT = 616;
-        private static readonly int HEIGHT_SMALL = 72;
+        private static readonly int WIDTH = 1008;
+        private static readonly int HEIGHT = 624;
 
         private static int W;
         private static int H;
@@ -125,7 +124,7 @@ namespace SentIO
             Resources.ConsoleFont = Content.Load<SpriteFont>("console");
             Resources.FaceTexture = Content.LoadTextureSet("face", 64, 32);
 
-            Face.Instance.Position = new Vector2(W * .5f, H * .5f);            
+            Face.Instance.Position = new Vector2(W * .5f, H * .25f);            
             script = new Script();
         }
 
