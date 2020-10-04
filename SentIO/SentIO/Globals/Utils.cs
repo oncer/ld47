@@ -72,5 +72,15 @@ namespace SentIO.Globals
         {
             return string.Format("#{0:X}{1:X}{2:X}{3:X}", color.R, color.G, color.B, color.A);
         }
+
+        public static double DegToRad(double angle)
+        {
+            return Math.PI * angle / 180.0;
+        }
+
+        public static double RadToDeg(double angle)
+        {
+            return angle * (180.0 / Math.PI);
+        }
     }
 }

@@ -16,6 +16,7 @@ namespace SentIO.Globals
         public static SpriteFont ConsoleFont { get; set; }
 
         public static TextureSet FaceTexture { get; set; }
+        public static TextureSet DiceTexture { get; set; }
 
         public static Color TextColor1 { get; set; } = Color.White;
 
