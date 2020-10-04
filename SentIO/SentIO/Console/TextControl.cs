@@ -299,6 +299,7 @@ namespace SentIO.Console
                 if (Globals.Input.WasAnyKeyPressedThisFrame())
                 {
                     mode = Mode.Nothing;
+                    cursorY = -1;
                 }
                 SetOutput(textOutput);
                 SetInput(textInput);
