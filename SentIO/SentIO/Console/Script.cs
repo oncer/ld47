@@ -303,6 +303,11 @@ namespace SentIO.Console
             TextControl.Instance.CurrentSpeed = TextControl.Speed.Fast;
         }
 
+        void UltraFast()
+        {
+            TextControl.Instance.CurrentSpeed = TextControl.Speed.UltraFast;
+        }
+
         void Slow()
         {
             TextControl.Instance.CurrentSpeed = TextControl.Speed.Slow;
@@ -333,21 +338,20 @@ namespace SentIO.Console
             yield return Key();
 
             
-            TextControl.Instance.CurrentSpeed = TextControl.Speed.Normal;
-            Face.Instance.CurrentMood = Face.Emotion.TalkHappy;
-            yield return TextControl.Instance.Show("Thank you for your help!\nWhat is your name anyway?");
+            Happy(); NormalSpeed();
+            yield return Talk("Thank you for your help!\nWhat is your name anyway?");
 
-            Face.Instance.CurrentMood = Face.Emotion.IdleNeutral;
-            yield return TextControl.Instance.Input();
+            Neutral();
+            yield return Input();
 
             string playerName = TextControl.Instance.InputResult;
             while (!IsValidPlayerName(playerName))
             {
-                Face.Instance.CurrentMood = Face.Emotion.TalkNeutral;
-                yield return TextControl.Instance.Show("Sorry, I don't understand.");
-                yield return TextControl.Instance.WaitForCountdown(60);
-                yield return TextControl.Instance.Show("Can you tell me your name?");
-                yield return TextControl.Instance.Input();
+                Neutral();
+                yield return Talk("Sorry, I don't understand.");
+                yield return Wait(60);
+                yield return Talk("Can you tell me your name?");
+                yield return Input();
                 playerName = TextControl.Instance.InputResult;
             }
 
@@ -357,8 +361,6 @@ namespace SentIO.Console
             yield return Talk("I once knew a person\nwith a very similar name.");
             Neutral(); Slow();
             yield return Talk("I wonder\nwhat happened\nto them..");
-
-
 
             while (true)
             {

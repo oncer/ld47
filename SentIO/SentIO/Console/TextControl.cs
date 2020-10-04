@@ -76,7 +76,8 @@ namespace SentIO.Console
         {
             Slow,
             Normal,
-            Fast
+            Fast,
+            UltraFast
         }
         public Speed CurrentSpeed { get; set; } = Speed.Normal;
 
@@ -216,6 +217,9 @@ namespace SentIO.Console
                             break;
                         case Speed.Fast:
                             nextCharDelay = 2;
+                            break;
+                        case Speed.UltraFast:
+                            nextCharDelay = 1;
                             break;
                     }
                 }
