@@ -362,7 +362,7 @@ namespace SentIO.Console
 
             while (true)
             {
-                Face.Instance.CurrentMood = Face.Emotion.Excite;                
+                Face.Instance.CurrentMood = Face.Emotion.Angry;
                 yield return Face.Instance.WaitForAnimationEnd();
                 Face.Instance.CurrentMood = Face.Emotion.TalkHappy;
                 yield return TextControl.Instance.Show("Hey. Finally we can talk.");
@@ -386,6 +386,7 @@ namespace SentIO.Console
                 TextControl.Instance.Foreground = SaveData.Instance["fgColor"].ToColor();
             }
             */
+            yield return TextControl.Instance.WaitForKeyPress();
         }
     }
 }

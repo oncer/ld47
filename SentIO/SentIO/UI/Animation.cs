@@ -34,11 +34,11 @@ namespace SentIO.UI
 
         public bool IsDone { get; private set; }
 
-        public Animation(TextureSet frames, int minFrame, int maxFrame, double animationSpeed, bool loop)
+        public Animation(TextureSet frames, int minFrame, int frameCount, double animationSpeed, bool loop)
         {
             this.frames = frames;
             MinFrame = minFrame;
-            MaxFrame = maxFrame;
+            MaxFrame = minFrame + frameCount - 1;
             AnimationSpeed = animationSpeed;
             this.loop = loop;
 
