@@ -34,7 +34,8 @@ namespace SentIO.MiniGame
             New,
             Bounce,
             Finish,
-            Done
+            Done,
+            FadeOut
         }
 
         public DiceState State { get; private set; }
@@ -48,7 +49,8 @@ namespace SentIO.MiniGame
         private float yMax;
         
         public Vector2 Position { get; set; }
-        
+
+        float scale = 0;
         float alpha = 0f;
         float angle = 0;
         int bounced = 0;
@@ -66,6 +68,7 @@ namespace SentIO.MiniGame
 
         public void Roll()
         {
+            scale = 2;
             alpha = 0f;
             yMax = y;
             bounced = 4;
@@ -83,8 +86,10 @@ namespace SentIO.MiniGame
         void ChangeAngularSpeed()
         {
             var pow = Math.Max(bounced * 2f, 1);
-            angSpeed = Math.Sign(bounced % 2 == 0 ? 1 : -1) * (1.5 + RND.Get * pow);
+            angSpeed = Math.Sign(bounced % 2 == 0 ? -1 : 1) * (1.5 + RND.Get * pow);
         }
+
+        public void FadeOut() => State = DiceState.FadeOut;
 
         public void Update()
         {
@@ -101,7 +106,7 @@ namespace SentIO.MiniGame
                 yVel = Math.Min(yVel + yGrav, 999);
                 if (y + yVel > yMax)
                 {
-                    if (bounced > 0)
+                    if (bounced > 1)
                         value = (int)(RND.Get * 6);
 
                     yVel *= -.7f;
@@ -115,7 +120,7 @@ namespace SentIO.MiniGame
 
                     if (bounced == 0)
                     {
-                        yVel = 0;
+                        yVel = -2;
                         Position = new Vector2(x, yMax);
                         State = DiceState.Finish;
                     }
@@ -133,13 +138,13 @@ namespace SentIO.MiniGame
 
                 Position = new Vector2(x, y + yVel);
 
-                if (Math.Abs(y - yMax) > 80)
+                if (Math.Abs(y - yMax) > 128)
                 {
                     angSpeed *= .99f;
                     if ((Math.Abs(angle) % 90) - 10 < 4
                         || Math.Abs(angSpeed) < .05f)
                     {
-                        angle = 0;
+                        angle = Math.Abs(angle);
                         angSpeed = 0;                        
                         State = DiceState.Done;
                     }
@@ -154,14 +159,26 @@ namespace SentIO.MiniGame
 
             if (State == DiceState.Done)
             {
+                angle = .85f;
+                if (angle < 5)
+                    angle = 0;
                 //angle = 0;
+            }
+
+            if (State == DiceState.FadeOut)
+            {
+                scale = Math.Max(scale - .1f, 0);
+                if (scale == 0)
+                {
+                    State = DiceState.New;
+                }
             }
         }
 
         public void Draw(SpriteBatch sb)
         {
             if (alpha <= 0f) return;
-            sb.Draw(Texture, Position, null, new Color(1f, 1f, 1f, alpha), (float)Utils.DegToRad(angle), new Vector2(16, 16), new Vector2(2), SpriteEffects.None, 1);
+            sb.Draw(Texture, Position, null, new Color(1f, 1f, 1f, alpha), (float)Utils.DegToRad(angle), new Vector2(16, 16), new Vector2(scale), SpriteEffects.None, 1);
         }
     }
 }
