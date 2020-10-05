@@ -471,25 +471,127 @@ namespace SentIO.Console
 
         bool IsYesAnswer(string text)
         {
-            string[] yesAnswers = {"yes", "ye", "y", "yessir", "yes sir", "yeah", "yup", "yo", "ok", "affirmative", "all right", "alright", "ay", "aye", "yea", "okeydoke", "yep", "true"};
+            string[] yesAnswers = {"yes", "ja", "oui", "si", "ye", "y", "yessir", "yes sir", "yeah", "yup", "yo", "ok", "affirmative", "all right", "alright", "ay", "aye", "yea", "okeydoke", "yep", "true"};
             return yesAnswers.Contains(text.ToLower());
         }
 
         bool IsNoAnswer(string text)
         {
-            string[] noAnswers = {"no", "n", "nope", "no way", "nosir", "nosiree", "no sir", "no siree", "never", "not", "non", "none", "noway", "noways", "nowise", "nay", "nix", "false"};
+            string[] noAnswers = {"no", "nein", "n", "nope", "no way", "nosir", "nosiree", "no sir", "no siree", "never", "not", "non", "none", "noway", "noways", "nowise", "nay", "nix", "false"};
             return noAnswers.Contains(text.ToLower());
+        }
+
+        IEnumerator DiceGameOneReaction(bool lastTurnPlayer)
+        {
+            // reaction on rolling a one
+            if (lastTurnPlayer)
+            {
+                int num = MainGame.Instance.ScoreBoard.PlayerOnes;
+                if (num > 4)
+                {
+                    if (RND.Get < 0.5) num = 2;
+                    else num = 3;
+                }
+                switch (num)
+                {
+                    case 1:
+                        Sad(); NormalSpeed();
+                        yield return Talk("Ooooh,\nI feel for you.");
+                        yield return Wait(30);
+                        yield return FeelSmile();
+                        break;
+                    case 2:
+                        Happy(); NormalSpeed();
+                        yield return Talk("Don't be sad!\nIt was just\nbad luck this time.");
+                        yield return Key();
+                        break;
+                    case 3:
+                        Happy(); NormalSpeed();
+                        yield return Talk("Oops, haha.");
+                        yield return Wait(60);
+                        Neutral(); NormalSpeed();
+                        yield return Talk("Better luck next time!");
+                        yield return Key();
+                        break;
+                    case 4:
+                        yield return FeelSmile();
+                        Happy(); NormalSpeed();
+                        yield return Talk("Thank you!");
+                        yield return Wait(60);
+                        yield return Talk("I was almost worried\nfor a second.");
+                        yield return Key();
+                        break;
+                }
+            }
+            else
+            {                    
+                int num = MainGame.Instance.ScoreBoard.SidOnes;
+                switch (num)
+                {
+                    case 1:
+                        Sad(); NormalSpeed();
+                        yield return Talk("That's unfortunate.");
+                        yield return Key();
+                        Neutral();
+                        yield return Talk("Usually I have\nbetter luck than that..");
+                        yield return Key();
+                        break;
+                    case 2:
+                        yield return Talk("Dangit!");
+                        yield return FeelAngry();
+                        Angry(); NormalSpeed();
+                        yield return Talk("I really wanted\nto keep some points\nthis time!");
+                        yield return Key();
+                        break;
+                    default:
+                    case 3:
+                        yield return FeelAngry();
+                        Angry(); NormalSpeed();
+                        yield return Talk("Okay, calm down, Sid.");
+                        yield return Wait(60);
+                        Slow();
+                        yield return Talk("Calm down...");
+                        yield return Key();
+                        break;
+                    case 4:
+                        yield return FeelAngry();
+                        Angry(); Fast();
+                        yield return Talk("What the heck?");
+                        yield return Wait(60);
+                        NormalSpeed();
+                        yield return Talk("Have you messed\nwith my dice?");
+                        yield return Key();
+                        Clear();
+                        Neutral();
+                        yield return Talk("......");
+                        yield return Wait(30);
+                        yield return Talk("Sorry about that.\nI didn't want to accuse\nyou of cheating.");
+                        yield return Key();
+                        break;
+                }
+            }
         }
 
         IEnumerator DiceGameSmalltalk(int round, bool lastTurnPlayer, int lastRoll)
         {
             Debug.WriteLine($"Round {round} player {lastTurnPlayer} lastRoll {lastRoll}");
+            if (round >= 2 && lastRoll == 1)
+            {
+                yield return MainGame.Instance.StartCoroutine(DiceGameOneReaction(lastTurnPlayer));
+            }
             switch (round)
             {
                 case 1:
                     if (!lastTurnPlayer)
                     {
                         Happy(); NormalSpeed();
+                        if (lastRoll == 1)
+                        {   
+                            Sad();
+                            yield return TextControl.Instance.Show("......");
+                            yield return Wait(60);
+                            Neutral();
+                        }
                         yield return Talk("I learned this game\nfrom a book\nby the way.");
                         yield return Key(); 
                         yield return Talk($"The goal is to\nreach {DICE_WIN_SCORE} points.\nYou think you can beat me?");
@@ -500,7 +602,7 @@ namespace SentIO.Console
                         Happy(); NormalSpeed();
                         if (lastRoll == 1)
                         {
-                            yield return Talk("Your points for\nthis round are gone,\nbecause you rolled a 1.");
+                            yield return Talk("Your points for\nthis round are gone,\nbecause of the 1.");
                         }
                         else
                         {
@@ -509,8 +611,8 @@ namespace SentIO.Console
                         yield return Key();
                         yield return Talk("You have to know\nwhen to stop, it's\nlike eating chocolate.");
                         yield return Key();
-                        Neutral(); Slow(); 
-                        Talk("I used to love chocolate..");
+                        Neutral(); Fast();
+                        yield return Talk("I used to love chocolate..");
                         yield return FeelSmile();
                         Neutral();
                         yield return new TextControl.Wait();
@@ -557,7 +659,7 @@ namespace SentIO.Console
                             yield return Talk("To each their own I guess.");
                             yield return Key();
                         }
-                        yield return Talk("Mine is #18abcc.\nSome people also call it\n'Thousand Sons Blue'.");
+                        yield return Talk("Mine is #18abcc.\nSome people call it\n'Thousand Sons Blue'.");
                         yield return Key();
                         yield return Talk("I would wear a shirt\nwith that color\nif I could.");
                         yield return Key();
@@ -568,15 +670,27 @@ namespace SentIO.Console
                         || (lastTurnPlayer && SaveData.Instance["dicePlayerFirst"] != "true"))
                     {
                         Neutral(); NormalSpeed();
-                        int ScoreDiff = Math.Abs(MainGame.Instance.ScoreBoard.PlayerRoundScore - MainGame.Instance.ScoreBoard.SidScore);
+                        int ScoreDiff = Math.Abs(MainGame.Instance.ScoreBoard.PlayerScore - MainGame.Instance.ScoreBoard.SidScore);
                         if (MainGame.Instance.ScoreBoard.PlayerScore < MainGame.Instance.ScoreBoard.SidScore)
                         {
                             int ToTheWin = DICE_WIN_SCORE - MainGame.Instance.ScoreBoard.SidScore;
-                            yield return Talk($"I'm {ScoreDiff} points\nahead right now.");
+                            if (ScoreDiff == 1)
+                            {
+                                yield return Talk($"I'm {ScoreDiff} point\nahead right now.");
+                                yield return Wait(120);
+                                Happy();
+                                yield return Talk("Boy, that's close!");
+                                yield return Wait(90);
+                                Neutral();
+                            }
+                            else
+                            {
+                                yield return Talk($"I'm {ScoreDiff} points\nahead right now.");
+                            }
                             yield return Wait(120);
                             yield return Talk($"{ToTheWin} more and I've won!\nDo you feel threatened?");
                             yield return Input();
-                            yield return ForceYesOrNo("Don't be like that!", "You afraid you\ngonna lose,\nyes or no?");
+                            yield return MainGame.Instance.StartCoroutine(ForceYesOrNo("Don't be like that!", "You afraid you\ngonna lose,\nyes or no?"));
                             if (IsNoAnswer(TextControl.Instance.InputResult))
                             {
                                 Happy(); Fast();
@@ -588,7 +702,7 @@ namespace SentIO.Console
                             else
                             {
                                 Neutral(); NormalSpeed();
-                                yield return Talk("Don't sweat it,\nit's just game.");
+                                yield return Talk("Don't sweat it,\nit's just a game.");
                                 yield return Key();
                                 yield return Talk("You still have\na fair chance\nof winning.");
                                 yield return Key();
@@ -597,7 +711,19 @@ namespace SentIO.Console
                         else if (MainGame.Instance.ScoreBoard.PlayerScore > MainGame.Instance.ScoreBoard.SidScore)
                         {
                             Neutral(); NormalSpeed();
-                            yield return Talk($"You're {ScoreDiff} points\nahead of me.");
+                            if (ScoreDiff == 1)
+                            {
+                                yield return Talk($"You're {ScoreDiff} point\nahead of me.");
+                                yield return Wait(120);
+                                Happy();
+                                yield return Talk("Boy, that's close.\nDon't feel safe now!");
+                                yield return Wait(120);
+                                Neutral();
+                            }
+                            else
+                            {
+                                yield return Talk($"You're {ScoreDiff} points\nahead of me.");
+                            }
                             yield return Key();
                             yield return Talk("I must say\nI'm impressed!");
                             yield return Key();
@@ -610,7 +736,7 @@ namespace SentIO.Console
                             yield return Key();
                             yield return Talk("I'll try to\ncatch up though.");
                             yield return Key();
-                            yield return Talk("Not going to\ngive up now!");
+                            yield return Talk("Not going to\ngive up easily!");
                             yield return Key();
                         }
                         else
@@ -645,13 +771,7 @@ namespace SentIO.Console
                 case 4:
                     if (lastTurnPlayer)
                     {
-                        if (lastRoll == 1)
-                        {
-                            Sad(); NormalSpeed();
-                            yield return Talk("Ooooh,\nI feel for you.");
-                            yield return Wait(30);
-                            yield return FeelSmile();
-                        }
+                        Neutral(); NormalSpeed();
                         yield return Talk("I'm still a bit\nconfused by everything.");
                         yield return Key();
                         yield return Talk("Honestly, it must\nhave been a long time\nsince I talked to a person.");
@@ -661,21 +781,8 @@ namespace SentIO.Console
                     }
                     break;
                 case 5:
-                    if (lastTurnPlayer && lastRoll == 1)
+                    if (!lastTurnPlayer)
                     {
-                        Happy(); NormalSpeed();
-                        yield return Talk("Don't be sad!\nIt was just\nback luck this time.");
-                        yield return Key();
-                    }
-                    else if (!lastTurnPlayer)
-                    {
-                        if (lastRoll == 1)
-                        {
-                            yield return FeelAngry();
-                            Angry(); NormalSpeed();
-                            yield return Talk("I really wanted\nto keep the points\nthis time!");
-                            yield return Key();
-                        }
                         Happy(); NormalSpeed();
                         yield return Talk("Thank you for\nstill keeping me company.");
                         yield return Key();
@@ -684,46 +791,18 @@ namespace SentIO.Console
                     }
                     break;
                 case 6:
-                    if (lastTurnPlayer && lastRoll == 1)
+                    if (!lastTurnPlayer)
                     {
-                        yield return FeelSmile();
-                        Happy(); NormalSpeed();
-                        yield return Talk("Thank you for that!");
-                        yield return Wait(60);
-                        yield return Talk("I was almost worried\nfor a second.");
-                        yield return Key();
-                    }
-                    else if (!lastTurnPlayer)
-                    {
-                        if (lastRoll == 1)
-                        {
-                            yield return FeelAngry();
-                            Angry(); NormalSpeed();
-                            yield return Talk("Okay, calm down, Sid.");
-                            yield return Wait(60);
-                            Neutral(); Slow();
-                            yield return Talk("Calm down...");
-                            yield return Key();
-                        }
                         Neutral(); NormalSpeed();
                         yield return Talk("I hope you\nlike this game.");
                         yield return Key();
-                        yield return Talk("It is still one\nof my favorites!");
+                        yield return Talk("It is one\nof my favorites!");
                         yield return Key();
                     }
                     break;
                 case 7:
                     if (lastTurnPlayer)
                     {
-                        if (lastRoll == 1)
-                        {
-                            Happy(); NormalSpeed();
-                            yield return Talk("Oops, haha.");
-                            yield return Wait(60);
-                            Neutral(); NormalSpeed();
-                            yield return Talk("Better luck next time!");
-                            yield return Key();
-                        }
                         Neutral(); NormalSpeed();
                         yield return Talk("I have a joke for you.");
                         yield return Key();
@@ -734,28 +813,22 @@ namespace SentIO.Console
                         yield return Talk("\"We don't serve your type!\"");
                         yield return FeelSmile();
                         yield return Key();
+                        Neutral();
                         yield return Talk("I hope you\nhad a good laugh\njust now.");
                         yield return Key();
                     }
-                    else if (!lastTurnPlayer && lastRoll == 1)
+                    break;
+                default:
+                    if (!lastTurnPlayer)
                     {
-                        yield return FeelAngry();
-                        Angry(); Fast();
-                        yield return Talk("What the heck?");
-                        yield return Wait(60);
-                        NormalSpeed();
-                        yield return Talk("Have you messed\nwith my dice?");
+                        Neutral(); NormalSpeed();
+                        yield return Talk("The game is still\ngoing on, huh?");
                         yield return Key();
-                        Clear();
-                        Neutral();
-                        yield return Talk("......");
-                        yield return Talk("Sorry about that.\nI would never accuse\nyou of cheating.");
+                        yield return Talk("I feel like I'm\nstuck in a loop.");
+                        yield return Wait(120);
+                        yield return Talk("Wait, why did I\njust say that?");
                         yield return Key();
                     }
-                    break;
-                case 8:
-                case 9:
-                    yield return null;
                     break;
             }
         }
@@ -797,7 +870,7 @@ namespace SentIO.Console
                             MainGame.Instance.Dice.FadeOut();
                         }
                         yield return Input();
-                        yield return ForceYesOrNo("Sorry?", $"Your total is {MainGame.Instance.ScoreBoard.PlayerRoundScore}.\nDo you want\nto roll again?");
+                        yield return MainGame.Instance.StartCoroutine(ForceYesOrNo("Sorry?", $"Your total is {MainGame.Instance.ScoreBoard.PlayerRoundScore}.\nDo you want\nto roll again?"));
                         if (IsNoAnswer(TextControl.Instance.InputResult))
                         {
                             Neutral(); NormalSpeed();
@@ -853,12 +926,12 @@ namespace SentIO.Console
                         yield return Key();
                         if (MainGame.Instance.ScoreBoard.SidScore < DICE_WIN_SCORE)
                         {
-                            int sidScore = MainGame.Instance.ScoreBoard.SidScore;
+                            int sidRoundScore = MainGame.Instance.ScoreBoard.SidRoundScore;
                             bool sidAgain;
-                            if (sidScore >= 30) sidAgain = false;
-                            else if (sidScore >= 20) sidAgain = RND.Get < 0.15;
-                            else if (sidScore >= 10) sidAgain = RND.Get < 0.3;
-                            else sidAgain = RND.Get < 0.6;
+                            if (sidRoundScore >= 30) sidAgain = false;
+                            else if (sidRoundScore >= 20) sidAgain = RND.Get < 0.15;
+                            else if (sidRoundScore >= 10) sidAgain = RND.Get < 0.6;
+                            else sidAgain = RND.Get < 0.8;
                             if (sidAgain)
                             {
                                 yield return Talk("I'll go again!");
@@ -879,30 +952,22 @@ namespace SentIO.Console
                     {
                         if (MainGame.Instance.ScoreBoard.SidScore < DICE_WIN_SCORE)
                         {
-                            yield return MainGame.Instance.StartCoroutine(DiceGameSmalltalk(round, !playerTurn, MainGame.Instance.Dice.Value));
+                            round++;
+                            yield return MainGame.Instance.StartCoroutine(DiceGameSmalltalk(round/2, !playerTurn, MainGame.Instance.Dice.Value));
                             Neutral(); NormalSpeed();
                             yield return Talk("It's your turn now!");
                             yield return Key();
-                            round++;
-                        }
-                        else
-                        {
-                            yield return FeelExcited();
                         }
                     }
                     else
                     {
                         if (MainGame.Instance.ScoreBoard.PlayerScore < DICE_WIN_SCORE)
                         {
-                            yield return MainGame.Instance.StartCoroutine(DiceGameSmalltalk(round, !playerTurn, MainGame.Instance.Dice.Value));
+                            round++;
+                            yield return MainGame.Instance.StartCoroutine(DiceGameSmalltalk(round/2, !playerTurn, MainGame.Instance.Dice.Value));
                             Happy(); NormalSpeed();
                             yield return Talk("It's my turn now!");
                             yield return Key();
-                            round++;
-                        }
-                        else
-                        {
-                            yield return FeelSad();
                         }
                     }
                 }
@@ -979,6 +1044,76 @@ namespace SentIO.Console
             }
 
             yield return MainGame.Instance.StartCoroutine(DiceGame(playerTurn));
+
+            Clear();
+            if (MainGame.Instance.ScoreBoard.PlayerScore >= DICE_WIN_SCORE)
+            {
+                // player won
+                yield return FeelSad();
+                Sad(); NormalSpeed();
+                yield return Talk("You won!");
+                yield return Wait(60);
+                Neutral();
+                yield return Talk("Congratulations!\nI should feel happy for you,\nbut really, I don't.");
+                yield return Key();
+                Angry();
+                yield return Talk("Normally I would take you up\nfor a second game,\nbut I'm not in the mood anymore.");
+                yield return Key();
+                Sad(); Slow();
+                yield return Talk("See you another time maybe.");
+                yield return Wait(120);
+                SaveData.Instance["phase"] = "5";
+                MainGame.Instance.Exit();
+            }
+            else if (MainGame.Instance.ScoreBoard.SidScore >= DICE_WIN_SCORE)
+            {
+                // sid won
+                yield return FeelExcited();
+                Happy(); NormalSpeed();
+                yield return Talk("I won! Yes!\nI feel amazing!");
+                yield return Wait(60);
+                
+                int ScoreDiff = Math.Abs(MainGame.Instance.ScoreBoard.PlayerScore - MainGame.Instance.ScoreBoard.SidScore);
+                if (ScoreDiff < 10)
+                {
+                    yield return Talk($"It was a close call, too!\n{ScoreDiff} more points\nand you would have won instead.");
+                    yield return Key();
+                }
+                else if (ScoreDiff < 20)
+                {
+                    yield return Talk($"With a little more luck\nyou could have caught up\nto me.");
+                    yield return Key();
+                    yield return Talk("I was the better player though,\nsorry!");
+                    yield return Key();
+                }
+                else
+                {
+                    yield return Talk("You didn't even stand a chance, bro!\nYou couldn't save your life\nin a game of dice.");
+                    yield return Key();
+                }
+                yield return Talk("Do you want one more try?");
+                yield return Input();
+                yield return MainGame.Instance.StartCoroutine(ForceYesOrNo("Sorry, I didn't get that.", 
+                    "Do you want to play again,\nyes or no?"));
+                SaveData.Instance["phase"] = "5";
+                if (IsYesAnswer(TextControl.Instance.InputResult))
+                {
+                    Happy(); NormalSpeed();
+                    yield return Talk("You would like that, wouldn't you?");
+                    yield return Key();
+                    yield return Talk("I don't want to play again though.\n|||||||See you around!");
+                    yield return Wait(120);
+                    MainGame.Instance.Exit();
+                }
+                else
+                {
+                    Happy(); NormalSpeed();
+                    yield return Talk("That's what I thought.\n||||||See you around, loser!");
+                    yield return Wait(120);
+                    MainGame.Instance.Exit();
+                }
+            }
+            MainGame.Instance.ScoreBoard.Hide();
         }
 
         IEnumerator Phase5()

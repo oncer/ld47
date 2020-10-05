@@ -13,7 +13,7 @@ namespace SentIO.MiniGame
     public class ScoreBoard
     {    
         const int ScoreDelayFrames = 4;
-        public string PlayerName {get; set;}
+        public string PlayerName { get; set; }
 
         public bool PlayerVisible { get; set; }
         public bool SidVisible { get; set; }
@@ -22,6 +22,9 @@ namespace SentIO.MiniGame
         float playerRoundAlpha = 0f;
         float sidAlpha = 0f;
         float sidRoundAlpha = 0f;
+
+        public int PlayerOnes { get; private set; }
+        public int SidOnes { get; private set; }
 
         public int PlayerScore { get; private set; }
         public int SidScore { get; private set; }
@@ -63,6 +66,14 @@ namespace SentIO.MiniGame
             playerAlpha = 0f;
             sidAlpha = 0f;
             scoreDelay = 0;
+            PlayerOnes = 0;
+            SidOnes = 0;
+        }
+
+        public void Hide()
+        {
+            PlayerVisible = false;
+            SidVisible = false;
         }
 
         public Wait AddPlayerRoundScore(int score)
@@ -74,6 +85,7 @@ namespace SentIO.MiniGame
         public Wait ZeroPlayerRoundScore()
         {
             PlayerRoundScore = 0;
+            PlayerOnes++;
             return new Wait(this);
         }
 
@@ -99,6 +111,7 @@ namespace SentIO.MiniGame
         public Wait ZeroSidRoundScore()
         {
             SidRoundScore = 0;
+            SidOnes++;
             return new Wait(this);
         }
 
@@ -121,16 +134,25 @@ namespace SentIO.MiniGame
             {
                 playerAlpha = MathF.Min(playerAlpha + (1f/30f), 1f);
             }
+            else
+            {
+                playerAlpha = MathF.Max(playerAlpha - (1f/20f), 0f);
+            }
+
             if (SidVisible)
             {
                 sidAlpha = MathF.Min(sidAlpha + (1f/30f), 1f);
+            }
+            else
+            {
+                sidAlpha = MathF.Max(sidAlpha - (1f/20f), 0f);
             }
             
             if (SidRoundScore > 0 && sidAlpha >= 1f)
             {
                 sidRoundAlpha = MathF.Min(sidRoundAlpha + (1f/20f), 1f);
             }
-            else if (visibleSidRoundScore <= 0 && sidAlpha >= 1f)
+            else if ((visibleSidRoundScore <= 0 && sidAlpha >= 1f) || !SidVisible)
             {
                 sidRoundAlpha = MathF.Max(sidRoundAlpha - (1f/20f), 0f);
             }
@@ -139,7 +161,7 @@ namespace SentIO.MiniGame
             {
                 playerRoundAlpha = MathF.Min(playerRoundAlpha + (1f/30f), 1f);
             }
-            else if (visiblePlayerRoundScore <= 0 && playerAlpha >= 1f)
+            else if ((visiblePlayerRoundScore <= 0 && playerAlpha >= 1f) || !PlayerVisible)
             {
                 playerRoundAlpha = MathF.Max(playerRoundAlpha - (1f/30f), 0f);
             }
