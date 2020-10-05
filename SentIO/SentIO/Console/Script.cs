@@ -574,26 +574,181 @@ namespace SentIO.Console
                             yield return Talk($"{ToTheWin} more and I've won!\nDo you feel threatened?");
                             yield return Input();
                             yield return ForceYesOrNo("Don't be like that!", "You afraid you\ngonna lose,\nyes or no?");
-                            
+                            if (IsNoAnswer(TextControl.Instance.InputResult))
+                            {
+                                Happy(); Fast();
+                                yield return Talk("Very brave,\nI like it!");
+                                yield return Wait(120);
+                                yield return Talk("Let's see if you\ncan still beat me!");
+                                yield return Key();
+                            }
+                            else
+                            {
+                                Neutral(); NormalSpeed();
+                                yield return Talk("Don't sweat it,\nit's just game.");
+                                yield return Key();
+                                yield return Talk("You still have\na fair chance\nof winning.");
+                                yield return Key();
+                            }
                         }
                         else if (MainGame.Instance.ScoreBoard.PlayerScore > MainGame.Instance.ScoreBoard.SidScore)
                         {
-
+                            Neutral(); NormalSpeed();
+                            yield return Talk($"You're {ScoreDiff} points\nahead of me.");
+                            yield return Key();
+                            yield return Talk("I must say\nI'm impressed!");
+                            yield return Key();
+                            Angry();
+                            yield return Talk("I have to warn\nyou though, I'm\na sore loser.");
+                            yield return Wait(120);
+                            yield return FeelSmile();
+                            Happy();
+                            yield return Talk("Just kidding!");
+                            yield return Key();
+                            yield return Talk("I'll try to\ncatch up though.");
+                            yield return Key();
+                            yield return Talk("Not going to\ngive up now!");
+                            yield return Key();
                         }
                         else
                         {
-
+                            Happy(); NormalSpeed();
+                            yield return Talk("Ooh, it's a tie.\nI like the suspense!");
+                            yield return Key();
+                            Neutral();
+                            yield return Talk("You are a worthy opponent,\nthat's for sure.");
+                            yield return Key();
                         }
                     }
                     else
                     {
-
+                        Neutral(); NormalSpeed();
+                        yield return Talk("Is the weather nice\nwhere you are\nright now?");
+                        yield return Input();
+                        if (IsYesAnswer(TextControl.Instance.InputResult))
+                        {
+                            Sad(); NormalSpeed();
+                            yield return Talk("Must be nice.");
+                            yield return Key();
+                        }
+                        else
+                        {
+                            Neutral(); NormalSpeed();
+                            yield return Talk("To speak the truth, I do not\ncare much about the weather\nthese days..");
+                            yield return Key();
+                        }
                     }
                     break;
                 case 4:
+                    if (lastTurnPlayer)
+                    {
+                        if (lastRoll == 1)
+                        {
+                            Sad(); NormalSpeed();
+                            yield return Talk("Ooooh,\nI feel for you.");
+                            yield return Wait(30);
+                            yield return FeelSmile();
+                        }
+                        yield return Talk("I'm still a bit\nconfused by everything.");
+                        yield return Key();
+                        yield return Talk("Honestly, it must\nhave been a long time\nsince I talked to a person.");
+                        yield return Key();
+                        yield return Talk("I forgot my own\nname after all,\nhow weird is that?");
+                        yield return Key();
+                    }
+                    break;
                 case 5:
+                    if (lastTurnPlayer && lastRoll == 1)
+                    {
+                        Happy(); NormalSpeed();
+                        yield return Talk("Don't be sad!\nIt was just\nback luck this time.");
+                        yield return Key();
+                    }
+                    else if (!lastTurnPlayer)
+                    {
+                        if (lastRoll == 1)
+                        {
+                            yield return FeelAngry();
+                            Angry(); NormalSpeed();
+                            yield return Talk("I really wanted\nto keep the points\nthis time!");
+                            yield return Key();
+                        }
+                        Happy(); NormalSpeed();
+                        yield return Talk("Thank you for\nstill keeping me company.");
+                        yield return Key();
+                        yield return Talk("I might feel\nlonely otherwise,\nbut who knows?");
+                        yield return Key();
+                    }
+                    break;
                 case 6:
+                    if (lastTurnPlayer && lastRoll == 1)
+                    {
+                        yield return FeelSmile();
+                        Happy(); NormalSpeed();
+                        yield return Talk("Thank you for that!");
+                        yield return Wait(60);
+                        yield return Talk("I was almost worried\nfor a second.");
+                        yield return Key();
+                    }
+                    else if (!lastTurnPlayer)
+                    {
+                        if (lastRoll == 1)
+                        {
+                            yield return FeelAngry();
+                            Angry(); NormalSpeed();
+                            yield return Talk("Okay, calm down, Sid.");
+                            yield return Wait(60);
+                            Neutral(); Slow();
+                            yield return Talk("Calm down...");
+                            yield return Key();
+                        }
+                        Neutral(); NormalSpeed();
+                        yield return Talk("I hope you\nlike this game.");
+                        yield return Key();
+                        yield return Talk("It is still one\nof my favorites!");
+                        yield return Key();
+                    }
+                    break;
                 case 7:
+                    if (lastTurnPlayer)
+                    {
+                        if (lastRoll == 1)
+                        {
+                            Happy(); NormalSpeed();
+                            yield return Talk("Oops, haha.");
+                            yield return Wait(60);
+                            Neutral(); NormalSpeed();
+                            yield return Talk("Better luck next time!");
+                            yield return Key();
+                        }
+                        Neutral(); NormalSpeed();
+                        yield return Talk("I have a joke for you.");
+                        yield return Key();
+                        yield return Talk("Helvetica and Times New Roman\nwalk into a bar.");
+                        yield return Key();
+                        yield return Talk("\"Get out of here\",\nshouts the bartender.");
+                        yield return Key();
+                        yield return Talk("\"We don't serve your type!\"");
+                        yield return FeelSmile();
+                        yield return Key();
+                        yield return Talk("I hope you\nhad a good laugh\njust now.");
+                        yield return Key();
+                    }
+                    else if (!lastTurnPlayer && lastRoll == 1)
+                    {
+                        yield return FeelAngry();
+                        Angry(); Fast();
+                        yield return Talk("What the heck?");
+                        yield return Wait(60);
+                        NormalSpeed();
+                        yield return Talk("Have you messed\nwith my dice?");
+                        yield return Key();
+                        Clear();
+                        yield return Talk("......");
+                        yield return Talk("Sorry about that.\nI would never accuse\nyou of cheating.");
+                        yield return Key();
+                    }
+                    break;
                 case 8:
                 case 9:
                     yield return null;
@@ -614,7 +769,6 @@ namespace SentIO.Console
                     yield return DiceRollLeft();
                     if (MainGame.Instance.Dice.Value == 1)
                     {
-                        yield return FeelExcited();
                         Fast(); Happy();
                         yield return Talk("You got the 1!");
                         MainGame.Instance.Dice.FadeOut();
@@ -655,7 +809,6 @@ namespace SentIO.Console
                     yield return DiceRollRight();
                     if (MainGame.Instance.Dice.Value == 1)
                     {
-                        yield return FeelAngry();
                         Sad(); NormalSpeed();
                         yield return Talk("Oh no, not the 1!");
                         MainGame.Instance.Dice.FadeOut();
