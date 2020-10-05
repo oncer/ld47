@@ -1115,7 +1115,8 @@ namespace SentIO.Console
                 MainGame.Instance.Exit();
             }
 
-            TextControl.Instance.Background = Resources.BGColor3;
+            TextControl.Instance.Background = Resources.BGColor2;
+            MainGame.Instance.StartBackgroundColorTransition(Resources.BGColor3);
 
             yield return FeelExcited();            
             Happy();
@@ -1171,11 +1172,13 @@ namespace SentIO.Console
         IEnumerator Phase9()
         {
             TextControl.Instance.Foreground = Resources.TextColor1;
-            TextControl.Instance.Background = Resources.BGColor1;
-            Neutral(); NormalSpeed();
+            TextControl.Instance.Background = Resources.BGColor3;
+            MainGame.Instance.StartBackgroundColorTransition(Resources.BGColor1);
+            Neutral(); UltraSlow();
 
             yield return TextControl.Instance.Show("....");
             yield return Wait(120);
+            NormalSpeed();
             yield return Talk("Hey. There's something that\nI need you to do for me.");
             yield return Key();
 

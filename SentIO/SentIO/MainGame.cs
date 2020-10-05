@@ -188,11 +188,39 @@ namespace SentIO
             base.Update(gameTime);
         }
 
+        bool colorTransitionActive;
+        Color currentColor;
+        Color targetColor;
+        public void StartBackgroundColorTransition(Color targetColor)
+        {
+            this.currentColor = TextControl.Instance.Background;
+            this.targetColor = targetColor;
+            colorTransitionActive = true;
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             // prepare
 
-            GraphicsDevice.Clear(TextControl.Instance.Background);
+            if (!colorTransitionActive)
+                GraphicsDevice.Clear(TextControl.Instance.Background);
+            else
+            {
+                var f = 40f;
+
+                var r = (float)(targetColor.R - currentColor.R) / f;
+                var g = (float)(targetColor.G - currentColor.G) / f;
+                var b = (float)(targetColor.B - currentColor.B) / f;
+
+                currentColor = new Color((byte)(currentColor.R + r), (byte)(currentColor.G + g), (byte)(currentColor.B + b));
+                GraphicsDevice.Clear(currentColor);
+                
+                if (currentColor == targetColor)
+                {
+                    colorTransitionActive = false;
+                    TextControl.Instance.Background = targetColor;
+                }
+            }
 
             Camera.Instance.ResolutionRenderer.SetupDraw();
 
