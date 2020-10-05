@@ -15,13 +15,33 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.get('/player', function(req, res, next) {
+router.get('/player/:mac', function(req, res, next) {
   var ip = getClientAddress(req);
-  db.getPlayer(ip).then((row) => {
-    res.json(row);
+  db.getPlayer(ip, req.params.mac).then((row) => {
+    if (row == undefined)
+    {
+      res.json({
+        finished: false
+      })
+    }
+    else
+    {
+      res.json(row);
+    }
   }).catch((err) =>{
     console.log(err);
     res.json({error: err.toString()});
+  });
+});
+
+router.post('/playerFinished', function(req, res, next) {
+  var ip = getClientAddress(req);
+  db.insertPlayer(ip, req.body.macAddr, req.body.message, req.body.secondsPlayed, req.body.playerName, req.body.playerFavoriteColor, 1)
+  .then((value) => {
+    res.send("Success!");
+  })
+  .catch((err) => {
+    res.send("Error: " + err.toString());
   });
 });
 

@@ -56,22 +56,29 @@ class AppDAO
 }
 
 var db = new AppDAO("db.sqlite3");
-db.run("CREATE TABLE IF NOT EXISTS players (ip TEXT, mac TEXT, finished INTEGER, PRIMARY KEY(ip))").then((result) => {
+db.run(`CREATE TABLE IF NOT EXISTS players (
+    ip TEXT, 
+    mac TEXT, 
+    message TEXT, 
+    secondsPlayed INTEGER, 
+    name TEXT, 
+    color TEXT, 
+    finished INTEGER,
+    timestamp TEXT
+    )`).then((result) => {
     console.log("Tables set up");
     console.log(result);
 });
 
 var getPlayer = (ip, mac) => {
-    return db.get("SELECT ip, mac, finished FROM players WHERE ip=?", [ip]).then((row) => {
-        if (row == undefined) {
-            return db.run("INSERT INTO players (ip, mac, finished) VALUES (?, ?, ?)", [ip, mac, 0]).then((result) => {
-                return db.get("SELECT ip, mac, finished FROM players WHERE ip=?", [ip]);
-            });
-        }
-        return row;
-    });
+    return db.get("SELECT name, finished, timestamp FROM players WHERE ip=? AND mac=? ORDER BY ts DESC", [ip, mac]);
 };
 
-module.exports = {getPlayer};
+var insertPlayer = (ip, mac, message, secondsPlayed, name, color, finished) => {
+    return db.run("INSERT INTO players (ip, mac, message, secondsPlayed, name, color, finished, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))",
+        [ip, mac, message, secondsPlayed, name, color, finished]);
+};
+
+module.exports = {getPlayer, insertPlayer};
  
 
