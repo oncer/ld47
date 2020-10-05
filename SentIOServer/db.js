@@ -56,16 +56,16 @@ class AppDAO
 }
 
 var db = new AppDAO("db.sqlite3");
-db.run("CREATE TABLE IF NOT EXISTS players (ip TEXT, finished INTEGER, PRIMARY KEY(ip))").then((result) => {
+db.run("CREATE TABLE IF NOT EXISTS players (ip TEXT, mac TEXT, finished INTEGER, PRIMARY KEY(ip))").then((result) => {
     console.log("Tables set up");
     console.log(result);
 });
 
-var getPlayer = (ip) => {
-    return db.get("SELECT ip, finished FROM players WHERE ip=?", [ip]).then((row) => {
+var getPlayer = (ip, mac) => {
+    return db.get("SELECT ip, mac, finished FROM players WHERE ip=?", [ip]).then((row) => {
         if (row == undefined) {
-            return db.run("INSERT INTO players (ip, finished) VALUES (?, ?)", [ip, 0]).then((result) => {
-                return db.get("SELECT ip, finished FROM players WHERE ip=?", [ip]);
+            return db.run("INSERT INTO players (ip, mac, finished) VALUES (?, ?, ?)", [ip, mac, 0]).then((result) => {
+                return db.get("SELECT ip, mac, finished FROM players WHERE ip=?", [ip]);
             });
         }
         return row;

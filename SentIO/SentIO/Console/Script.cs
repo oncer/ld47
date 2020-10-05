@@ -177,11 +177,6 @@ namespace SentIO.Console
         {
             Face.Instance.CurrentMood = Face.Emotion.IdleAngry;
         }
-        
-        void Smile()
-        {
-            Face.Instance.CurrentMood = Face.Emotion.Smile;
-        }
 
         void Sad()
         {
@@ -191,6 +186,11 @@ namespace SentIO.Console
         ICoroutineYield FeelExcited()
         {
             Face.Instance.CurrentMood = Face.Emotion.FeelExcited;
+            return Face.Instance.WaitForAnimationEnd();
+        }
+        ICoroutineYield FeelSmile()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.FeelSmile;
             return Face.Instance.WaitForAnimationEnd();
         }
 
@@ -489,8 +489,8 @@ namespace SentIO.Console
                     if (!lastTurnPlayer)
                     {
                         Happy(); NormalSpeed();
-                        yield return Talk("A guy named John\nonce showed me this game.");
-                        yield return Key();
+                        yield return Talk("I learned this game\nfrom a book\nby the way.");
+                        yield return Key(); 
                         yield return Talk($"The goal is to\nreach {DICE_WIN_SCORE} points.\nYou think you can beat me?");
                         yield return Key();
                     }
@@ -510,14 +510,86 @@ namespace SentIO.Console
                         yield return Key();
                         Neutral(); Slow(); 
                         yield return Talk("I used to love chocolate..");
-                        yield return FeelSad();
+                        yield return FeelSmile();
                         yield return Key();
                     }
                     break;
                 case 2:
-                    
+                    if (!lastTurnPlayer)
+                    {
+                        Neutral(); NormalSpeed();
+                        yield return Talk("Have you played a lot\nof dice games before?");
+                        yield return Input();
+                        if (IsNoAnswer(TextControl.Instance.InputResult))
+                        {
+                            yield return Talk("Well, I'll try\nto go easy on you.\nNo promises though!");
+                        }
+                        else
+                        {
+                            Happy();
+                            yield return Talk("I love dice games!\nI'm happy we can play\nthis together.");
+                        }
+                        Neutral();
+                        yield return Key();
+                    }
+                    else
+                    {
+                        Neutral(); NormalSpeed();
+                        yield return Talk("Hey, what's your\nfavorite color?");
+                        yield return Input();
+                        string c = TextControl.Instance.InputResult;
+                        SaveData.Instance["playerFavoriteColor"] = c;
+                        c = c.ToLower();
+                        if (c.Contains("cyan") || c.Contains("turqoise") || c.Contains("teal") || c.Contains("blue") || c.Contains("green"))
+                        {
+                            SaveData.Instance["colorBros"] = "1";
+                            yield return FeelSmile();
+                            Happy(); NormalSpeed();
+                            yield return Talk("That's pretty close!");
+                            yield return Wait(90);
+                        }
+                        else
+                        {
+                            Neutral(); NormalSpeed();
+                            yield return Talk("To each their own I guess.");
+                            yield return Key();
+                        }
+                        yield return Talk("Mine is #18abcc.\nSome people also call it\n'Thousand Sons Blue'.");
+                        yield return Key();
+                        yield return Talk("I would wear a shirt\nwith that color\nif I could.");
+                        yield return Key();
+                    }
                     break;
                 case 3:
+                    if ((!lastTurnPlayer && SaveData.Instance["dicePlayerFirst"] == "true")
+                        || (lastTurnPlayer && SaveData.Instance["dicePlayerFirst"] != "true"))
+                    {
+                        Neutral(); NormalSpeed();
+                        int ScoreDiff = Math.Abs(MainGame.Instance.ScoreBoard.PlayerRoundScore - MainGame.Instance.ScoreBoard.SidScore);
+                        if (MainGame.Instance.ScoreBoard.PlayerScore < MainGame.Instance.ScoreBoard.SidScore)
+                        {
+                            int ToTheWin = DICE_WIN_SCORE - MainGame.Instance.ScoreBoard.SidScore;
+                            yield return Talk($"I'm {ScoreDiff} points\nahead right now.");
+                            yield return Wait(120);
+                            yield return Talk($"{ToTheWin} more and I've won!\nDo you feel threatened?");
+                            yield return Input();
+                            yield return ForceYesOrNo("Don't be like that!", "You afraid you\ngonna lose,\nyes or no?");
+                            
+                        }
+                        else if (MainGame.Instance.ScoreBoard.PlayerScore > MainGame.Instance.ScoreBoard.SidScore)
+                        {
+
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                    break;
                 case 4:
                 case 5:
                 case 6:
@@ -732,12 +804,14 @@ namespace SentIO.Console
             if (IsYesAnswer(TextControl.Instance.InputResult))
             {
                 playerTurn = true;
+                SaveData.Instance["dicePlayerFirst"] = "true";
                 yield return Talk("Alright, let's roll!");
                 yield return Key();
             }
             else
             {
                 playerTurn = false;
+                SaveData.Instance["dicePlayerFirst"] = "false";
                 yield return Talk("Okay, I'll go first!");
                 yield return Wait(60);
             }

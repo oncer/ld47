@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.VisualBasic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SentIO.Globals;
@@ -16,6 +17,7 @@ namespace SentIO.Console
 {
     public class TextControl
     {
+        private static char[] CONTROL_CHARS = new char[]{'<', '|'};
         private const char CURSOR_CHAR = '_';
         private const int CURSOR_BLINK_DELAY = 20;
         private const int AFTER_SHOW_WAIT_FRAMES = 30;
@@ -160,6 +162,11 @@ namespace SentIO.Console
             return new Wait();
         }
 
+        private float StringWidth(string text)
+        {
+            return Resources.ConsoleFont.MeasureString(new string(text.Except(CONTROL_CHARS).ToArray())).X;
+        }
+
         private void SetOutput(string textOutput, int index=-1)
         {
             string[] fullLines = textOutput.Split('\n');
@@ -193,7 +200,7 @@ namespace SentIO.Console
                 int windowHeight = MainGame.Instance.Window.ClientBounds.Height;
                 for (int i = 0; i < fullLines.Length; i++)
                 {
-                    linePos[i].X = (int) ((windowWidth - Resources.ConsoleFont.MeasureString(fullLines[i]).X) / 2f);
+                    linePos[i].X = (int) ((windowWidth - StringWidth(fullLines[i])) / 2f);
                     linePos[i].Y = windowHeight / 2 - Resources.ConsoleFont.LineSpacing * (fullLines.Length - i + 2);
                 }
             }
@@ -204,7 +211,7 @@ namespace SentIO.Console
             inputLine = input;
             int windowWidth = MainGame.Instance.Window.ClientBounds.Width;
             int windowHeight = MainGame.Instance.Window.ClientBounds.Height;
-            linePos[lines.Length].X = (int) ((windowWidth - Resources.ConsoleFont.MeasureString(inputLine).X) / 2f);
+            linePos[lines.Length].X = (int) ((windowWidth - StringWidth(inputLine)) / 2f);
             linePos[lines.Length].Y = windowHeight - Resources.ConsoleFont.LineSpacing * 2;
         }
 
@@ -233,11 +240,24 @@ namespace SentIO.Console
                             SoundControl.Stop(Resources.SfxChar);
                             SoundControl.Play(Resources.SfxCharStop);
                         }
-                        else if (textOutput[index] != ' ')
+                        else if (textOutput[index] != ' '
+                            && !CONTROL_CHARS.Contains(textOutput[index]))
                         {
                             SoundControl.Play(Resources.SfxChar);
                         }
-                        index++;
+                        switch (textOutput[index])
+                        {
+                            case '|':
+                                textOutput = textOutput.Remove(index);
+                                break;
+                            case '<':
+                                textOutput = textOutput.Remove(index - 1).Remove(index - 1);
+                                index--;
+                                break;
+                            default:
+                                index++;
+                                break;
+                        }
                     }
                     switch (CurrentSpeed)
                     {
