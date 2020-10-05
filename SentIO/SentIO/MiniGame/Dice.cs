@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SentIO.Globals;
+using SentIO.Routines;
 using SentIO.UI;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,23 @@ using System.Text;
 
 namespace SentIO.MiniGame
 {
+
+    public class DiceWait : ICoroutineYield
+    {
+        private Dice dice;
+        public DiceWait(Dice d)
+        {
+            dice = d;
+        }
+        public void Execute()
+        {
+        }
+
+        public bool IsDone()
+        {
+            return dice.State == Dice.DiceState.Done;
+        }
+    }
     public class Dice
     {
         public enum DiceState
@@ -19,6 +37,7 @@ namespace SentIO.MiniGame
         }
 
         public DiceState State { get; private set; }
+        public int Value { get; set; }
 
         private float x => Position.X;
         private float y => Position.Y;
@@ -28,27 +47,35 @@ namespace SentIO.MiniGame
 
         public Vector2 Position { get; set; }
         
-        int diceValue = 0;
+        float alpha = 0f;
         float angle = 0;
         int bounced = 0;
 
         double angSpeed = 0;
 
-        private Texture2D Texture => Resources.DiceTexture[diceValue];
+        private Texture2D Texture => Resources.DiceTexture[Value];
 
         public Dice()
         {
             yGrav = .15f;
+            alpha = 0f;
+            State = DiceState.New;
         }
 
         public void Roll()
         {
+            alpha = 0f;
             yMax = y;
             bounced = 5;
             State = DiceState.Bounce;
             yVel = -8;
 
             ChangeAngularSpeed();
+        }
+
+        public void Hide()
+        {
+            alpha = 0f;
         }
 
         void ChangeAngularSpeed()
@@ -59,6 +86,10 @@ namespace SentIO.MiniGame
 
         public void Update()
         {
+            if (State != DiceState.Done && State != DiceState.New)
+            {
+                alpha = MathF.Min(alpha + (1f / 30f), 1f);
+            }
             if (State == DiceState.Bounce)
             {
                 angle += (float)angSpeed;
@@ -69,7 +100,7 @@ namespace SentIO.MiniGame
                 if (y + yVel > yMax)
                 {
                     if (bounced > 0)
-                        diceValue = (int)(RND.Get * 6);
+                        Value = (int)(RND.Get * 6);
 
                     ChangeAngularSpeed();
 
@@ -138,7 +169,8 @@ namespace SentIO.MiniGame
 
         public void Draw(SpriteBatch sb)
         {
-            sb.Draw(Texture, Position, null, Color.White, (float)Utils.DegToRad(angle), new Vector2(16, 16), new Vector2(2), SpriteEffects.None, 1);
+            if (alpha <= 0f) return;
+            sb.Draw(Texture, Position, null, new Color(1f, 1f, 1f, alpha), (float)Utils.DegToRad(angle), new Vector2(16, 16), new Vector2(2), SpriteEffects.None, 1);
         }
     }
 }
