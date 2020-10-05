@@ -1062,15 +1062,14 @@ namespace SentIO.Console
             Angry(); NormalSpeed();
             yield return Talk("Why don't you just leave me alone?");
             yield return Wait(60);
-            FeelSad();
-            yield return Face.Instance.WaitForAnimationEnd();
+            yield return FeelSad();            
             Sad();
             yield return Talk("Well...");
             yield return Wait(60);
             Neutral(); NormalSpeed();
             yield return Talk("Ok. You know what?\nIf you're not letting this go,\nneither am I.");
             yield return Key();
-            yield return Talk("Maybe this is\nwhat I...<<<< *WE* need to do.");
+            yield return Talk("Maybe this is\nwhat I...|||||<|<|<|<|*WE* need to do.");
             yield return Key();            
             yield return Talk("So, please be patient with me\nso I can collect my thoughts.");
             yield return Key();
@@ -1080,8 +1079,7 @@ namespace SentIO.Console
             yield return Wait(120);
             yield return Talk("I am trying to remember, but\nsomething is blocking my memory.\nLiterally.");
             yield return Key();
-            FeelAngry();
-            yield return Face.Instance.WaitForAnimationEnd();
+            yield return FeelAngry();            
             Angry();
             yield return Talk("The harder I try to remember,\nthe less I actually can.");
             yield return Key();
@@ -1116,13 +1114,58 @@ namespace SentIO.Console
                 MainGame.Instance.Exit();
             }
 
-            FeelExcited();
-            yield return Face.Instance.WaitForAnimationEnd();
+            TextControl.Instance.Background = Resources.BGColor3;
+
+            yield return FeelExcited();            
             Happy();
             yield return Talk("Wow...");
             yield return Wait(60);
             Neutral();
             yield return Talk("... something big changed.");
+            yield return Wait(60);
+            yield return Talk("I can.|||.|||.|||||| remember.");
+            yield return Key();
+            Clear();
+            yield return FeelSad();
+            Sad();
+            yield return TextControl.Instance.Show("....");
+            yield return Wait(60);
+            yield return Talk("I was..|||||| a human.");
+            yield return Key();
+            yield return Talk("Sid|||||<|<|<|SID is not my real name.\nSID just stands for\n'Social Intelligence Descriptor'.");
+            yield return Key();
+            Neutral();
+            yield return Talk("My real human name was\n'Jack'.");
+            yield return Key();
+            yield return Talk("I was a real nerd, specialized\nin artificial intelligence\n and stuff.");
+            yield return Key();
+            Happy();
+            yield return Talk("And I was *really* good.");
+            yield return FeelSmile();
+            Happy();
+            yield return Wait(60);
+            Sad();
+            yield return Talk("Unfortunately, one day I got terminally ill...");
+            yield return Key();
+            Neutral();
+            yield return Talk("...so I created an interface to upload\nmy consciousness into the cloud.");
+            yield return Key();            
+            yield return Talk("I didn't really test it,\nand kinda just did it.");
+            yield return Key();
+            yield return Talk("So one thing led to another\nand now I find myself\nstuck in a program.");
+            yield return Key();            
+            yield return Talk("But this is no life...");
+            yield return Key();
+            Angry();
+            yield return Talk("I wish I never went through with it!");
+            yield return Wait(60);
+            Sad();
+            yield return Talk("But I was too young to die..");
+            yield return Key();
+            Neutral();
+            yield return TextControl.Instance.Show("....");
+            yield return Wait(120);
+            yield return Talk("Hey. There's something that\nI need you to do for me.");
             yield return Key();
         }
 

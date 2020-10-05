@@ -209,7 +209,7 @@ namespace SentIO
 
             // font batch
 
-            fontBatch.Begin(blendState: BlendState.NonPremultiplied);
+            fontBatch.Begin(blendState: BlendState.NonPremultiplied, depthStencilState:DepthStencilState.None, samplerState:SamplerState.PointClamp);
             TextControl.Instance.Draw(fontBatch);
             fontBatch.End();
 
