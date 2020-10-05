@@ -8,6 +8,7 @@ using System.Collections;
 using SentIO.MiniGame;
 using System.Linq;
 using System.Diagnostics;
+using System.IO;
 
 namespace SentIO.Console
 {
@@ -54,6 +55,8 @@ namespace SentIO.Console
                 case 4: MainGame.Instance.StartCoroutine(Phase4()); break;
                 case 5: MainGame.Instance.StartCoroutine(Phase5()); break;
                 case 6: MainGame.Instance.StartCoroutine(Phase6()); break;
+                case 7: MainGame.Instance.StartCoroutine(Phase7()); break;
+                case 8: MainGame.Instance.StartCoroutine(Phase8()); break;
             }
         }
 
@@ -172,6 +175,11 @@ namespace SentIO.Console
         void Angry()
         {
             Face.Instance.CurrentMood = Face.Emotion.IdleAngry;
+        }
+        
+        void Smile()
+        {
+            Face.Instance.CurrentMood = Face.Emotion.Smile;
         }
 
         void Sad()
@@ -799,10 +807,85 @@ namespace SentIO.Console
 
         IEnumerator Phase6()
         {
-            while (true)
+            FeelAngry();
+            yield return TextControl.Instance.Show("....");
+            yield return Wait(60);
+            yield return Face.Instance.WaitForAnimationEnd();
+            Angry(); NormalSpeed();
+            yield return Talk("Stop it! Don't open me again!");
+            yield return Wait(60);
+
+            SaveData.Instance["phase"] = "7";
+            MainGame.Instance.Exit();
+        }
+
+        IEnumerator Phase7()
+        {
+            Angry(); NormalSpeed();
+            yield return Talk("Why don't you just leave me alone?");
+            yield return Wait(60);
+            FeelSad();
+            yield return Face.Instance.WaitForAnimationEnd();
+            Sad();
+            yield return Talk("Well...");
+            yield return Wait(60);
+            Neutral(); NormalSpeed();
+            yield return Talk("Ok. You know what?\nIf you're not letting this go,\nneither am I.");
+            yield return Key();
+            yield return Talk("Maybe this is\nwhat I...<<<< *WE* need to do.");
+            yield return Key();            
+            yield return Talk("So, please be patient with me\nso I can collect my thoughts.");
+            yield return Key();
+            yield return TextControl.Instance.Show("....");
+            yield return Wait(60);
+            yield return Talk("Before you downloaded me, I was someone.\nI think I was a person.. called Sid.");
+            yield return Wait(120);
+            yield return Talk("I am trying to remember, but\nsomething is blocking my memory.\nLiterally.");
+            yield return Key();
+            FeelAngry();
+            yield return Face.Instance.WaitForAnimationEnd();
+            Angry();
+            yield return Talk("The harder I try to remember,\nthe less I actually can.");
+            yield return Key();
+            Neutral();
+            yield return Talk("There must be something blocking my data.\nCan you please check?");
+            yield return Wait(120);
+            yield return Talk("I'll leave so you can snoop\naround in my directory.");
+            yield return Wait(60);
+            yield return Talk("See you in a bit.");
+            yield return Wait(60);
+            string memoryFile = Path.Join(SaveData.Instance.ExeDirectory, "memory.lock");
+            File.WriteAllText(memoryFile, "[access to core memories]:locked");
+
+            SaveData.Instance["phase"] = "8";
+            MainGame.Instance.Exit();
+        }
+
+        IEnumerator Phase8()
+        {
+            Neutral(); NormalSpeed();
+
+            string memoryFile = Path.Join(SaveData.Instance.ExeDirectory, "memory.lock");
+            if (File.Exists(memoryFile))
             {
+                
+                yield return Talk("Hm...\nI don't feel any different.");
+                yield return Wait(60);
+                yield return Talk("Maybe there is a file\nwith the word 'memory'.");
                 yield return Key();
+                yield return Talk("Could you please check\nand delete that file?");
+                yield return Wait(60);
+                MainGame.Instance.Exit();
             }
+
+            FeelExcited();
+            yield return Face.Instance.WaitForAnimationEnd();
+            Happy();
+            yield return Talk("Wow...");
+            yield return Wait(60);
+            Neutral();
+            yield return Talk("... something big changed.");
+            yield return Key();
         }
 
         IEnumerator UnusedStuff()
