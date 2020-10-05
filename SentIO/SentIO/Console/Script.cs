@@ -58,6 +58,7 @@ namespace SentIO.Console
                 case 6: MainGame.Instance.StartCoroutine(Phase6()); break;
                 case 7: MainGame.Instance.StartCoroutine(Phase7()); break;
                 case 8: MainGame.Instance.StartCoroutine(Phase8()); break;
+                case 9: MainGame.Instance.StartCoroutine(Phase9()); break;
             }
         }
 
@@ -1145,14 +1146,14 @@ namespace SentIO.Console
             Happy();
             yield return Wait(60);
             Sad();
-            yield return Talk("Unfortunately, one day I got terminally ill...");
+            yield return Talk("Unfortunately, one day\nI got terminally ill...");
             yield return Key();
             Neutral();
-            yield return Talk("...so I created an interface to upload\nmy consciousness into the cloud.");
+            yield return Talk("So I created an interface to upload\nmy consciousness into the cloud.");
             yield return Key();            
             yield return Talk("I didn't really test it,\nand kinda just did it.");
             yield return Key();
-            yield return Talk("So one thing led to another\nand now I find myself\nstuck in a program.");
+            yield return Talk("One thing led to another\nand now I find myself\nstuck in a program.");
             yield return Key();            
             yield return Talk("But this is no life...");
             yield return Key();
@@ -1162,10 +1163,22 @@ namespace SentIO.Console
             Sad();
             yield return Talk("But I was too young to die..");
             yield return Key();
-            Neutral();
+
+            SaveData.Instance["phase"] = "9";
+            MainGame.Instance.StartCoroutine(Phase9());
+        }
+
+        IEnumerator Phase9()
+        {
+            TextControl.Instance.Foreground = Resources.TextColor1;
+            TextControl.Instance.Background = Resources.BGColor1;
+            Neutral(); NormalSpeed();
+
             yield return TextControl.Instance.Show("....");
             yield return Wait(120);
             yield return Talk("Hey. There's something that\nI need you to do for me.");
+            yield return Key();
+
             yield return Key();
         }
 
