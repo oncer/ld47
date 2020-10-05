@@ -5,6 +5,7 @@ using SentIO.Routines;
 using SentIO.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace SentIO.MiniGame
@@ -44,7 +45,7 @@ namespace SentIO.MiniGame
         private float yVel;
         private float yGrav;
         private float yMax;
-
+        
         public Vector2 Position { get; set; }
         
         float alpha = 0f;
@@ -66,7 +67,7 @@ namespace SentIO.MiniGame
         {
             alpha = 0f;
             yMax = y;
-            bounced = 5;
+            bounced = 4;
             State = DiceState.Bounce;
             yVel = -8;
 
@@ -80,7 +81,7 @@ namespace SentIO.MiniGame
 
         void ChangeAngularSpeed()
         {
-            var pow = Math.Max(bounced * .5f, 1);
+            var pow = Math.Max(bounced * 2f, 1);
             angSpeed = Math.Sign(bounced % 2 == 0 ? 1 : -1) * (1.5 + RND.Get * pow);
         }
 
@@ -102,8 +103,6 @@ namespace SentIO.MiniGame
                     if (bounced > 0)
                         Value = (int)(RND.Get * 6);
 
-                    ChangeAngularSpeed();
-
                     yVel *= -.7f;
                     if (Math.Abs(yVel) < .6f)
                     {
@@ -111,24 +110,13 @@ namespace SentIO.MiniGame
                     }
 
                     bounced = Math.Max(bounced - 1, 0);
+                    ChangeAngularSpeed();
 
                     if (bounced == 0)
                     {
-                        if ((angle % 45) < 22.5)
-                            angSpeed = 6;
-                        else
-                            angSpeed = -6;
-
                         yVel = 0;
                         Position = new Vector2(x, yMax);
                         State = DiceState.Finish;
-                        /*if (Math.Abs(yVel) < .2f)
-                        {
-                            Position = new Vector2(x, yMax);
-                            yVel = 0;
-                            angSpeed = 0;
-                            State = DiceState.Done;
-                        }*/
                     }
                 }
                 else
@@ -142,22 +130,24 @@ namespace SentIO.MiniGame
                 angle += (float)angSpeed;
                 angle = angle % 360;
 
-                yVel = -2;
                 Position = new Vector2(x, y + yVel);
 
-                if (Math.Abs(y - yMax) > 128)
+                if (Math.Abs(y - yMax) > 80)
                 {
-                    yVel = 0;
-                    State = DiceState.Done;
-                }
-
-                if (Math.Abs(y - yMax) > 96)
-                {
-                    if (Math.Abs((angle % 90) - 10) < 8)
+                    angSpeed *= .99f;
+                    if ((Math.Abs(angle) % 90) - 10 < 4
+                        || Math.Abs(angSpeed) < .05f)
                     {
                         angle = 0;
-                        angSpeed = 0;
+                        angSpeed = 0;                        
+                        State = DiceState.Done;
                     }
+                    yVel *= .9f;
+                }
+                else
+                {
+                    yVel = Math.Max(yVel - .01f, -1.5f);
+                    angSpeed = 12 * yVel / 1.5f;
                 }
             }
 
