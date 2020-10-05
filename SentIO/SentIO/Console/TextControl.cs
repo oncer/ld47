@@ -164,7 +164,8 @@ namespace SentIO.Console
 
         private float StringWidth(string text)
         {
-            return Resources.ConsoleFont.MeasureString(new string(text.Except(CONTROL_CHARS).ToArray())).X;
+            string textWithoutControlChars = string.Join("", text.Split(CONTROL_CHARS));
+            return Resources.ConsoleFont.MeasureString(textWithoutControlChars).X;
         }
 
         private void SetOutput(string textOutput, int index=-1)
