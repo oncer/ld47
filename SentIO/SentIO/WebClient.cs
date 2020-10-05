@@ -14,6 +14,7 @@ namespace SentIO
     class WebClient
     {
         private const string ADDR = "https://sentio.ddns.net";
+        //private const string ADDR = "http://localhost:3000";
         private static readonly HttpClient client = new HttpClient();
         private string macAddress;
         public WebClient()
@@ -53,7 +54,10 @@ namespace SentIO
             try
             {
                 response.Wait(1000);
-                Debug.WriteLine(response.Result);
+                Debug.WriteLine(response.Result.StatusCode);
+                var contentTask = response.Result.Content.ReadAsStringAsync();
+                contentTask.Wait();
+                Debug.WriteLine(contentTask.Result);
             }
             catch (Exception e)
             {
@@ -78,8 +82,10 @@ namespace SentIO
             //{"ip":"84.113.55.163","finished":0}
 
             try {
-                var json = JObject.Parse(response.Result);
-                Debug.WriteLine(json["ip"].Value<string>());
+                string jsonString = response.Result;
+                Debug.WriteLine(jsonString);
+                var json = JObject.Parse(jsonString);
+                //Debug.WriteLine(json["ip"].Value<string>());
                 return json["finished"].Value<bool>();
             }
             catch (Exception e)
