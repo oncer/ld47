@@ -1336,6 +1336,8 @@ namespace SentIO.Console
             Neutral();            
             yield return Talk("It is the only way for me\nto get out of this loop.");
             yield return FeelSad();
+            yield return Wait(60);
+            yield return Talk("I remember that there's a killswitch.");
             yield return Key();
         }
 
