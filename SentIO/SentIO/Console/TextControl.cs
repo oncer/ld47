@@ -164,7 +164,21 @@ namespace SentIO.Console
 
         private float StringWidth(string text)
         {
-            string textWithoutControlChars = string.Join("", text.Split(CONTROL_CHARS));
+            string textWithoutControlChars = "";
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+                switch (c)
+                {
+                    case '|': break;
+                    case '<':
+                        if (textWithoutControlChars.Length > 0)
+                            textWithoutControlChars = 
+                                textWithoutControlChars.Remove(textWithoutControlChars.Length - 1, 1);
+                        break;
+                    default: textWithoutControlChars += c; break;
+                }
+            }
             return Resources.ConsoleFont.MeasureString(textWithoutControlChars).X;
         }
 
@@ -249,10 +263,10 @@ namespace SentIO.Console
                         switch (textOutput[index])
                         {
                             case '|':
-                                textOutput = textOutput.Remove(index);
+                                textOutput = textOutput.Remove(index, 1);
                                 break;
                             case '<':
-                                textOutput = textOutput.Remove(index - 1).Remove(index - 1);
+                                textOutput = textOutput.Remove(index - 1, 2);
                                 index--;
                                 break;
                             default:

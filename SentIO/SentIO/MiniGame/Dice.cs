@@ -107,7 +107,8 @@ namespace SentIO.MiniGame
                 yVel = Math.Min(yVel + yGrav, 999);
                 if (y + yVel > yMax)
                 {
-                    if (bounced > 1)
+                    int oldValue = value;
+                    while (bounced > 1 && value == oldValue)
                         value = (int)(RND.Get * 6);
 
                     yVel *= -.7f;

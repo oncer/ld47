@@ -509,8 +509,10 @@ namespace SentIO.Console
                         yield return Talk("You have to know\nwhen to stop, it's\nlike eating chocolate.");
                         yield return Key();
                         Neutral(); Slow(); 
-                        yield return Talk("I used to love chocolate..");
+                        Talk("I used to love chocolate..");
                         yield return FeelSmile();
+                        Neutral();
+                        yield return new TextControl.Wait();
                         yield return Key();
                     }
                     break;
@@ -850,7 +852,12 @@ namespace SentIO.Console
                         yield return Key();
                         if (MainGame.Instance.ScoreBoard.SidScore < DICE_WIN_SCORE)
                         {
-                            bool sidAgain = RND.Get > 0.3f;
+                            int sidScore = MainGame.Instance.ScoreBoard.SidScore;
+                            bool sidAgain;
+                            if (sidScore >= 30) sidAgain = false;
+                            else if (sidScore >= 20) sidAgain = RND.Get < 0.15;
+                            else if (sidScore >= 10) sidAgain = RND.Get < 0.3;
+                            else sidAgain = RND.Get < 0.6;
                             if (sidAgain)
                             {
                                 yield return Talk("I'll go again!");
