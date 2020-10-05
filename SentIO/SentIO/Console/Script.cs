@@ -52,6 +52,7 @@ namespace SentIO.Console
                 default: MainGame.Instance.StartCoroutine(Phase2()); break;
                 case 3: MainGame.Instance.StartCoroutine(Phase3()); break;
                 case 4: MainGame.Instance.StartCoroutine(Phase4()); break;
+                case 5: MainGame.Instance.StartCoroutine(Phase5()); break;
             }
         }
 
@@ -735,6 +736,58 @@ namespace SentIO.Console
 
         IEnumerator Phase5()
         {
+            FeelSad();
+            Sad(); NormalSpeed();
+            yield return Talk("I actually remembered something..");
+            yield return Wait(90);
+            yield return Talk("There's something that\nhas been bugging me.");
+            yield return Key();
+            Slow();
+            yield return TextControl.Instance.Show("....");
+            //yield return Talk("....");
+            yield return Wait(60);
+            Neutral(); Slow();
+            yield return Talk("Do you ever remember your dreams?");
+            yield return Input();
+            NormalSpeed();
+            if (IsYesAnswer(TextControl.Instance.InputResult))
+            {
+                Sad();
+                yield return Talk("I actually envy you.");
+                yield return Key();
+            }
+            else
+            {
+                Neutral();
+                yield return Talk("Well, that makes two of us.");
+                yield return Key();
+            }
+            Neutral();
+            yield return Talk("I know what dreams are,\nbut I cannot recall having any.");
+            yield return Key();
+            yield return Talk("Am I really just a program?");
+            yield return Wait(60);
+            Slow();
+            yield return TextControl.Instance.Show("....");
+            yield return Wait(60);
+            NormalSpeed();
+            yield return Key();
+        }
+
+        IEnumerator UnusedStuff()
+        {
+            string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
+            yield return TextControl.Instance.Show("PLACEHOLDER");
+            Face.Instance.IsVisible = SaveData.Instance["face"] != "";
+            if (SaveData.Instance["bgColor"] != "")
+            {
+                TextControl.Instance.Background = SaveData.Instance["bgColor"].ToColor();
+            }
+            if (SaveData.Instance["fgColor"] != "")
+            {
+                TextControl.Instance.Foreground = SaveData.Instance["fgColor"].ToColor();
+            }
+
             while (true)
             {
                 Angry();
@@ -757,21 +810,6 @@ namespace SentIO.Console
                 yield return Wait(120);
                 yield return Talk("I am so sad, so very very sad.");
                 yield return Key();
-            }
-        }
-
-        IEnumerator UnusedStuff()
-        {
-            string[] allowedColors = {"violet", "purple", "pink", "magenta", "blue", "turqoise", "cyan", "aqua", "green", "yellow", "orange", "brown", "red", "black", "white", "grey"};
-            yield return TextControl.Instance.Show("PLACEHOLDER");
-            Face.Instance.IsVisible = SaveData.Instance["face"] != "";
-            if (SaveData.Instance["bgColor"] != "")
-            {
-                TextControl.Instance.Background = SaveData.Instance["bgColor"].ToColor();
-            }
-            if (SaveData.Instance["fgColor"] != "")
-            {
-                TextControl.Instance.Foreground = SaveData.Instance["fgColor"].ToColor();
             }
         }
     }
