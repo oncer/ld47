@@ -71,7 +71,7 @@ db.run(`CREATE TABLE IF NOT EXISTS players (
 });
 
 var getPlayer = (ip, mac) => {
-    return db.get("SELECT name, finished, timestamp FROM players WHERE ip=? AND mac=? ORDER BY ts DESC", [ip, mac]);
+    return db.get("SELECT name, finished, ip, timestamp FROM players WHERE ip=? AND mac=? ORDER BY timestamp DESC", [ip, mac]);
 };
 
 var insertPlayer = (ip, mac, message, secondsPlayed, name, color, finished) => {

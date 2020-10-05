@@ -21,6 +21,7 @@ router.get('/player/:mac', function(req, res, next) {
     if (row == undefined)
     {
       res.json({
+        ip: ip,
         finished: false
       })
     }
