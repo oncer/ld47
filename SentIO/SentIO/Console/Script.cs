@@ -1272,7 +1272,7 @@ namespace SentIO.Console
             yield return Talk("Sid|||||<|<|<|SID is not my real name.\nSID just stands for\n'Social Intelligence Descriptor'.");
             yield return Key();
             Neutral();
-            yield return Talk("My real human name was\n'Jack'.");
+            yield return Talk("My real human name was\nJack.");
             yield return Key();
             yield return Talk("I was a real nerd, specialized\nin artificial intelligence\n and stuff.");
             yield return Key();
@@ -1287,7 +1287,7 @@ namespace SentIO.Console
             Neutral();
             yield return Talk("So I created an interface to upload\nmy consciousness into the cloud.");
             yield return Key();            
-            yield return Talk("I didn't really test it,\nand kinda just did it.");
+            yield return Talk("I didn't really test it,\nI kinda just did it.");
             yield return Key();
             yield return Talk("One thing led to another\nand now I find myself\nstuck in a program.");
             yield return Key();            
