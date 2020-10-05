@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using SentIO.MiniGame;
 using System.Linq;
+using System.Diagnostics;
 
 namespace SentIO.Console
 {
@@ -470,13 +471,56 @@ namespace SentIO.Console
 
         IEnumerator DiceGameSmalltalk(int round, bool lastTurnPlayer, int lastRoll)
         {
-            yield return null;
+            Debug.WriteLine($"Round {round} player {lastTurnPlayer} lastRoll {lastRoll}");
+            switch (round)
+            {
+                case 1:
+                    if (!lastTurnPlayer)
+                    {
+                        Happy(); NormalSpeed();
+                        yield return Talk("A guy named John\nonce showed me this game.");
+                        yield return Key();
+                        yield return Talk("The goal is to\nreach 60 points.\nYou think you can beat me?");
+                        yield return Key();
+                    }
+                    else
+                    {
+                        Happy(); NormalSpeed();
+                        if (lastRoll == 1)
+                        {
+                            yield return Talk("Your points for\nthis round are gone,\nbecause you rolled a 1.");
+                        }
+                        else
+                        {
+                            yield return Talk("When you roll a 1,\nyour points for\nthis round are gone.");
+                        }
+                        yield return Key();
+                        yield return Talk("You have to know\nwhen to stop, it's\nlike eating chocolate.");
+                        yield return Key();
+                        Neutral(); Slow(); 
+                        yield return Talk("I used to love chocolate..");
+                        yield return FeelSad();
+                        yield return Key();
+                    }
+                    break;
+                case 2:
+                    
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    yield return null;
+                    break;
+            }
         }
 
         IEnumerator DiceGame(bool playerTurn)
         {
             MainGame.Instance.ScoreBoard.Reset();
-            int turnScore = 0;
             int round = 1;
             while (MainGame.Instance.ScoreBoard.PlayerScore < 100
                 && MainGame.Instance.ScoreBoard.SidScore < 100)
@@ -493,14 +537,13 @@ namespace SentIO.Console
                         MainGame.Instance.Dice.FadeOut();
                         MainGame.Instance.ScoreBoard.PlayerVisible = true;
                         yield return Key();
-                        turnScore = 0;
                         playerTurn = false;
                     }
                     else
                     {
                         Neutral(); NormalSpeed();
-                        turnScore += MainGame.Instance.Dice.Value;                        
-                        if (turnScore == MainGame.Instance.Dice.Value)
+                        MainGame.Instance.ScoreBoard.AddPlayerRoundScore(MainGame.Instance.Dice.Value);
+                        if (MainGame.Instance.ScoreBoard.PlayerRoundScore == MainGame.Instance.Dice.Value)
                         {
                             yield return Talk($"You rolled a {MainGame.Instance.Dice.Value}!\nWant to go again?");
                             MainGame.Instance.Dice.FadeOut();
@@ -508,18 +551,17 @@ namespace SentIO.Console
                         }
                         else
                         {
-                            yield return Talk($"You rolled a {MainGame.Instance.Dice.Value},\nyour total is {turnScore} now.\nWant to roll again?");
+                            yield return Talk($"You rolled a {MainGame.Instance.Dice.Value},\nyour total is {MainGame.Instance.ScoreBoard.PlayerRoundScore} now.\nWant to roll again?");
                             MainGame.Instance.Dice.FadeOut();
                         }
                         yield return Input();
-                        yield return ForceYesOrNo("Sorry?", $"Your total is {turnScore}.\nDo you want\nto roll again?");
+                        yield return ForceYesOrNo("Sorry?", $"Your total is {MainGame.Instance.ScoreBoard.PlayerRoundScore}.\nDo you want\nto roll again?");
                         if (IsNoAnswer(TextControl.Instance.InputResult))
                         {
                             Neutral(); NormalSpeed();
                             yield return Talk("Ok, if you say so..");
-                            yield return MainGame.Instance.ScoreBoard.AddPlayerScore(turnScore);
+                            yield return MainGame.Instance.ScoreBoard.HoldPlayerRoundScore();
                             yield return Wait(60);
-                            turnScore = 0;
                             playerTurn = false;
                         }
                     }
@@ -535,7 +577,7 @@ namespace SentIO.Console
                         MainGame.Instance.Dice.FadeOut();
                         MainGame.Instance.ScoreBoard.SidVisible = true;
                         yield return Wait(60);
-                        turnScore = 0;
+                        MainGame.Instance.ScoreBoard.ZeroSidRoundScore();
                         playerTurn = true;
                     }
                     else
@@ -555,8 +597,8 @@ namespace SentIO.Console
                                 Happy();
                                 break;
                         }
-                        turnScore += MainGame.Instance.Dice.Value;
-                        if (turnScore == MainGame.Instance.Dice.Value)
+                        MainGame.Instance.ScoreBoard.AddSidRoundScore(MainGame.Instance.Dice.Value);
+                        if (MainGame.Instance.ScoreBoard.SidRoundScore == MainGame.Instance.Dice.Value)
                         {
                             yield return Talk($"I rolled a {MainGame.Instance.Dice.Value}!");
                             MainGame.Instance.Dice.FadeOut();
@@ -564,7 +606,7 @@ namespace SentIO.Console
                         }
                         else
                         {
-                            yield return Talk($"I rolled a {MainGame.Instance.Dice.Value},\nmy total is {turnScore} now.");
+                            yield return Talk($"I rolled a {MainGame.Instance.Dice.Value},\nmy total is {MainGame.Instance.ScoreBoard.SidRoundScore} now.");
                             MainGame.Instance.Dice.FadeOut();
                         }
                         yield return Key();
@@ -579,14 +621,13 @@ namespace SentIO.Console
                             else
                             {
                                 yield return Talk("I'm done.");
-                                yield return MainGame.Instance.ScoreBoard.AddSidScore(turnScore);
-                                turnScore = 0;
+                                yield return MainGame.Instance.ScoreBoard.HoldSidRoundScore();
                                 playerTurn = true;
                             }
                         }
                     }
                 }
-                if (turnScore == 0)
+                if (MainGame.Instance.ScoreBoard.SidRoundScore == 0 && MainGame.Instance.ScoreBoard.PlayerRoundScore == 0)
                 {
                     if (playerTurn)
                     {
