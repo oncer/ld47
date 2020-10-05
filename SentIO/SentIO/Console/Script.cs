@@ -469,6 +469,160 @@ namespace SentIO.Console
             return noAnswers.Contains(text.ToLower());
         }
 
+        IEnumerator DiceGameSmalltalk(int round, bool lastTurnPlayer, int lastRoll)
+        {
+            yield return null;
+        }
+
+        IEnumerator DiceGame(bool playerTurn)
+        {
+            MainGame.Instance.ScoreBoard.Reset();
+            int turnScore = 0;
+            int round = 1;
+            while (MainGame.Instance.ScoreBoard.PlayerScore < 100
+                && MainGame.Instance.ScoreBoard.SidScore < 100)
+            {
+                Clear();
+                if (playerTurn) 
+                {
+                    yield return DiceRollLeft();
+                    if (MainGame.Instance.Dice.Value == 1)
+                    {
+                        yield return FeelExcited();
+                        Fast(); Happy();
+                        yield return Talk("You got the 1!");
+                        MainGame.Instance.Dice.FadeOut();
+                        MainGame.Instance.ScoreBoard.PlayerVisible = true;
+                        yield return Key();
+                        turnScore = 0;
+                        playerTurn = false;
+                    }
+                    else
+                    {
+                        Neutral(); NormalSpeed();
+                        turnScore += MainGame.Instance.Dice.Value;                        
+                        if (turnScore == MainGame.Instance.Dice.Value)
+                        {
+                            yield return Talk($"You rolled a {MainGame.Instance.Dice.Value}!\nWant to go again?");
+                            MainGame.Instance.Dice.FadeOut();
+                            MainGame.Instance.ScoreBoard.PlayerVisible = true;
+                        }
+                        else
+                        {
+                            yield return Talk($"You rolled a {MainGame.Instance.Dice.Value},\nyour total is {turnScore} now.\nWant to roll again?");
+                            MainGame.Instance.Dice.FadeOut();
+                        }
+                        yield return Input();
+                        yield return ForceYesOrNo("Sorry?", $"Your total is {turnScore}.\nDo you want\nto roll again?");
+                        if (IsNoAnswer(TextControl.Instance.InputResult))
+                        {
+                            Neutral(); NormalSpeed();
+                            yield return Talk("Ok, if you say so..");
+                            yield return MainGame.Instance.ScoreBoard.AddPlayerScore(turnScore);
+                            yield return Wait(60);
+                            turnScore = 0;
+                            playerTurn = false;
+                        }
+                    }
+                }
+                else 
+                {
+                    yield return DiceRollRight();
+                    if (MainGame.Instance.Dice.Value == 1)
+                    {
+                        yield return FeelAngry();
+                        Sad(); NormalSpeed();
+                        yield return Talk("Oh no, not the 1!");
+                        MainGame.Instance.Dice.FadeOut();
+                        MainGame.Instance.ScoreBoard.SidVisible = true;
+                        yield return Wait(60);
+                        turnScore = 0;
+                        playerTurn = true;
+                    }
+                    else
+                    {
+                        switch (MainGame.Instance.Dice.Value)
+                        {
+                            case 2:
+                            case 3:
+                                Neutral();
+                                break;
+                            case 4:
+                            case 5:
+                                Happy();
+                                break;
+                            case 6:
+                                yield return FeelExcited();
+                                Happy();
+                                break;
+                        }
+                        turnScore += MainGame.Instance.Dice.Value;
+                        if (turnScore == MainGame.Instance.Dice.Value)
+                        {
+                            yield return Talk($"I rolled a {MainGame.Instance.Dice.Value}!");
+                            MainGame.Instance.Dice.FadeOut();
+                            MainGame.Instance.ScoreBoard.SidVisible = true;
+                        }
+                        else
+                        {
+                            yield return Talk($"I rolled a {MainGame.Instance.Dice.Value},\nmy total is {turnScore} now.");
+                            MainGame.Instance.Dice.FadeOut();
+                        }
+                        yield return Key();
+                        if (MainGame.Instance.ScoreBoard.SidScore < 100)
+                        {
+                            bool sidAgain = RND.Get > 0.3f;
+                            if (sidAgain)
+                            {
+                                yield return Talk("I'll go again!");
+                                yield return Wait(60);
+                            }
+                            else
+                            {
+                                yield return Talk("I'm done.");
+                                yield return MainGame.Instance.ScoreBoard.AddSidScore(turnScore);
+                                turnScore = 0;
+                                playerTurn = true;
+                            }
+                        }
+                    }
+                }
+                if (turnScore == 0)
+                {
+                    if (playerTurn)
+                    {
+                        if (MainGame.Instance.ScoreBoard.SidScore < 100)
+                        {
+                            yield return MainGame.Instance.StartCoroutine(DiceGameSmalltalk(round, !playerTurn, MainGame.Instance.Dice.Value));
+                            Neutral(); NormalSpeed();
+                            yield return Talk("It's your turn now!");
+                            yield return Key();
+                            round++;
+                        }
+                        else
+                        {
+                            yield return FeelExcited();
+                        }
+                    }
+                    else
+                    {
+                        if (MainGame.Instance.ScoreBoard.PlayerScore < 100)
+                        {
+                            yield return MainGame.Instance.StartCoroutine(DiceGameSmalltalk(round, !playerTurn, MainGame.Instance.Dice.Value));
+                            Happy(); NormalSpeed();
+                            yield return Talk("It's my turn now!");
+                            yield return Key();
+                            round++;
+                        }
+                        else
+                        {
+                            yield return FeelSad();
+                        }
+                    }
+                }
+            }
+        }
+
         IEnumerator Phase4()
         {
             if (SaveData.Instance["phase4_progress"] == "")
@@ -518,7 +672,8 @@ namespace SentIO.Console
             }
             MainGame.Instance.ScoreBoard.Reset();
             MainGame.Instance.ScoreBoard.PlayerName = SaveData.Instance["playerName"];
-            bool playerTurn = false;
+
+            bool playerTurn;
             NormalSpeed();
             yield return Talk("Do you want to go first?");
             yield return Input();
@@ -535,129 +690,7 @@ namespace SentIO.Console
                 yield return Wait(60);
             }
 
-            MainGame.Instance.ScoreBoard.Reset();
-            int turnScore = 0;
-            while (MainGame.Instance.ScoreBoard.PlayerScore < 100
-                && MainGame.Instance.ScoreBoard.SidScore < 100)
-            {
-                Clear();
-                if (playerTurn) 
-                {
-                    yield return DiceRollLeft();
-                    if (MainGame.Instance.Dice.Value == 1)
-                    {
-                        yield return FeelExcited();
-                        Fast(); Happy();
-                        yield return Talk("You got the 1,\nit's my turn now!");
-                        yield return Key();
-                        turnScore = 0;
-                        playerTurn = false;
-                    }
-                    else
-                    {
-                        Neutral(); NormalSpeed();
-                        turnScore += MainGame.Instance.Dice.Value;                        
-                        if (turnScore == MainGame.Instance.Dice.Value)
-                        {
-                            yield return Talk($"You rolled a {MainGame.Instance.Dice.Value}!");
-                            MainGame.Instance.ScoreBoard.PlayerVisible = true;
-                        }
-                        else
-                        {
-                            yield return Talk($"You rolled a {MainGame.Instance.Dice.Value},\nyour total is {turnScore} now.\nWant to roll again?");
-                        }
-                        yield return Key();
-                        yield return Talk("Want to roll again?");
-                        yield return Input();
-                        yield return ForceYesOrNo("Sorry?", $"Your total is {turnScore}.\nDo you want\nto roll again?");
-                        if (IsNoAnswer(TextControl.Instance.InputResult))
-                        {
-                            Neutral(); NormalSpeed();
-                            yield return Talk("Ok, if you say so..");
-                            yield return MainGame.Instance.ScoreBoard.AddPlayerScore(turnScore);
-                            yield return Wait(60);
-                            if (MainGame.Instance.ScoreBoard.PlayerScore < 100)
-                            {
-                                Happy(); Fast();
-                                yield return Talk("It's my turn now!");
-                                yield return Key();
-                                turnScore = 0;
-                                playerTurn = false;
-                            }
-                            else
-                            {
-                                yield return FeelSad();
-                            }
-                        }
-                    }
-                }
-                else 
-                {
-                    yield return DiceRollRight();
-                    if (MainGame.Instance.Dice.Value == 1)
-                    {
-                        yield return FeelAngry();
-                        Sad(); NormalSpeed();
-                        yield return Talk("Oh no, not the one!");
-                        yield return Wait(60);
-                        yield return Talk("It's your turn now.");
-                        yield return Key();
-                        turnScore = 0;
-                        playerTurn = true;
-                    }
-                    else
-                    {
-                        switch (MainGame.Instance.Dice.Value)
-                        {
-                            case 2:
-                            case 3:
-                                Neutral();
-                                break;
-                            case 4:
-                            case 5:
-                                Happy();
-                                break;
-                            case 6:
-                                yield return FeelExcited();
-                                Happy();
-                                break;
-                        }
-                        turnScore += MainGame.Instance.Dice.Value;
-                        if (turnScore == MainGame.Instance.Dice.Value)
-                        {
-                            yield return Talk($"I rolled a {MainGame.Instance.Dice.Value}!");
-                            MainGame.Instance.ScoreBoard.SidVisible = true;
-                        }
-                        else
-                        {
-                            yield return Talk($"I rolled a {MainGame.Instance.Dice.Value},\nmy total is {turnScore} now.");
-                        }
-                        yield return Key();
-                        if (MainGame.Instance.ScoreBoard.SidScore < 100)
-                        {
-                            bool sidAgain = RND.Get > 0.3f;
-                            if (sidAgain)
-                            {
-                                yield return Talk("I'll go again!");
-                                yield return Wait(60);
-                            }
-                            else
-                            {
-                                yield return Talk("I'm done");
-                                yield return MainGame.Instance.ScoreBoard.AddSidScore(turnScore);
-                                yield return Talk("It's your turn now!");
-                                yield return Key();
-                                turnScore = 0;
-                                playerTurn = true;
-                            }
-                        }
-                        else
-                        {
-                            yield return FeelExcited();
-                        }
-                    }
-                }
-            }
+            yield return MainGame.Instance.StartCoroutine(DiceGame(playerTurn));
         }
 
         IEnumerator Phase5()
