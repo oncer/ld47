@@ -625,7 +625,7 @@ namespace SentIO.Console
                     else
                     {
                         Neutral(); NormalSpeed();
-                        yield return Talk("Is the weather nice\nwhere you are\nright now?");
+                        yield return Talk("Do you have good\nweather right now?");
                         yield return Input();
                         if (IsYesAnswer(TextControl.Instance.InputResult))
                         {
@@ -636,7 +636,7 @@ namespace SentIO.Console
                         else
                         {
                             Neutral(); NormalSpeed();
-                            yield return Talk("To speak the truth, I do not\ncare much about the weather\nthese days..");
+                            yield return Talk("To speak the truth, I do not\ncare much about the weather.");
                             yield return Key();
                         }
                     }
@@ -746,6 +746,7 @@ namespace SentIO.Console
                         yield return Talk("Have you messed\nwith my dice?");
                         yield return Key();
                         Clear();
+                        Neutral();
                         yield return Talk("......");
                         yield return Talk("Sorry about that.\nI would never accuse\nyou of cheating.");
                         yield return Key();

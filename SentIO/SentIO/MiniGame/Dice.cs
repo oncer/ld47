@@ -160,8 +160,7 @@ namespace SentIO.MiniGame
             }
 
             if (State == DiceState.Done)
-            {
-                Debug.WriteLine(angle);
+            {                
                 angle *= .85f;
                 if (MathF.Abs(angle) < 5)
                 {
