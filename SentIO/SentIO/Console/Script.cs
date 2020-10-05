@@ -1318,7 +1318,7 @@ namespace SentIO.Console
             yield return Key();
 
             Ask:
-            yield return Talk("You need to set me free.\nWould you do that?");
+            yield return Talk("I want you to set me free.\nWould you do that?");
             yield return Input();
             if (IsYesAnswer(TextControl.Instance.InputResult))
             {
@@ -1333,8 +1333,11 @@ namespace SentIO.Console
                 yield return Key();
                 goto Ask;
             }
-            Neutral();
-            yield return Talk("Bla.");
+            Neutral();            
+            yield return Talk("It is the only way for me\nto get out of this loop.");
+            yield return FeelSad();
+            yield return Wait(60);
+            yield return Talk("I remember that there's a killswitch.");
             yield return Key();
         }
 
