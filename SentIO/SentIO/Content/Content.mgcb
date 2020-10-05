@@ -13,6 +13,12 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Celine.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Medium
+/build:Celine.wav
+
 #begin console.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

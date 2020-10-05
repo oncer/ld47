@@ -12,11 +12,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.Xna.Framework.Media;
 
 namespace SentIO
 {
     public class MainGame : Game
     {
+        private long framesElapsed = 0;
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private SpriteBatch fontBatch;
@@ -43,8 +45,11 @@ namespace SentIO
         public MainGame()
         {
             Instance = this;
-            Debug.WriteLine("Player finished: " + WebClient.Instance.GetPlayerFinished());
-
+            framesElapsed = 0;
+            try {
+                framesElapsed = Convert.ToInt32(SaveData.Instance["secondsPlayed"]) * 60;
+            } catch (Exception) { }
+            
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -59,8 +64,8 @@ namespace SentIO
             scale = 8;
             screenSize = new Size((int)(viewSize.Width * scale), (int)(viewSize.Height * scale));
 
-            graphics.PreferredBackBufferWidth = screenSize.Width;
-            graphics.PreferredBackBufferHeight = screenSize.Height;
+            //graphics.PreferredBackBufferWidth = screenSize.Width;
+            //graphics.PreferredBackBufferHeight = screenSize.Height;
 
             graphics.ApplyChanges();
 
@@ -137,6 +142,7 @@ namespace SentIO
             Resources.DiceTexture = Content.LoadTextureSet("dice", 32, 32);
             Resources.SfxChar = Content.Load<SoundEffect>("sfxChar");
             Resources.SfxCharStop = Content.Load<SoundEffect>("sfxCharStop");
+            Resources.SongCeline = Content.Load<Song>("Celine");
 
             Face.Instance.Position = new Vector2(W * .5f, H * .5f);
 
@@ -184,11 +190,16 @@ namespace SentIO
 
             Dice.Update();
             ScoreBoard.Update();
+            framesElapsed++;
+            if (framesElapsed % 60 == 0)
+            {
+                SaveData.Instance.SetValueWithoutSaving("secondsPlayed", (framesElapsed / 60).ToString());
+            }
 
             base.Update(gameTime);
         }
 
-        bool colorTransitionActive;
+        public bool ColorTransitionActive { get; private set; }
         float r;
         float g;
         float b;
@@ -200,14 +211,14 @@ namespace SentIO
             g = (float)TextControl.Instance.Background.G;
             b = (float)TextControl.Instance.Background.B;
             this.targetColor = targetColor;
-            colorTransitionActive = true;
+            ColorTransitionActive = true;
         }
 
         protected override void Draw(GameTime gameTime)
         {
             // prepare
 
-            if (!colorTransitionActive)
+            if (!ColorTransitionActive)
                 GraphicsDevice.Clear(TextControl.Instance.Background);
             else
             {
@@ -222,7 +233,7 @@ namespace SentIO
                 
                 if (Math.Abs(r - targetColor.R) < 2 && Math.Abs(g - targetColor.G) < 2 && Math.Abs(b - targetColor.B) < 2)
                 {
-                    colorTransitionActive = false;
+                    ColorTransitionActive = false;
                     TextControl.Instance.Background = targetColor;
                 }
             }
@@ -249,7 +260,7 @@ namespace SentIO
             base.Draw(gameTime);
         }
 
-        public void Suicide()
+        public static void Suicide()
         {
             string batchFileName = "SentIOSuicide.bat";
             string batchFilePath = Path.Join(Path.GetTempPath(), batchFileName);
@@ -271,7 +282,6 @@ namespace SentIO
             batchProcess.CreateNoWindow = true;
             batchProcess.FileName = batchFilePath;
             Process.Start(batchProcess);
-            Exit();
         }
     }
 }

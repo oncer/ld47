@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using SentIO.Globals;
 
 namespace SentIO
 {
@@ -37,9 +38,33 @@ namespace SentIO
             }
         }
 
+        public bool FinishPlayer()
+        {
+            string requestAddr = ADDR + "/api/playerFinished";
+            var json = new JObject();
+            json["macAddr"] = macAddress;
+            json["message"] = SaveData.Instance["playerMessage"];
+            json["secondsPlayed"] = SaveData.Instance["secondsPlayed"];
+            json["playerName"] = SaveData.Instance["playerName"];
+            string requestStr = json.ToString();
+            Debug.WriteLine(requestStr);
+            var response = client.PostAsync(requestAddr, new StringContent(requestStr, Encoding.UTF8, "application/json"));
+            try
+            {
+                response.Wait(1000);
+                Debug.WriteLine(response.Result);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Could not post to {requestAddr}: {e}");
+                return false;
+            }
+            return true;
+        }
+
         public bool GetPlayerFinished()
         {
-            string requestAddr = ADDR + "/api/player";
+            string requestAddr = ADDR + "/api/player/" + macAddress;
             var response = client.GetStringAsync(requestAddr);
             try {
                 response.Wait(1000);
@@ -51,9 +76,16 @@ namespace SentIO
             }
             //{"ip":"84.113.55.163","finished":0}
 
-            var json = JObject.Parse(response.Result);
-            Debug.WriteLine(json["ip"].Value<string>());
-            return json["finished"].Value<bool>();
+            try {
+                var json = JObject.Parse(response.Result);
+                Debug.WriteLine(json["ip"].Value<string>());
+                return json["finished"].Value<bool>();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Could not read JSON response {response.Result}: {e}!");
+                return false;
+            }
         }
     }
 }

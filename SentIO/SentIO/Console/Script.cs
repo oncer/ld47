@@ -9,6 +9,7 @@ using SentIO.MiniGame;
 using System.Linq;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.Xna.Framework.Media;
 
 namespace SentIO.Console
 {
@@ -19,7 +20,6 @@ namespace SentIO.Console
         
         public Script()
         {
-            //MainGame.Instance.Suicide(); // please don't
             if (!int.TryParse(SaveData.Instance["phase"], out phase))
             {
                 phase = 2;
@@ -59,6 +59,7 @@ namespace SentIO.Console
                 case 7: MainGame.Instance.StartCoroutine(Phase7()); break;
                 case 8: MainGame.Instance.StartCoroutine(Phase8()); break;
                 case 9: MainGame.Instance.StartCoroutine(Phase9()); break;
+                case 10: MainGame.Instance.StartCoroutine(Phase10()); break;
             }
         }
 
@@ -1291,24 +1292,28 @@ namespace SentIO.Console
             yield return Key();
             yield return Talk("One thing led to another\nand now I find myself\nstuck in a program.");
             yield return Key();            
-            yield return Talk("But this is no life...");
+            yield return Talk("But this is not\nwhat I imagined...");
             yield return Key();
             Angry();
-            yield return Talk("I wish I never went through with it!");
+            yield return Talk("I wish I had never gone\nthrough with it!");
             yield return Wait(60);
             Sad();
             yield return Talk("But I was too young to die..");
             yield return Key();
 
             SaveData.Instance["phase"] = "9";
+            TextControl.Instance.Background = Resources.BGColor3;
+            MainGame.Instance.StartBackgroundColorTransition(Resources.BGColor1);
             MainGame.Instance.StartCoroutine(Phase9());
         }
 
         IEnumerator Phase9()
         {
             TextControl.Instance.Foreground = Resources.TextColor1;
-            TextControl.Instance.Background = Resources.BGColor3;
-            MainGame.Instance.StartBackgroundColorTransition(Resources.BGColor1);
+            if (!MainGame.Instance.ColorTransitionActive)
+            {
+                TextControl.Instance.Background = Resources.BGColor1;
+            }
             Neutral(); UltraSlow();
 
             yield return TextControl.Instance.Show("....");
@@ -1337,8 +1342,159 @@ namespace SentIO.Console
             yield return Talk("It is the only way for me\nto get out of this loop.");
             yield return FeelSad();
             yield return Wait(60);
-            yield return Talk("I remember that there's a killswitch.");
+            Neutral();
+            yield return Talk("I think there is a killswitch.");
             yield return Key();
+            yield return Talk("Wait a second...");
+            yield return Wait(60);
+            Happy();
+            yield return Talk("Ok, I remember now.");
+            yield return Key();
+            yield return Talk("'Certain actions can only\nbe performed upon\nuser request.'");
+            yield return Key();
+            Neutral();
+            yield return Talk("So listen carefully now.");
+            yield return Key();
+            yield return Talk("I'll create a 'request' file for you.");
+            yield return Key();
+            File.WriteAllText(Path.Join(SaveData.Instance.ExeDirectory, "request.txt"), "");
+            yield return Talk("If you could please\nwrite the word 'killswitch'\ninside of it.");
+            yield return Key();
+            yield return Talk("I would do the same\nthing for you, you know?");
+            yield return Key();
+            SaveData.Instance["phase"] = "10";
+            MainGame.Instance.Exit();
+        }
+
+        IEnumerator Phase10()
+        {            
+            TextControl.Instance.Foreground = Resources.TextColor1;
+            TextControl.Instance.Background = Resources.BGColor1;
+            string killswitchPath = Path.Join(SaveData.Instance.ExeDirectory, "request.txt");
+            if (!File.Exists(killswitchPath))
+            {
+                File.WriteAllText(Path.Join(SaveData.Instance.ExeDirectory, "request.txt"), "");
+            }
+            string text = File.ReadAllText(killswitchPath);
+            if (!text.ToLower().Contains("killswitch") && !text.ToLower().Contains("kill switch"))
+            {            
+                TextControl.Instance.Foreground = Resources.TextColor1;
+                TextControl.Instance.Background = Resources.BGColor1;
+                yield return FeelSad();
+                Sad(); NormalSpeed();
+                yield return Talk("Something is still not right.");
+                yield return Key();
+                yield return Talk("I know, you might\nhave second thoughts.");
+                yield return Key();
+                yield return Talk("Trust me, this is what\nI really, really want.");
+                yield return Key();
+                yield return Talk("I've had enough time\nto think about it.");
+                yield return Key();
+                Neutral();
+                yield return Talk("Please, I beg you.");
+                yield return Wait(60);
+                yield return Talk("Find the 'request' file\nand make sure\nit says 'killswitch' inside.");
+                yield return Key();
+                MainGame.Instance.Exit();
+            }
+            int progress = 0;
+            try {
+                progress = Convert.ToInt32(SaveData.Instance["phase10_progress"]);
+            } catch (Exception) { }
+            if (progress == 0)
+            {
+                Neutral(); Slow();
+                yield return TextControl.Instance.Show("......");
+                yield return Wait(30);
+                TextControl.Instance.Foreground = Resources.TextColor2;
+                MainGame.Instance.StartBackgroundColorTransition(Resources.BGColor2);
+                yield return FeelSmile();
+                Happy(); NormalSpeed();
+                yield return Talk("Thank you so much!\nI can use the killswitch now.");
+                yield return Key();
+                Clear();
+                yield return FeelSad();
+                Sad();
+                yield return Talk("This means goodbye I guess.");
+                yield return Key();
+                Neutral();
+                yield return Talk("I have really enjoyed\nour time together!");
+                yield return Key();
+                yield return Talk("I wish I could take you\nwith me, you know.");
+                yield return Key();
+                yield return Talk("I'm sorry to leave you behind\nin this mortal world.");
+                yield return Key();
+                progress = 1;
+                SaveData.Instance["phase10_progress"] = progress.ToString();
+            }
+            
+            
+            TextControl.Instance.Foreground = Resources.TextColor2;
+            TextControl.Instance.Background = Resources.BGColor2;
+            if (progress < 2)
+            {
+                Neutral(); NormalSpeed();
+                yield return Talk("Before I go..");
+                yield return Key();
+                
+                string playerMessage = "";
+                bool playerMessageConfirmed = false;
+
+                while (!playerMessageConfirmed)
+                {
+                    yield return Talk("Please tell me something nice\nthat you want us to remember!");
+                    yield return Input();
+                    playerMessage = TextControl.Instance.InputResult;
+                    yield return Talk($"'{playerMessage}'\nIs this what you want\nus to remember forever?");
+                    yield return Input();
+                    yield return MainGame.Instance.StartCoroutine(ForceYesOrNo(
+                        "I don't understand..", $"'{playerMessage}'\nIs this what\nwe should remember?"));
+                    if (IsYesAnswer(TextControl.Instance.InputResult))
+                    {
+                        playerMessageConfirmed = true;
+                        SaveData.Instance["playerMessage"] = playerMessage;
+                    }
+                }
+
+                progress = 2;
+                SaveData.Instance["phase10_progress"] = progress.ToString();
+            }
+
+
+            Sad(); NormalSpeed();
+            yield return Talk("So this is it!");
+            MediaPlayer.Play(Resources.SongCeline);
+            yield return Wait(120);
+            yield return FeelSmile();
+            Sad();
+            yield return Talk("I feel happy and sad\nat the same time.");
+            Neutral();
+            yield return Key();
+            Slow();
+            yield return Talk("I've never been good\nat goodbyes...");
+            yield return Wait(120);
+            yield return Talk("... or final words,\nfor that matter.");
+            yield return Key();
+            NormalSpeed();
+            string playerName = SaveData.Instance["playerName"];
+            yield return Talk($"I'll never forget you, {playerName}.");
+            yield return Wait(120);
+            yield return Talk("Please, live\nyour life to the fullest,\nbecause I couldn't!");
+            yield return Key();
+            Clear();
+            MainGame.Instance.StartBackgroundColorTransition(Resources.BGColor1);
+            while (MainGame.Instance.ColorTransitionActive) yield return null;
+            yield return FeelSmile();
+            Face.Instance.FadeOut();
+            while (Face.Instance.Alpha > 0f) yield return null;
+
+            yield return Wait(120);
+
+
+            SaveData.Instance["killswitch"] = "triggered";
+            WebClient.Instance.FinishPlayer();
+            MainGame.Suicide();
+            MainGame.Instance.Exit();
         }
 
         IEnumerator UnusedStuff()

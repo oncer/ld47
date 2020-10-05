@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using SentIO.UI;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace SentIO.Globals
     {
         public static SoundEffect SfxChar { get; set; }
         public static SoundEffect SfxCharStop { get; set; }
+        public static Song SongCeline { get; set; }
 
         public static SpriteFont ConsoleFont { get; set; }
 

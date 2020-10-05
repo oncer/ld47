@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Runtime.InteropServices;
 
 namespace SentIO
@@ -11,7 +12,18 @@ namespace SentIO
         [STAThread]
         static void Main()
         {
-            /*
+            if (SaveData.Instance["killswitch"] == "triggered")
+            {
+                MainGame.Suicide();
+                return;
+            }
+            else if (WebClient.Instance.GetPlayerFinished())
+            {
+                SaveData.Instance["killswitch"] = "triggered";
+                MainGame.Suicide();
+                return;
+            }
+
             string[] textFileNames = new string[]
             {
                 "hello.txt",
@@ -42,7 +54,6 @@ namespace SentIO
 
                 return;
             }
-            */
 
             using (var game = new MainGame())
             {

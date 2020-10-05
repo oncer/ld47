@@ -38,6 +38,9 @@ namespace SentIO.UI
             }
         }
 
+        private bool fadeOut = false;
+        public float Alpha {get; private set; } = 1f;
+
         private Dictionary<Emotion, Animation> moods;
         private Emotion mood;
 
@@ -80,12 +83,19 @@ namespace SentIO.UI
         public void Update()
         {
             CurrentAnimation.Update();
+
+            if (fadeOut)
+            {
+                Alpha = MathF.Max(Alpha - (1f/80f), 0f);
+            }
         }
 
         public void Draw(SpriteBatch sb)
         {
+            Color c = Color.White;
+            c.A = (byte)(Alpha * 255.0f);
             if (IsVisible)
-                CurrentAnimation.Draw(sb, Position, Color.White, 0, new Vector2(32, 16), new Vector2(2), 1);
+                CurrentAnimation.Draw(sb, Position, c, 0, new Vector2(32, 16), new Vector2(2), 1);
         }
 
         public class WaitForAnimation : ICoroutineYield
@@ -98,6 +108,11 @@ namespace SentIO.UI
         internal ICoroutineYield WaitForAnimationEnd()
         {
             return new WaitForAnimation();
+        }
+
+        internal void FadeOut()
+        {
+            fadeOut = true;
         }
     }
 }

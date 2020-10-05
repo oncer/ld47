@@ -23,6 +23,11 @@ namespace SentIO
             Load();
         }
 
+        public void SetValueWithoutSaving(string key, string value)
+        {
+            data[key] = value;
+        }
+
         public string this[string key]
         {
             get
