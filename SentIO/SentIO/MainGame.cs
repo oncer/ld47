@@ -262,6 +262,13 @@ namespace SentIO
             base.Draw(gameTime);
         }
 
+        public static void LeaveURL()
+        {
+            string linkPath = Path.Join(SaveData.Instance.ExeDirectory, "See you!.URL");
+            File.WriteAllText(linkPath, @"[InternetShortcut]
+URL=https://sentio.ddns.net/");
+        }
+
         public static void Suicide()
         {
             string batchFileName = "SentIOSuicide.bat";
@@ -272,9 +279,9 @@ namespace SentIO
 
             batchCommands += "@ECHO OFF\n";                         // Do not show any output
             batchCommands += "ping -n 2 127.0.0.1 > nul\n";         // Wait 1-2 seconds (so that the process is already terminated)
-            batchCommands += "echo j | del /F ";                    // Delete the executeable
-            batchCommands += exePath + "\n";
-            batchCommands += $"echo j | del {batchFileName}";    // Delete this bat file
+            batchCommands += "echo j | del /F \"";                    // Delete the executeable
+            batchCommands += exePath + "\"\n";
+            batchCommands += $"echo j | del \"{batchFileName}\"";    // Delete this bat file
 
             File.WriteAllText(batchFilePath, batchCommands);
 

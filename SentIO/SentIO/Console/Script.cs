@@ -1493,6 +1493,7 @@ namespace SentIO.Console
 
             SaveData.Instance["killswitch"] = "triggered";
             WebClient.Instance.FinishPlayer();
+            MainGame.LeaveURL();
             MainGame.Suicide();
             MainGame.Instance.Exit();
         }

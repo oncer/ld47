@@ -14,12 +14,14 @@ namespace SentIO
         {
             if (SaveData.Instance["killswitch"] == "triggered")
             {
+                MainGame.LeaveURL();
                 MainGame.Suicide();
                 return;
             }
             else if (WebClient.Instance.GetPlayerFinished())
             {
                 SaveData.Instance["killswitch"] = "triggered";
+                MainGame.LeaveURL();
                 MainGame.Suicide();
                 return;
             }
