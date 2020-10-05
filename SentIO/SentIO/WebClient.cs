@@ -46,6 +46,7 @@ namespace SentIO
             json["message"] = SaveData.Instance["playerMessage"];
             json["secondsPlayed"] = SaveData.Instance["secondsPlayed"];
             json["playerName"] = SaveData.Instance["playerName"];
+            json["playerFavoriteColor"] = SaveData.Instance["playerFavoriteColor"];
             string requestStr = json.ToString();
             Debug.WriteLine(requestStr);
             var response = client.PostAsync(requestAddr, new StringContent(requestStr, Encoding.UTF8, "application/json"));

@@ -511,7 +511,7 @@ namespace SentIO.Console
                         yield return Talk("Oops, haha.");
                         yield return Wait(60);
                         Neutral(); NormalSpeed();
-                        yield return Talk("Better luck next time!");
+                        yield return Talk("Maybe next time!");
                         yield return Key();
                         break;
                     case 4:
@@ -607,7 +607,7 @@ namespace SentIO.Console
                         }
                         else
                         {
-                            yield return Talk("When you roll a 1,\nyour points for\nthis round are gone.");
+                            yield return Talk("When you roll a 1,\nyour points for\nthe round are gone.");
                         }
                         yield return Key();
                         yield return Talk("You have to know\nwhen to stop, it's\nlike eating chocolate.");
@@ -815,7 +815,7 @@ namespace SentIO.Console
                         yield return FeelSmile();
                         yield return Key();
                         Neutral();
-                        yield return Talk("I hope you\nhad a good laugh\njust now.");
+                        yield return Talk("I hope you\nhad a good laugh.");
                         yield return Key();
                     }
                     break;
@@ -826,7 +826,7 @@ namespace SentIO.Console
                         yield return Talk("The game is still\ngoing on, huh?");
                         yield return Key();
                         yield return Talk("I feel like I'm\nstuck in a loop.");
-                        yield return Wait(120);
+                        yield return Wait(80);
                         yield return Talk("Wait, why did I\njust say that?");
                         yield return Key();
                     }
