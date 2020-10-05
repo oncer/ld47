@@ -188,11 +188,44 @@ namespace SentIO
             base.Update(gameTime);
         }
 
+        bool colorTransitionActive;
+        float r;
+        float g;
+        float b;
+        Color targetColor;
+        public void StartBackgroundColorTransition(Color targetColor)
+        {
+            //this.currentColor = TextControl.Instance.Background;
+            r = (float)TextControl.Instance.Background.R;
+            g = (float)TextControl.Instance.Background.G;
+            b = (float)TextControl.Instance.Background.B;
+            this.targetColor = targetColor;
+            colorTransitionActive = true;
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             // prepare
 
-            GraphicsDevice.Clear(TextControl.Instance.Background);
+            if (!colorTransitionActive)
+                GraphicsDevice.Clear(TextControl.Instance.Background);
+            else
+            {
+                var f = 40f;
+
+                r += (targetColor.R - r) / f;
+                g += (targetColor.G - g) / f;
+                b += (targetColor.B - b) / f;
+
+                var currentColor = new Color((byte)r, (byte)g, (byte)b);
+                GraphicsDevice.Clear(currentColor);
+                
+                if (Math.Abs(r - targetColor.R) < 2 && Math.Abs(g - targetColor.G) < 2 && Math.Abs(b - targetColor.B) < 2)
+                {
+                    colorTransitionActive = false;
+                    TextControl.Instance.Background = targetColor;
+                }
+            }
 
             Camera.Instance.ResolutionRenderer.SetupDraw();
 
@@ -209,7 +242,7 @@ namespace SentIO
 
             // font batch
 
-            fontBatch.Begin(blendState: BlendState.NonPremultiplied);
+            fontBatch.Begin(blendState: BlendState.NonPremultiplied, depthStencilState:DepthStencilState.None, samplerState:SamplerState.PointClamp);
             TextControl.Instance.Draw(fontBatch);
             fontBatch.End();
 

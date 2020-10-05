@@ -19,14 +19,12 @@ namespace SentIO.Globals
         public static TextureSet DiceTexture { get; set; }
 
         public static Color TextColor1 { get; set; } = Color.White;
-
-        // light white
         public static Color TextColor2 { get; set; } = "e1f6f4".ToColor();
         public static Color TextColorInput { get; set; } = "73a8b1".ToColor();
 
         public static Color BGColor1 { get; set; } = Color.Black;
-
         public static Color BGColor2 { get; set; } = "0a4552".ToColor();
+        public static Color BGColor3 { get; set; } = "288778".ToColor();
 
         public static string DisplayName { 
             get {
