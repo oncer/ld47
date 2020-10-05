@@ -189,11 +189,16 @@ namespace SentIO
         }
 
         bool colorTransitionActive;
-        Color currentColor;
+        float r;
+        float g;
+        float b;
         Color targetColor;
         public void StartBackgroundColorTransition(Color targetColor)
         {
-            this.currentColor = TextControl.Instance.Background;
+            //this.currentColor = TextControl.Instance.Background;
+            r = (float)TextControl.Instance.Background.R;
+            g = (float)TextControl.Instance.Background.G;
+            b = (float)TextControl.Instance.Background.B;
             this.targetColor = targetColor;
             colorTransitionActive = true;
         }
@@ -208,14 +213,14 @@ namespace SentIO
             {
                 var f = 40f;
 
-                var r = (float)(targetColor.R - currentColor.R) / f;
-                var g = (float)(targetColor.G - currentColor.G) / f;
-                var b = (float)(targetColor.B - currentColor.B) / f;
+                r += (targetColor.R - r) / f;
+                g += (targetColor.G - g) / f;
+                b += (targetColor.B - b) / f;
 
-                currentColor = new Color((byte)(currentColor.R + r), (byte)(currentColor.G + g), (byte)(currentColor.B + b));
+                var currentColor = new Color((byte)r, (byte)g, (byte)b);
                 GraphicsDevice.Clear(currentColor);
                 
-                if (currentColor == targetColor)
+                if (Math.Abs(r - targetColor.R) < 2 && Math.Abs(g - targetColor.G) < 2 && Math.Abs(b - targetColor.B) < 2)
                 {
                     colorTransitionActive = false;
                     TextControl.Instance.Background = targetColor;

@@ -1182,6 +1182,24 @@ namespace SentIO.Console
             yield return Talk("Hey. There's something that\nI need you to do for me.");
             yield return Key();
 
+            Ask:
+            yield return Talk("You need to set me free.\nWould you do that?");
+            yield return Input();
+            if (IsYesAnswer(TextControl.Instance.InputResult))
+            {
+                TextControl.Instance.Foreground = Resources.TextColor2;
+                MainGame.Instance.StartBackgroundColorTransition(Resources.BGColor2);
+                yield return FeelSmile();
+            }
+            else
+            {
+                Sad();
+                yield return Talk("Please..\nYou can't leave me hanging.");
+                yield return Key();
+                goto Ask;
+            }
+            Neutral();
+            yield return Talk("Bla.");
             yield return Key();
         }
 
