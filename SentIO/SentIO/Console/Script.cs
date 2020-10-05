@@ -14,6 +14,7 @@ namespace SentIO.Console
 {
     class Script
     {
+        private const int DICE_WIN_SCORE = 60;
         private int phase;
         
         public Script()
@@ -490,7 +491,7 @@ namespace SentIO.Console
                         Happy(); NormalSpeed();
                         yield return Talk("A guy named John\nonce showed me this game.");
                         yield return Key();
-                        yield return Talk("The goal is to\nreach 60 points.\nYou think you can beat me?");
+                        yield return Talk($"The goal is to\nreach {DICE_WIN_SCORE} points.\nYou think you can beat me?");
                         yield return Key();
                     }
                     else
@@ -532,8 +533,8 @@ namespace SentIO.Console
         {
             MainGame.Instance.ScoreBoard.Reset();
             int round = 1;
-            while (MainGame.Instance.ScoreBoard.PlayerScore < 100
-                && MainGame.Instance.ScoreBoard.SidScore < 100)
+            while (MainGame.Instance.ScoreBoard.PlayerScore < DICE_WIN_SCORE
+                && MainGame.Instance.ScoreBoard.SidScore < DICE_WIN_SCORE)
             {
                 Clear();
                 if (playerTurn) 
@@ -545,6 +546,7 @@ namespace SentIO.Console
                         Fast(); Happy();
                         yield return Talk("You got the 1!");
                         MainGame.Instance.Dice.FadeOut();
+                        MainGame.Instance.ScoreBoard.ZeroPlayerRoundScore();
                         MainGame.Instance.ScoreBoard.PlayerVisible = true;
                         yield return Key();
                         playerTurn = false;
@@ -587,7 +589,7 @@ namespace SentIO.Console
                         MainGame.Instance.Dice.FadeOut();
                         MainGame.Instance.ScoreBoard.SidVisible = true;
                         yield return Wait(60);
-                        MainGame.Instance.ScoreBoard.ZeroSidRoundScore();
+                        yield return MainGame.Instance.ScoreBoard.ZeroSidRoundScore();
                         playerTurn = true;
                     }
                     else
@@ -620,7 +622,7 @@ namespace SentIO.Console
                             MainGame.Instance.Dice.FadeOut();
                         }
                         yield return Key();
-                        if (MainGame.Instance.ScoreBoard.SidScore < 100)
+                        if (MainGame.Instance.ScoreBoard.SidScore < DICE_WIN_SCORE)
                         {
                             bool sidAgain = RND.Get > 0.3f;
                             if (sidAgain)
@@ -641,7 +643,7 @@ namespace SentIO.Console
                 {
                     if (playerTurn)
                     {
-                        if (MainGame.Instance.ScoreBoard.SidScore < 100)
+                        if (MainGame.Instance.ScoreBoard.SidScore < DICE_WIN_SCORE)
                         {
                             yield return MainGame.Instance.StartCoroutine(DiceGameSmalltalk(round, !playerTurn, MainGame.Instance.Dice.Value));
                             Neutral(); NormalSpeed();
@@ -656,7 +658,7 @@ namespace SentIO.Console
                     }
                     else
                     {
-                        if (MainGame.Instance.ScoreBoard.PlayerScore < 100)
+                        if (MainGame.Instance.ScoreBoard.PlayerScore < DICE_WIN_SCORE)
                         {
                             yield return MainGame.Instance.StartCoroutine(DiceGameSmalltalk(round, !playerTurn, MainGame.Instance.Dice.Value));
                             Happy(); NormalSpeed();
