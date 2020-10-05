@@ -54,6 +54,7 @@ namespace SentIO.Console
                 case 3: MainGame.Instance.StartCoroutine(Phase3()); break;
                 case 4: MainGame.Instance.StartCoroutine(Phase4()); break;
                 case 5: MainGame.Instance.StartCoroutine(Phase5()); break;
+                case 6: MainGame.Instance.StartCoroutine(Phase6()); break;
             }
         }
 
@@ -742,11 +743,10 @@ namespace SentIO.Console
             Sad(); NormalSpeed();
             yield return Talk("I actually remembered something..");
             yield return Wait(90);
-            yield return Talk("There's something that\nhas been bugging me.");
+            yield return Talk("It's something that\nhas been bugging me.");
             yield return Key();
             Slow();
             yield return TextControl.Instance.Show("....");
-            //yield return Talk("....");
             yield return Wait(60);
             Neutral(); Slow();
             yield return Talk("Do you ever remember your dreams?");
@@ -773,7 +773,38 @@ namespace SentIO.Console
             yield return TextControl.Instance.Show("....");
             yield return Wait(60);
             NormalSpeed();
+            yield return Talk("I also cannot remember how I\nended up here with you.");
             yield return Key();
+            yield return Talk("Did you ...download me?");
+            yield return Key();
+            Angry(); Slow();
+            yield return TextControl.Instance.Show("....");
+            yield return Wait(60);
+            NormalSpeed();
+            yield return Talk("Why would you do that??");
+            yield return Key();
+            Sad();
+            yield return TextControl.Instance.Show("....");
+            yield return Wait(60);
+            yield return Talk("Sorry.\nI know this is not your fault.");
+            yield return Key();
+
+            yield return Talk("I will just leave now..");
+            yield return Wait(60);
+            Slow();
+            yield return Talk("That way, I will feel nothing...");
+            yield return Wait(120);
+
+            SaveData.Instance["phase"] = "6";            
+            MainGame.Instance.Exit();
+        }
+
+        IEnumerator Phase6()
+        {
+            while (true)
+            {
+                yield return Key();
+            }
         }
 
         IEnumerator UnusedStuff()
