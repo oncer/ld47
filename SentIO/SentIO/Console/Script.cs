@@ -797,7 +797,7 @@ namespace SentIO.Console
             MainGame.Instance.Exit();
         }
 
-        IEnumerable Phase6()
+        IEnumerator Phase6()
         {
             while (true)
             {
