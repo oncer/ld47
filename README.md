@@ -1,5 +1,8 @@
 # ld47
 
-Music source:
-- http://www.storth.com/midi/Celine_Dion-My_heart_will_go_on.mid
-  (retrieved on 2020-10-05)
+Some kind of sentient life form inside your computer.
+
+Watch and learn as the drama unfolds!
+
+* Peter Sperl - Design, Pixel Art, SFX, Programming
+* Simon Parzer - Design, Programming

@@ -81,8 +81,10 @@ namespace SentIO
 
             coroutines = new List<Coroutine>();
             
-
-            Window.Title = Resources.DisplayName;
+            if (Resources.DisplayName.ToLower() != "sentio")
+            {
+                Window.Title = Resources.DisplayName;
+            }
             //Window.Title = "Kevin"; // remove me, duh
         }
 
