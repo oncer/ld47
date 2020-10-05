@@ -74,6 +74,7 @@ namespace SentIO.MiniGame
             bounced = 4;
             State = DiceState.Bounce;
             yVel = -8;
+            value = (int)(RND.Get * 6);
 
             ChangeAngularSpeed();
         }
@@ -140,11 +141,11 @@ namespace SentIO.MiniGame
 
                 if (Math.Abs(y - yMax) > 128)
                 {
-                    angSpeed *= .99f;
-                    if ((Math.Abs(angle) % 90) - 10 < 4
-                        || Math.Abs(angSpeed) < .05f)
+                    if (Math.Abs(angSpeed) > 10) angSpeed *= .95f;
+                    if ((angle < -320 || angle > 320) && Math.Abs(angSpeed) < 10)
                     {
-                        angle = Math.Abs(angle);
+                        if (angle < 0) angle = (angle + 360) % 360;
+                        else if (angle > 0) angle = (-360 + angle) % 360;
                         angSpeed = 0;                        
                         State = DiceState.Done;
                     }
@@ -159,10 +160,12 @@ namespace SentIO.MiniGame
 
             if (State == DiceState.Done)
             {
-                angle = .85f;
-                if (angle < 5)
+                Debug.WriteLine(angle);
+                angle *= .85f;
+                if (MathF.Abs(angle) < 5)
+                {
                     angle = 0;
-                //angle = 0;
+                }
             }
 
             if (State == DiceState.FadeOut)
