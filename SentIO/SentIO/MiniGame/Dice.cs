@@ -38,7 +38,8 @@ namespace SentIO.MiniGame
         }
 
         public DiceState State { get; private set; }
-        public int Value { get; set; }
+        private int value;
+        public int Value => value + 1;
 
         private float x => Position.X;
         private float y => Position.Y;
@@ -54,7 +55,7 @@ namespace SentIO.MiniGame
 
         double angSpeed = 0;
 
-        private Texture2D Texture => Resources.DiceTexture[Value];
+        private Texture2D Texture => Resources.DiceTexture[value];
 
         public Dice()
         {
@@ -101,7 +102,7 @@ namespace SentIO.MiniGame
                 if (y + yVel > yMax)
                 {
                     if (bounced > 0)
-                        Value = (int)(RND.Get * 6);
+                        value = (int)(RND.Get * 6);
 
                     yVel *= -.7f;
                     if (Math.Abs(yVel) < .6f)
