@@ -19,7 +19,9 @@ namespace SentIO.MiniGame
         public bool SidVisible { get; set; }
 
         float playerAlpha = 0f;
+        float playerRoundAlpha = 0f;
         float sidAlpha = 0f;
+        float sidRoundAlpha = 0f;
 
         public int PlayerScore { get; private set; }
         public int SidScore { get; private set; }
@@ -27,9 +29,20 @@ namespace SentIO.MiniGame
         private int visiblePlayerScore;
         private int visibleSidScore;
 
+        public int PlayerRoundScore { get; private set; }
+        public int SidRoundScore { get; private set; }
+
+        private int visiblePlayerRoundScore;
+        private int visibleSidRoundScore;
+
+
         private int scoreDelay;
 
-        public bool IsDone => visiblePlayerScore == PlayerScore && visibleSidScore == SidScore;
+        public bool IsDone => 
+            visiblePlayerScore == PlayerScore 
+            && visibleSidScore == SidScore
+            && visiblePlayerRoundScore == PlayerRoundScore
+            && visibleSidRoundScore == SidRoundScore;
         public ScoreBoard()
         {
             Reset();
@@ -39,6 +52,12 @@ namespace SentIO.MiniGame
         {
             PlayerScore = 0;
             SidScore = 0;
+            visibleSidScore = 0;
+            visiblePlayerScore = 0;
+            PlayerRoundScore = 0;
+            SidRoundScore = 0;
+            visibleSidRoundScore = 0;
+            visiblePlayerRoundScore = 0;
             PlayerVisible = false;
             SidVisible = false;
             playerAlpha = 0f;
@@ -46,17 +65,53 @@ namespace SentIO.MiniGame
             scoreDelay = 0;
         }
 
+        public Wait AddPlayerRoundScore(int score)
+        {
+            PlayerRoundScore += score;
+            return new Wait(this);
+        }
+
+        public Wait ZeroPlayerRoundScore()
+        {
+            PlayerRoundScore = 0;
+            return new Wait(this);
+        }
+
+        public Wait HoldPlayerRoundScore()
+        {
+            PlayerScore += PlayerRoundScore;
+            PlayerRoundScore = 0;
+            return new Wait(this);
+        }
+
         public Wait AddPlayerScore(int score)
         {
             PlayerScore += score;
-            PlayerVisible = true;
+            return new Wait(this);
+        }
+
+        public Wait AddSidRoundScore(int score)
+        {
+            SidRoundScore += score;
+            return new Wait(this);
+        }
+
+        public Wait ZeroSidRoundScore()
+        {
+            SidRoundScore = 0;
+            return new Wait(this);
+        }
+
+        public Wait HoldSidRoundScore()
+        {
+            SidScore += SidRoundScore;
+            SidRoundScore = 0;
             return new Wait(this);
         }
 
         public Wait AddSidScore(int score)
         {
             SidScore += score;
-            SidVisible = true;
             return new Wait(this);
         }
 
@@ -71,10 +126,38 @@ namespace SentIO.MiniGame
                 sidAlpha = MathF.Min(sidAlpha + (1f/30f), 1f);
             }
             
+            if (SidRoundScore > 0 && sidAlpha >= 1f)
+            {
+                sidRoundAlpha = MathF.Min(sidRoundAlpha + (1f/20f), 1f);
+            }
+            else if (visibleSidRoundScore <= 0 && sidAlpha >= 1f)
+            {
+                sidRoundAlpha = MathF.Max(sidRoundAlpha - (1f/20f), 0f);
+            }
+
+            if (PlayerRoundScore > 0 && playerAlpha >= 1f)
+            {
+                playerRoundAlpha = MathF.Min(playerRoundAlpha + (1f/30f), 1f);
+            }
+            else if (visiblePlayerRoundScore <= 0 && playerAlpha >= 1f)
+            {
+                playerRoundAlpha = MathF.Max(playerRoundAlpha - (1f/30f), 0f);
+            }
+
             if (scoreDelay <= 0)
             {
                 if (visiblePlayerScore < PlayerScore) visiblePlayerScore++;
                 if (visibleSidScore < SidScore) visibleSidScore++;
+                if (playerRoundAlpha >= 1f)
+                {
+                    if (visiblePlayerRoundScore < PlayerRoundScore) visiblePlayerRoundScore++;
+                    if (visiblePlayerRoundScore > PlayerRoundScore) visiblePlayerRoundScore--;
+                }
+                if (sidRoundAlpha >= 1f)
+                {
+                    if (visibleSidRoundScore < SidRoundScore) visibleSidRoundScore++;
+                    if (visibleSidRoundScore > SidRoundScore) visibleSidRoundScore--;
+                }
                 scoreDelay = ScoreDelayFrames;
             }
             else scoreDelay--;
@@ -88,23 +171,34 @@ namespace SentIO.MiniGame
             float y = windowHeight * 0.6f;
             string playerStr = $"{PlayerName}";
             string playerScoreStr = visiblePlayerScore.ToString();
+            string playerRoundScoreStr = $"+{visiblePlayerRoundScore}";
             Vector2 playerPos = new Vector2(windowWidth * 0.2f, y);
             Vector2 playerStrPos = playerPos - new Vector2(Resources.ConsoleFont.MeasureString(playerStr).X / 2, 0);
             Vector2 playerScorePos = playerPos + new Vector2(-Resources.ConsoleFont.MeasureString(playerScoreStr).X / 2, Resources.ConsoleFont.LineSpacing);
+            Vector2 playerRoundScorePos = playerPos + new Vector2(-Resources.ConsoleFont.MeasureString(playerRoundScoreStr).X / 2, Resources.ConsoleFont.LineSpacing * 2);
             Color playerColor = Resources.TextColor2;
             playerColor.A = (byte)(playerAlpha * 255f);
+            Color playerRoundColor = Resources.TextColor2;
+            playerRoundColor.A = (byte)(playerRoundAlpha * 255f);
             Vector2 sidPos = new Vector2(windowWidth * 0.8f, y);
             string sidStr = $"{Resources.DisplayName}";
             string sidScoreStr = visibleSidScore.ToString();
+            string sidRoundScoreStr = $"+{visibleSidRoundScore}";
             Vector2 sidStrPos = sidPos - new Vector2(Resources.ConsoleFont.MeasureString(sidStr).X / 2, 0);
             Vector2 sidScorePos = sidPos + new Vector2(-Resources.ConsoleFont.MeasureString(sidScoreStr).X / 2, Resources.ConsoleFont.LineSpacing);
+            Vector2 sidRoundScorePos = sidPos + new Vector2(-Resources.ConsoleFont.MeasureString(sidRoundScoreStr).X / 2, Resources.ConsoleFont.LineSpacing * 2);
             Color sidColor = Resources.TextColor2;
             sidColor.A = (byte)(sidAlpha * 255f);
+            Color sidRoundColor = Resources.TextColor2;
+            sidRoundColor.A = (byte)(sidRoundAlpha * 255f);
 
             spriteBatch.DrawString(Resources.ConsoleFont, playerStr, playerStrPos, playerColor, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
             spriteBatch.DrawString(Resources.ConsoleFont, playerScoreStr, playerScorePos, playerColor, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
+            spriteBatch.DrawString(Resources.ConsoleFont, playerRoundScoreStr, playerRoundScorePos, playerRoundColor, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
+            
             spriteBatch.DrawString(Resources.ConsoleFont, sidStr, sidStrPos, sidColor, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
             spriteBatch.DrawString(Resources.ConsoleFont, sidScoreStr, sidScorePos, sidColor, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
+            spriteBatch.DrawString(Resources.ConsoleFont, sidRoundScoreStr, sidRoundScorePos, sidRoundColor, 0, Vector2.Zero, new Vector2(1), SpriteEffects.None, 1);
         }
 
         public class Wait: ICoroutineYield
