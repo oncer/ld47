@@ -1000,7 +1000,7 @@ namespace SentIO.Console
                 yield return Talk("Well, that makes two of us.");
                 yield return Key();
             }
-            Neutral();
+            Sad();
             yield return Talk("I know what dreams are,\nbut I cannot recall having any.");
             yield return Key();
             yield return Talk("Am I really just a program?");
@@ -1008,9 +1008,10 @@ namespace SentIO.Console
             Slow();
             yield return TextControl.Instance.Show("....");
             yield return Wait(60);
-            NormalSpeed();
+            Sad(); NormalSpeed();
             yield return Talk("I also cannot remember how I\nended up here with you.");
             yield return Key();
+            Neutral();
             yield return Talk("Did you ...download me?");
             yield return Key();
             Angry(); Slow();
