@@ -37,32 +37,8 @@ namespace SentIO
 
         public static MainGame Instance { get; private set; }
 
-        private Dice dice;
-
-        public void Suicide()
-        {
-            string batchFileName = "SentIOSuicide.bat";
-            string batchFilePath = Path.Join(Path.GetTempPath(), batchFileName);
-            string exePath = SaveData.Instance.ExePath;
-
-            string batchCommands = string.Empty;
-
-            batchCommands += "@ECHO OFF\n";                         // Do not show any output
-            batchCommands += "ping -n 2 127.0.0.1 > nul\n";         // Wait 1-2 seconds (so that the process is already terminated)
-            batchCommands += "echo j | del /F ";                    // Delete the executeable
-            batchCommands += exePath + "\n";
-            batchCommands += $"echo j | del {batchFileName}";    // Delete this bat file
-
-            File.WriteAllText(batchFilePath, batchCommands);
-
-
-            ProcessStartInfo batchProcess = new ProcessStartInfo();
-            batchProcess.WindowStyle = ProcessWindowStyle.Hidden;
-            batchProcess.CreateNoWindow = true;
-            batchProcess.FileName = batchFilePath;
-            Process.Start(batchProcess);
-            Exit();
-        }
+        public Dice Dice { get; private set; }
+        public ScoreBoard ScoreBoard { get; private set; }
 
         public MainGame()
         {
@@ -163,11 +139,15 @@ namespace SentIO
             Resources.SfxCharStop = Content.Load<SoundEffect>("sfxCharStop");
 
             Face.Instance.Position = new Vector2(W * .5f, H * .5f);
-            script = new Script();
 
-            dice = new Dice();            
-            dice.Position = new Vector2(W * .25f, H * .75f);
-            dice.Roll();
+            Dice = new Dice();            
+            //Dice.Position = new Vector2(W * .25f, H * .75f);
+            //Dice.Roll();
+
+            ScoreBoard = new ScoreBoard();
+
+            // Script should be initialized last!
+            script = new Script();
         }
 
         public CoroutineWait StartCoroutine(IEnumerator coroutine)
@@ -188,13 +168,13 @@ namespace SentIO
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-            {
-                if (dice.State == Dice.DiceState.Done)
-                {
-                    dice.Roll();
-                }
-            }
+            //if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+            //{
+            //    if (Dice.State == Dice.DiceState.Done)
+            //    {
+            //        Dice.Roll();
+            //    }
+            //}
 
             Camera.Instance.Update();
 
@@ -202,7 +182,8 @@ namespace SentIO
             Face.Instance.Update();
             TextControl.Instance.Update();
 
-            dice.Update();
+            Dice.Update();
+            ScoreBoard.Update();
 
             base.Update(gameTime);
         }
@@ -220,8 +201,9 @@ namespace SentIO
             spriteBatch.BeginCamera(Camera.Instance, BlendState.NonPremultiplied, DepthStencilState.None);
 
             Face.Instance.Draw(spriteBatch);
-
-            dice.Draw(spriteBatch);
+            
+            ScoreBoard.Draw(spriteBatch);
+            Dice.Draw(spriteBatch);
 
             spriteBatch.End();
 
@@ -232,6 +214,31 @@ namespace SentIO
             fontBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void Suicide()
+        {
+            string batchFileName = "SentIOSuicide.bat";
+            string batchFilePath = Path.Join(Path.GetTempPath(), batchFileName);
+            string exePath = SaveData.Instance.ExePath;
+
+            string batchCommands = string.Empty;
+
+            batchCommands += "@ECHO OFF\n";                         // Do not show any output
+            batchCommands += "ping -n 2 127.0.0.1 > nul\n";         // Wait 1-2 seconds (so that the process is already terminated)
+            batchCommands += "echo j | del /F ";                    // Delete the executeable
+            batchCommands += exePath + "\n";
+            batchCommands += $"echo j | del {batchFileName}";    // Delete this bat file
+
+            File.WriteAllText(batchFilePath, batchCommands);
+
+
+            ProcessStartInfo batchProcess = new ProcessStartInfo();
+            batchProcess.WindowStyle = ProcessWindowStyle.Hidden;
+            batchProcess.CreateNoWindow = true;
+            batchProcess.FileName = batchFilePath;
+            Process.Start(batchProcess);
+            Exit();
         }
     }
 }
