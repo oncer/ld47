@@ -1064,7 +1064,7 @@ namespace SentIO.Console
                 yield return Talk("See you another time maybe.");
                 yield return Wait(120);
                 SaveData.Instance["phase"] = "5";
-                MainGame.Instance.Exit();
+                MainGame.Instance.ExitAndReopen();
             }
             else if (MainGame.Instance.ScoreBoard.SidScore >= DICE_WIN_SCORE)
             {
@@ -1104,14 +1104,14 @@ namespace SentIO.Console
                     yield return Key();
                     yield return Talk("I don't want to play again though.\n|||||||See you around!");
                     yield return Wait(120);
-                    MainGame.Instance.Exit();
+                    MainGame.Instance.ExitAndReopen();
                 }
                 else
                 {
                     Happy(); NormalSpeed();
                     yield return Talk("That's what I thought.\n||||||See you around, loser!");
                     yield return Wait(120);
-                    MainGame.Instance.Exit();
+                    MainGame.Instance.ExitAndReopen();
                 }
             }
             MainGame.Instance.ScoreBoard.Hide();

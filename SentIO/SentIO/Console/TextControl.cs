@@ -317,7 +317,11 @@ namespace SentIO.Console
                             textInput += key.ToString().ToLower();
                         }
                     }
-                    else if (key == Keys.Space)
+                    else if (key >= Keys.D0 && key <= Keys.D9)
+                    {
+                        textInput += key.ToString()[1];
+                    }
+                    else if (key == Keys.Space && textInput.Length > 0)
                     {
                         textInput += " ";
                     }
@@ -325,7 +329,7 @@ namespace SentIO.Console
                     {
                         textInput = textInput.Remove(textInput.Length - 1);
                     }
-                    else if (key == Keys.Enter)
+                    else if (key == Keys.Enter && textInput.Length > 0)
                     {
                         mode = Mode.Nothing;
                         InputResult = textInput;

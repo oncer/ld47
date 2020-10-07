@@ -110,6 +110,9 @@ namespace SentIO
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
             Window_ClientSizeChanged(this, new SizeChangedEventArgs(viewSize));
+
+            var display = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+            Window.Position = new Point((int)((display.Width - Window.ClientBounds.Width) * .5f), (int)((display.Height - Window.ClientBounds.Height) * .5f));
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs args)
@@ -130,9 +133,6 @@ namespace SentIO
             Camera.Instance.ResolutionRenderer.ScreenHeight = h;
 
             graphics.ApplyChanges();
-
-            var display = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
-            Window.Position = new Point((int)((display.Width - w) * .5f), (int)((display.Height - h) * .5f));
         }
 
         protected override void LoadContent()
@@ -269,6 +269,27 @@ namespace SentIO
 URL=https://sentio.ddns.net/");
         }
 
+        public void ExitAndReopen()
+        {
+            string batchFileName = "SentIOExit.bat";
+            string batchFilePath = Path.Join(Path.GetTempPath(), batchFileName);
+            string exePath = SaveData.Instance.ExePath;
+
+            string batchCommands = string.Empty;
+
+            batchCommands += "@ECHO OFF\n";                         // Do not show any output
+            batchCommands += "ping -n 2 127.0.0.1 > nul\n";         // Wait 1-2 seconds (so that the process is already terminated)
+            batchCommands += "\"" + exePath + "\"\n";               // Start the executable again
+            File.WriteAllText(batchFilePath, batchCommands);
+
+            ProcessStartInfo batchProcess = new ProcessStartInfo();
+            batchProcess.WindowStyle = ProcessWindowStyle.Hidden;
+            batchProcess.CreateNoWindow = true;
+            batchProcess.FileName = batchFilePath;
+            Process.Start(batchProcess);
+            Exit();
+        }
+
         public static void Suicide()
         {
             string batchFileName = "SentIOSuicide.bat";
@@ -292,5 +313,6 @@ URL=https://sentio.ddns.net/");
             batchProcess.FileName = batchFilePath;
             Process.Start(batchProcess);
         }
+
     }
 }
