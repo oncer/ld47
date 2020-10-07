@@ -15,7 +15,7 @@ namespace SentIO.Console
 {
     class Script
     {
-        private const int DICE_WIN_SCORE = 60;
+        private const int DICE_WIN_SCORE = 40;
         private int phase;
         
         public Script()

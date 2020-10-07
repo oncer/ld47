@@ -1,5 +1,27 @@
 extends layout
 
 block content
-  h1= title
-  p Coming soon!
+  //h1= title
+  if finished
+    p.letter.
+      Dear #{name},<br><br>
+      I fondly remember our time together,<br>
+      #{minutes} minutes and #{seconds} seconds to be exact.<br>
+      Never forget: #{message}.<br><br>
+      What follows are some other<br>
+      memorable quotes by people<br>
+      I have met so far.<br><br>
+  else
+    p.letter.
+      Hello stranger,<br>
+      you probably don't know me.<br><br>
+      In my travels I have collected<br>
+      some memorable quotes.<br><br>
+      I hope this page will save as an<br>
+      inspiration for all of us.
+
+  ul#players
+    each player in players
+      li
+        div.message “#{player.message}”
+        div.name  ~#{player.name}

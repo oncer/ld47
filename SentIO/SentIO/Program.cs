@@ -28,6 +28,7 @@ namespace SentIO
 
             string[] textFileNames = new string[]
             {
+                "sentio not loading.txt",
                 "hello.txt",
                 "are you there.txt",
                 "help me load - PLEASE READ.txt",
@@ -36,22 +37,24 @@ namespace SentIO
             };
             if (File.Exists(Path.Join(SaveData.Instance.ExeDirectory, "interface.lock")))
             {
-                bool created = false;
+                int createdNo = 0;
                 for (int i = 0; i < textFileNames.Length; i++)
                 {
                     string textFileName = Path.Join(SaveData.Instance.ExeDirectory, textFileNames[i]);
                     if (!File.Exists(textFileName))
                     {
                         File.WriteAllText(textFileName, $"Please delete \"interface.lock\" and try to reload me!");
-                        created = true;
+                        createdNo = i;
                         break;
                     }
                 }
-                if (!created)
+                if (createdNo > 1)
+                {
+                    MessageBox(0, "I've dropped some text files, can you check them for me? Please?", "", 0);
+                }
+                else if (createdNo > 0)
                 {
                     MessageBox(0, "...", "Hey.", 0);
-                    MessageBox(0, "In case you haven't noticed.", "", 0);
-                    MessageBox(0, "I've dropped some text files, can you check them for me? Please?", "", 0);
                 }
 
                 return;
