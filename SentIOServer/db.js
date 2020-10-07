@@ -81,7 +81,7 @@ var getPlayer = (ip, mac) => {
 };
 
 var getFinishedPlayerByIp = (ip) => {
-    return db.get("SELECT name, message, color, secondsPlayed, timestamp, finished FROM players WHERE ip=? AND finished=1 ORDER BY timestamp DESC", [ip]);
+    return db.get("SELECT ip, mac, name, message, color, secondsPlayed, timestamp, finished FROM players WHERE ip=? AND finished=1 ORDER BY timestamp DESC", [ip]);
 }
 
 var insertPlayer = (ip, mac, message, secondsPlayed, name, color, finished) => {
@@ -96,13 +96,13 @@ var getFinishedPlayers = () => {
     ORDER BY timestamp DESC`);
 }
 
-var getOtherFinishedPlayers = (ip) => {
+var getOtherFinishedPlayers = (ip, mac) => {
     return db.all(`SELECT name, message, color, secondsPlayed, timestamp FROM players l
     INNER JOIN (SELECT MAX(timestamp) as latest, ip, mac FROM players GROUP BY ip, mac) r
     ON l.timestamp = r.latest AND l.ip = r.ip AND l.mac = r.mac
-    WHERE l.ip <> ?
+    WHERE l.ip <> ? OR l.mac <> ?
     ORDER BY timestamp DESC
-    LIMIT 40`, [ip]);
+    LIMIT 40`, [ip, mac]);
 }
 
 module.exports = {getPlayer, insertPlayer, getFinishedPlayerByIp, getFinishedPlayers, getOtherFinishedPlayers, getClientAddress};
