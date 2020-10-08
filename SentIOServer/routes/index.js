@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
       params["seconds"] = seconds;
       params["message"] = player["message"];
     }
-    var mac = player["mac"]
+    var mac = player["mac"] || "NULL";
     db.getOtherFinishedPlayers(ip, mac).then((rows => {
       params["players"] = rows;
       res.render('index', params);
