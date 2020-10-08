@@ -8,6 +8,7 @@ router.get('/', function(req, res, next) {
   db.getFinishedPlayerByIp(ip).then((player => {
     //console.log(player);
     params = { title: "Jack's mementos" };
+    var mac = "NULL";
     if (player == undefined)
     {
       params["finished"] = 0;
@@ -22,8 +23,8 @@ router.get('/', function(req, res, next) {
       params["minutes"] = minutes;
       params["seconds"] = seconds;
       params["message"] = player["message"];
+      mac = player["mac"];
     }
-    var mac = player["mac"] || "NULL";
     db.getOtherFinishedPlayers(ip, mac).then((rows => {
       params["players"] = rows;
       res.render('index', params);
