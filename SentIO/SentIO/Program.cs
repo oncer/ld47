@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace SentIO
 {
@@ -9,17 +10,30 @@ namespace SentIO
     {
         [DllImport("user32.dll", SetLastError = true, CharSet= CharSet.Auto)]
         public static extern int MessageBox(int hWnd, String text, String caption, uint type);
+
+        //public static FileStream logFile;
+
+        public static void Log(string txt)
+        {
+            //logFile.Write(Encoding.UTF8.GetBytes(txt+"\n"));
+            //logFile.Flush();
+        }
         [STAThread]
         static void Main()
         {
+            //logFile = File.OpenWrite("C:\\Users\\Simon Parzer\\Desktop\\MonoGameLog.txt");
+            //Log("LOG START");
+
             if (SaveData.Instance["killswitch"] == "triggered")
             {
+                //Log("killswitch triggered (savedata)");
                 MainGame.LeaveURL();
                 MainGame.Suicide();
                 return;
             }
             else if (WebClient.Instance.GetPlayerFinished())
             {
+                //Log("killswitch triggered (web)");
                 SaveData.Instance["killswitch"] = "triggered";
                 MainGame.LeaveURL();
                 MainGame.Suicide();

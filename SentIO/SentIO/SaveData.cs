@@ -10,7 +10,8 @@ namespace SentIO
         private string path;
         private Dictionary<string, string> data;
 
-        public string ExeDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+        //public string ExeDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+        public string ExeDirectory => Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
         public string ExeName => System.Diagnostics.Process.GetCurrentProcess().ProcessName;        
         public string ExePath => Path.Join(ExeDirectory, ExeName) + ".exe";
 

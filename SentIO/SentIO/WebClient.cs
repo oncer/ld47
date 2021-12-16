@@ -13,7 +13,7 @@ namespace SentIO
 {
     class WebClient
     {
-        private const string ADDR = "https://sentio.ddns.net";
+        private const string ADDR = "https://sentio.simonparzer.com";
         //private const string ADDR = "http://localhost:3000";
         private static readonly HttpClient client = new HttpClient();
         private string macAddress;

@@ -266,7 +266,7 @@ namespace SentIO
         {
             string linkPath = Path.Join(SaveData.Instance.ExeDirectory, "See you!.URL");
             File.WriteAllText(linkPath, @"[InternetShortcut]
-URL=https://sentio.ddns.net/");
+URL=https://sentio.simonparzer.com/");
         }
 
         public void ExitAndReopen()
